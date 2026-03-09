@@ -16,19 +16,16 @@ class ToastHelper extends StatefulWidget {
   State<ToastHelper> createState() => _ToastHelperState();
 }
 
-class _ToastHelperState extends State<ToastHelper> with WidgetsBindingObserver {
+class _ToastHelperState extends State<ToastHelper> {
   //solve problem of keyboard shelter toast
   double _keyboardHeight = 0;
   BuildContext? _childContext;
 
   //offset size
-  Offset? selfOffset;
-  Size? selfSize;
+  double? _childToBottom;
 
   @override
   void initState() {
-    widgetsBinding.addObserver(this);
-
     ViewUtils.addSafeUse(() {
       if (!mounted || !_updateSelfInfo()) {
         return;
@@ -52,15 +49,9 @@ class _ToastHelperState extends State<ToastHelper> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeMetrics() {
-    super.didChangeMetrics();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _dealKeyboard();
-  }
-
-  @override
-  void dispose() {
-    widgetsBinding.removeObserver(this);
-    super.dispose();
   }
 
   void _dealKeyboard() {
@@ -69,29 +60,26 @@ class _ToastHelperState extends State<ToastHelper> with WidgetsBindingObserver {
         return;
       }
 
-      var screenHeight = MediaQuery.heightOf(context);
-      var childToBottom = screenHeight - (selfOffset!.dy + selfSize!.height);
       var keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
-      if (childToBottom < 0) {
+      if (_childToBottom! < 0) {
         _updateKeyboardHeight(keyboardHeight);
         return;
       }
-      if (childToBottom - keyboardHeight > -30) {
+      if (_childToBottom! - keyboardHeight > -30) {
         return;
       }
-      _updateKeyboardHeight(keyboardHeight - childToBottom);
+      _updateKeyboardHeight(keyboardHeight - _childToBottom!);
     });
   }
 
   bool _updateSelfInfo() {
-    if (selfOffset != null) {
+    if (_childToBottom != null) {
       return true;
     }
 
     final childContext = _childContext;
     if (!(childContext?.mounted ?? false)) {
-      selfOffset = null;
-      selfSize = null;
+      _childToBottom = null;
       return false;
     }
 
@@ -99,18 +87,18 @@ class _ToastHelperState extends State<ToastHelper> with WidgetsBindingObserver {
     if (renderObject is! RenderBox ||
         !renderObject.attached ||
         !renderObject.hasSize) {
-      selfOffset = null;
-      selfSize = null;
+      _childToBottom = null;
       return false;
     }
 
     try {
-      selfOffset = renderObject.localToGlobal(Offset.zero);
-      selfSize = renderObject.size;
+      var selfOffset =
+          renderObject.localToGlobal(renderObject.size.bottomLeft(Offset.zero));
+      var screenHeight = MediaQuery.heightOf(context);
+      _childToBottom = screenHeight - selfOffset.dy;
       return true;
     } catch (_) {
-      selfOffset = null;
-      selfSize = null;
+      _childToBottom = null;
       return false;
     }
   }

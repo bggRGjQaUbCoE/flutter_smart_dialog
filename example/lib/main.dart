@@ -78,7 +78,10 @@ class SmartDialogPage extends StatelessWidget {
   }
 
   void _showToast() async {
-    SmartDialog.showToast('test toast ---- ${Random().nextInt(999)}');
+    SmartDialog.showToast(
+      // alignment: Alignment.center,
+      'test toast ---- ${Random().nextInt(999)}',
+    );
 
     // for (var i = 0; i < 9; i++) {
     //   SmartDialog.showToast(
