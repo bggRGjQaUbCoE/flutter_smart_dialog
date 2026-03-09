@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/navigator_observer.dart';
+import 'package:flutter_smart_dialog/src/helper/pop_monitor/boost_route_monitor.dart';
+import 'package:flutter_smart_dialog/src/helper/pop_monitor/monitor_pop_route.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:flutter_smart_dialog/src/widget/default/loading_widget.dart';
 import 'package:flutter_smart_dialog/src/widget/default/notify_alter.dart';
 import 'package:flutter_smart_dialog/src/widget/default/notify_error.dart';
 import 'package:flutter_smart_dialog/src/widget/default/notify_failure.dart';
-
-import 'helper/dialog_proxy.dart';
-import 'helper/pop_monitor/boost_route_monitor.dart';
-import 'helper/pop_monitor/monitor_pop_route.dart';
-import 'widget/default/loading_widget.dart';
-import 'widget/default/notify_success.dart';
-import 'widget/default/notify_warning.dart';
-import 'widget/default/toast_widget.dart';
+import 'package:flutter_smart_dialog/src/widget/default/notify_success.dart';
+import 'package:flutter_smart_dialog/src/widget/default/notify_warning.dart';
+import 'package:flutter_smart_dialog/src/widget/default/toast_widget.dart';
 
 typedef FlutterSmartToastBuilder = Widget Function(String msg);
 typedef FlutterSmartLoadingBuilder = Widget Function(String msg);
@@ -20,14 +19,14 @@ typedef FlutterSmartStyleBuilder = Widget Function(Widget child);
 
 class FlutterSmartDialog extends StatefulWidget {
   const FlutterSmartDialog({
-    Key? key,
+    super.key,
     required this.child,
     this.toastBuilder,
     this.loadingBuilder,
     this.notifyStyle,
     this.styleBuilder,
     this.initType,
-  }) : super(key: key);
+  });
 
   final Widget? child;
 

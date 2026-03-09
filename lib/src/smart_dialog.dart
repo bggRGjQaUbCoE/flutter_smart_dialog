@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/config/smart_config.dart';
+import 'package:flutter_smart_dialog/src/data/animation_param.dart';
+import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
+import 'package:flutter_smart_dialog/src/kit/dialog_kit.dart';
 import 'package:flutter_smart_dialog/src/kit/typedef.dart';
-
-import 'config/smart_config.dart';
-import 'data/animation_param.dart';
-import 'helper/dialog_proxy.dart';
-import 'kit/dialog_kit.dart';
-import 'widget/attach_dialog_widget.dart';
-import 'widget/helper/dialog_scope.dart';
+import 'package:flutter_smart_dialog/src/widget/attach_dialog_widget.dart';
+import 'package:flutter_smart_dialog/src/widget/helper/dialog_scope.dart';
 
 class SmartDialog {
   SmartDialog._();
@@ -188,7 +187,7 @@ class SmartDialog {
               tag == null &&
               permanent == null &&
               keepSingle == null) ||
-          (useSystem == null || useSystem == false),
+          (useSystem == null || !useSystem),
       'useSystem is true; tag, keepSingle and permanent prohibit setting values',
     );
 
@@ -445,7 +444,7 @@ class SmartDialog {
               tag == null &&
               permanent == null &&
               keepSingle == null) ||
-          (useSystem == null || useSystem == false),
+          (useSystem == null || !useSystem),
       'useSystem is true; tag, keepSingle and permanent prohibit setting values',
     );
 
@@ -901,7 +900,7 @@ class SmartDialog {
     bool? debounce,
     SmartToastType? displayType,
     WidgetBuilder? builder,
-  }) async {
+  }) {
     return DialogProxy.instance.showToast(
       widget: DialogScope(
         controller: controller,

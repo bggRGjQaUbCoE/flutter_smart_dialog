@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 
 class LoadingWidget extends StatelessWidget {
-  const LoadingWidget({Key? key, required this.msg}) : super(key: key);
+  const LoadingWidget({super.key, required this.msg});
 
   ///loading msg
   final String msg;

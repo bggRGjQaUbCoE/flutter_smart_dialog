@@ -2,11 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/data/animation_param.dart';
+import 'package:flutter_smart_dialog/src/data/base_dialog.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
-
-import '../data/animation_param.dart';
-import '../data/base_dialog.dart';
-import '../widget/helper/smart_overlay_entry.dart';
+import 'package:flutter_smart_dialog/src/widget/helper/smart_overlay_entry.dart';
 
 class CustomLoading extends BaseDialog {
   CustomLoading({required SmartOverlayEntry overlayEntry})
@@ -79,7 +78,7 @@ class CustomLoading extends BaseDialog {
   VoidCallback _handleDismiss(VoidCallback? onDismiss, Duration? displayTime) {
     _displayTimer?.cancel();
     if (displayTime != null) {
-      _displayTimer = Timer(displayTime, () => dismiss());
+      _displayTimer = Timer(displayTime, dismiss);
     }
 
     return () {

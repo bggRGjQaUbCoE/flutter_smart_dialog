@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-
-import '../helper/dialog_proxy.dart';
+import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 
 class ViewUtils {
   static void addSafeUse(VoidCallback callback) {

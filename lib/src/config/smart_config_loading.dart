@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'enum_config.dart';
+import 'package:flutter_smart_dialog/src/config/enum_config.dart';
 
 ///showLoading() global config
 ///
@@ -15,7 +14,7 @@ class SmartConfigLoading {
     this.maskColor = const Color.fromRGBO(0, 0, 0, 0.46),
     this.maskWidget,
     this.clickMaskDismiss = false,
-    this.leastLoadingTime = const Duration(milliseconds: 0),
+    this.leastLoadingTime = Duration.zero,
     this.awaitOverType = SmartAwaitOverType.dialogDismiss,
     this.maskTriggerType = SmartMaskTriggerType.up,
     this.nonAnimationTypes = const [

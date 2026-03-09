@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import '../../flutter_smart_dialog.dart';
-import '../kit/typedef.dart';
-import 'base_dialog.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/data/base_dialog.dart';
+import 'package:flutter_smart_dialog/src/kit/typedef.dart';
 
 class NotifyInfo {
   NotifyInfo({

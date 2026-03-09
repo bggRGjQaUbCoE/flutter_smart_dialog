@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class SizeAnimation extends StatelessWidget {
   const SizeAnimation({
-    Key? key,
+    super.key,
     required this.controller,
     required this.alignment,
     required this.child,
-  }) : super(key: key);
+  });
 
   final AnimationController controller;
 

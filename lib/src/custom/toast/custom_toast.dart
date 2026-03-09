@@ -3,16 +3,15 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/custom/main_dialog.dart';
+import 'package:flutter_smart_dialog/src/custom/toast/toast_tool.dart';
+import 'package:flutter_smart_dialog/src/data/animation_param.dart';
+import 'package:flutter_smart_dialog/src/data/base_dialog.dart';
+import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/kit/debounce_utils.dart';
-
-import '../../data/animation_param.dart';
-import '../../data/base_dialog.dart';
-import '../../helper/dialog_proxy.dart';
-import '../../kit/view_utils.dart';
-import '../../widget/helper/dialog_scope.dart';
-import '../../widget/helper/smart_overlay_entry.dart';
-import '../../widget/helper/toast_helper.dart';
-import 'toast_tool.dart';
+import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:flutter_smart_dialog/src/widget/helper/dialog_scope.dart';
+import 'package:flutter_smart_dialog/src/widget/helper/smart_overlay_entry.dart';
+import 'package:flutter_smart_dialog/src/widget/helper/toast_helper.dart';
 
 typedef ToastCallback = Function();
 
@@ -41,7 +40,7 @@ class CustomToast extends BaseDialog {
       return;
     }
 
-    showToast() {
+    void showToast() {
       SmartDialog.config.toast.isExist = true;
       overlayEntry.remove();
       overlay(DialogProxy.contextToast).insert(overlayEntry);

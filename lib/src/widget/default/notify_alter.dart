@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-
-import '../../kit/view_utils.dart';
+import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 
 class NotifyAlter extends StatelessWidget {
   const NotifyAlter({
-    Key? key,
+    super.key,
     required this.msg,
-  }) : super(key: key);
+  });
 
   final String msg;
 

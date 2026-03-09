@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'enum_config.dart';
+import 'package:flutter_smart_dialog/src/config/enum_config.dart';
 
 ///showToast() global config
 ///

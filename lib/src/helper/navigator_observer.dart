@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/data/dialog_info.dart';
 import 'package:flutter_smart_dialog/src/data/smart_tag.dart';
+import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/route_record.dart';
-
-import '../data/dialog_info.dart';
-import 'dialog_proxy.dart';
 
 class SmartNavigatorObserver extends NavigatorObserver {
   @override
@@ -28,7 +27,8 @@ class SmartNavigatorObserver extends NavigatorObserver {
   }
 
   @override
-  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) async {
+  Future<void> didPop(
+      Route<dynamic> route, Route<dynamic>? previousRoute) async {
     RouteRecord.curRoute = previousRoute;
     RouteRecord.instance.pop(route, previousRoute);
     _removeDialog(route);

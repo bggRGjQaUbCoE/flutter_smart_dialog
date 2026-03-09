@@ -3,10 +3,10 @@ import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 
 class ToastHelper extends StatefulWidget {
   const ToastHelper({
-    Key? key,
+    super.key,
     required this.consumeEvent,
     required this.child,
-  }) : super(key: key);
+  });
 
   final bool consumeEvent;
 

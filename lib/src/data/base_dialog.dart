@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-
-import '../custom/main_dialog.dart';
-import '../widget/helper/smart_overlay_entry.dart';
+import 'package:flutter_smart_dialog/src/custom/main_dialog.dart';
+import 'package:flutter_smart_dialog/src/widget/helper/smart_overlay_entry.dart';
 
 /// base dialog：encapsulate common logic
 class BaseDialog {

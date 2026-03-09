@@ -2,22 +2,21 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/src/config/enum_config.dart';
+import 'package:flutter_smart_dialog/src/data/animation_param.dart';
+import 'package:flutter_smart_dialog/src/data/base_dialog.dart';
 import 'package:flutter_smart_dialog/src/data/dialog_info.dart';
+import 'package:flutter_smart_dialog/src/data/notify_info.dart';
 import 'package:flutter_smart_dialog/src/data/smart_tag.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/monitor_widget_helper.dart';
 import 'package:flutter_smart_dialog/src/helper/route_record.dart';
+import 'package:flutter_smart_dialog/src/kit/debounce_utils.dart';
+import 'package:flutter_smart_dialog/src/kit/typedef.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:flutter_smart_dialog/src/smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/widget/attach_dialog_widget.dart';
-
-import '../config/enum_config.dart';
-import '../data/animation_param.dart';
-import '../data/base_dialog.dart';
-import '../data/notify_info.dart';
-import '../kit/debounce_utils.dart';
-import '../kit/typedef.dart';
-import '../smart_dialog.dart';
-import '../widget/helper/smart_overlay_entry.dart';
+import 'package:flutter_smart_dialog/src/widget/helper/smart_overlay_entry.dart';
 
 ///main function : custom dialog
 class CustomDialog extends BaseDialog {

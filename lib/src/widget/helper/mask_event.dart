@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-
-import '../../config/enum_config.dart';
+import 'package:flutter_smart_dialog/src/config/enum_config.dart';
 
 class MaskEvent extends StatefulWidget {
   const MaskEvent({
-    Key? key,
+    super.key,
     required this.maskTriggerType,
     required this.onMask,
     required this.child,
-  }) : super(key: key);
+  });
 
   final SmartMaskTriggerType maskTriggerType;
 

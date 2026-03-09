@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
-
-import '../attach_dialog_widget.dart';
+import 'package:flutter_smart_dialog/src/widget/attach_dialog_widget.dart';
 
 typedef AttachBuilder = Widget Function(
   Widget child,
@@ -23,7 +22,7 @@ typedef CoverBuilder = List<Widget> Function(
 
 class AttachWidget extends StatefulWidget {
   const AttachWidget({
-    Key? key,
+    super.key,
     required this.targetContext,
     required this.targetBuilder,
     required this.beforeBuilder,
@@ -32,7 +31,7 @@ class AttachWidget extends StatefulWidget {
     required this.builder,
     this.belowBuilder,
     this.aboveBuilder,
-  }) : super(key: key);
+  });
 
   /// target widget
   final BuildContext? targetContext;
@@ -323,26 +322,30 @@ class _AttachWidgetState extends State<AttachWidget>
 
     if (!fixedHorizontal && left != null) {
       if (left < 0) {
-        rectInfo.left = 0;
-        rectInfo.right = null;
+        rectInfo
+          ..left = 0
+          ..right = null;
       } else {
         var rightEdge = screen.width - left - childSize.width;
         if (rightEdge < 0) {
-          rectInfo.left = null;
-          rectInfo.right = 0;
+          rectInfo
+            ..left = null
+            ..right = 0;
         }
       }
     }
 
     if (!fixedVertical && top != null) {
       if (top < 0) {
-        rectInfo.top = 0;
-        rectInfo.bottom = null;
+        rectInfo
+          ..top = 0
+          ..bottom = null;
       } else {
         var bottomEdge = screen.height - top - childSize.height;
         if (bottomEdge < 0) {
-          rectInfo.top = null;
-          rectInfo.bottom = 0;
+          rectInfo
+            ..top = null
+            ..bottom = 0;
         }
       }
     }
@@ -397,9 +400,9 @@ class _AttachWidgetState extends State<AttachWidget>
 
 class AdaptBuilder extends StatelessWidget {
   const AdaptBuilder({
-    Key? key,
+    super.key,
     required this.builder,
-  }) : super(key: key);
+  });
 
   final WidgetBuilder builder;
 

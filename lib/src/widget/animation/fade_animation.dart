@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class FadeAnimation extends StatefulWidget {
   const FadeAnimation({
-    Key? key,
+    super.key,
     required this.controller,
     required this.child,
-  }) : super(key: key);
+  });
 
   final AnimationController controller;
 

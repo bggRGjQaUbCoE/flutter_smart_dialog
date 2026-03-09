@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/data/animation_param.dart';
 import 'package:flutter_smart_dialog/src/data/base_controller.dart';
+import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
+import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:flutter_smart_dialog/src/widget/animation/fade_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/highlight_mask_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/scale_animation.dart';
+import 'package:flutter_smart_dialog/src/widget/animation/size_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/attach_widget.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/dialog_scope.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/mask_event.dart';
-
-import '../data/animation_param.dart';
-import '../helper/dialog_proxy.dart';
-import '../kit/view_utils.dart';
-import 'animation/fade_animation.dart';
-import 'animation/size_animation.dart';
 
 typedef HighlightBuilder = Positioned Function(
   Offset targetOffset,
@@ -36,7 +35,7 @@ typedef ScalePointBuilder = Offset Function(Size selfSize);
 
 class AttachDialogWidget extends StatefulWidget {
   const AttachDialogWidget({
-    Key? key,
+    super.key,
     required this.child,
     required this.targetContext,
     required this.targetBuilder,
@@ -57,7 +56,7 @@ class AttachDialogWidget extends StatefulWidget {
     required this.maskWidget,
     required this.maskTriggerType,
     required this.maskIgnoreArea,
-  }) : super(key: key);
+  });
 
   ///target context
   final BuildContext? targetContext;
@@ -193,9 +192,7 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
       beforeBuilder: beforeBuilder,
       alignment: widget.alignment,
       originChild: _child,
-      builder: (Widget child, AttachAdjustParam? adjustParam) {
-        return _buildBodyAnimation(child, adjustParam);
-      },
+      builder: _buildBodyAnimation,
       belowBuilder: (targetOffset, targetSize) {
         return [
           //暗色背景widget动画
@@ -276,7 +273,7 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
         if (widget.child is DialogScope) {
           _child = DialogScope(
             controller: (widget.child as DialogScope).controller,
-            builder: (context) => adjustWidgetBuilder(context),
+            builder: adjustWidgetBuilder,
           );
         }
       }
@@ -317,7 +314,7 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
     Widget fade = FadeAnimation(controller: _bodyController, child: child);
     Widget scale = ScaleAnimation(
       controller: _bodyController,
-      alignment: _scaleAlignment ?? const Alignment(0, 0),
+      alignment: _scaleAlignment ?? Alignment.center,
       child: child,
     );
     Widget size = SizeAnimation(

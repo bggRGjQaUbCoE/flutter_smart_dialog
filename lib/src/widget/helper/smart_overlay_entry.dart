@@ -3,10 +3,10 @@ import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 
 class SmartOverlayEntry extends OverlayEntry {
   SmartOverlayEntry({
-    required WidgetBuilder builder,
-    bool opaque = false,
-    bool maintainState = false,
-  }) : super(builder: builder, opaque: opaque, maintainState: maintainState);
+    required super.builder,
+    super.opaque,
+    super.maintainState,
+  });
 
   bool _disposedByOwner = false;
 

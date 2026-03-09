@@ -2,9 +2,8 @@ import 'dart:async';
 import 'dart:collection';
 
 import 'package:flutter/cupertino.dart';
-
-import '../../../flutter_smart_dialog.dart';
-import 'custom_toast.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/custom/toast/custom_toast.dart';
 
 class ToastTool {
   static ToastTool? _instance;
@@ -65,7 +64,7 @@ class ToastTool {
     return completer.future;
   }
 
-  void cancelLastDelay() async {
+  Future<void> cancelLastDelay() async {
     _curTime?.cancel();
     if (!(_curCompleter?.isCompleted ?? true)) _curCompleter?.complete();
   }

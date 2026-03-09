@@ -1,21 +1,20 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/src/config/enum_config.dart';
+import 'package:flutter_smart_dialog/src/data/animation_param.dart';
 import 'package:flutter_smart_dialog/src/data/base_controller.dart';
+import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/fade_animation.dart';
+import 'package:flutter_smart_dialog/src/widget/animation/mask_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/scale_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/slide_animation.dart';
-
-import '../config/enum_config.dart';
-import '../data/animation_param.dart';
-import '../helper/dialog_proxy.dart';
-import 'animation/mask_animation.dart';
-import 'helper/mask_event.dart';
+import 'package:flutter_smart_dialog/src/widget/helper/mask_event.dart';
 
 class SmartDialogWidget extends StatefulWidget {
   const SmartDialogWidget({
-    Key? key,
+    super.key,
     required this.child,
     required this.controller,
     required this.onMask,
@@ -30,7 +29,7 @@ class SmartDialogWidget extends StatefulWidget {
     required this.maskWidget,
     required this.maskTriggerType,
     required this.ignoreArea,
-  }) : super(key: key);
+  });
 
   /// 内容widget
   final Widget child;

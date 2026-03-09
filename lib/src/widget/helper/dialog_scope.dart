@@ -15,10 +15,10 @@ class DialogScopeInfo {
 
 class DialogScope extends StatefulWidget {
   DialogScope({
-    Key? key,
+    super.key,
     required this.controller,
     required this.builder,
-  }) : super(key: key);
+  });
 
   final SmartDialogController? controller;
 

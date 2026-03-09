@@ -1,5 +1,5 @@
-import '../config/enum_config.dart';
-import '../helper/dialog_proxy.dart';
+import 'package:flutter_smart_dialog/src/config/enum_config.dart';
+import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 
 /// widget controller
 abstract class BaseController {

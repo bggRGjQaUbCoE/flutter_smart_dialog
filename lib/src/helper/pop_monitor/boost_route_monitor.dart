@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
+import 'package:flutter_smart_dialog/src/helper/pop_monitor/monitor_pop_route.dart';
 import 'package:flutter_smart_dialog/src/kit/log.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
-
-import 'monitor_pop_route.dart';
 
 class BoostRouteMonitor {
   static BoostRouteMonitor? _instance;
@@ -21,7 +20,7 @@ class BoostRouteMonitor {
     return route;
   }
 
-  void _monitorRouteMount(Route<dynamic>? route, int count) async {
+  Future<void> _monitorRouteMount(Route<dynamic>? route, int count) async {
     try {
       if (count > threshold) {
         return;
@@ -36,7 +35,7 @@ class BoostRouteMonitor {
       if (route is ModalRoute) {
         // WillPopCallback 该回调函数返回一个 Future<bool>
         // 如果返回 true，则允许返回操作；如果返回 false，则阻止返回操作
-        willPopCallback() async {
+        Future<bool> willPopCallback() async {
           return !(await MonitorPopRoute.handBackEvent());
         }
 

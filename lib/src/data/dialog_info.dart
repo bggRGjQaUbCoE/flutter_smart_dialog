@@ -1,11 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/data/base_dialog.dart';
+import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/kit/typedef.dart';
-
-import '../../flutter_smart_dialog.dart';
-import '../helper/dialog_proxy.dart';
-import 'base_dialog.dart';
 
 class DialogInfo {
   DialogInfo({

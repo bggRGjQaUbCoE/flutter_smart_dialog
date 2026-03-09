@@ -1,9 +1,8 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/src/data/dialog_info.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
-
-import '../data/dialog_info.dart';
 
 class RouteRecord {
   factory RouteRecord() => instance;

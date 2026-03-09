@@ -1,16 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/src/config/enum_config.dart';
+import 'package:flutter_smart_dialog/src/data/animation_param.dart';
 import 'package:flutter_smart_dialog/src/data/base_controller.dart';
 import 'package:flutter_smart_dialog/src/data/smart_tag.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 import 'package:flutter_smart_dialog/src/widget/attach_dialog_widget.dart';
+import 'package:flutter_smart_dialog/src/widget/helper/smart_overlay_entry.dart';
 import 'package:flutter_smart_dialog/src/widget/smart_dialog_widget.dart';
-
-import '../config/enum_config.dart';
-import '../data/animation_param.dart';
-import '../widget/helper/smart_overlay_entry.dart';
 
 ///main function : customize dialog
 class MainDialog {

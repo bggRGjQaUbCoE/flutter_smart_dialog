@@ -1,6 +1,5 @@
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-
-import '../kit/dialog_kit.dart';
+import 'package:flutter_smart_dialog/src/kit/dialog_kit.dart';
 
 /// Global configuration is unified here
 ///

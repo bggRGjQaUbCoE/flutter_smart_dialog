@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class SlideAnimation extends StatefulWidget {
   const SlideAnimation({
-    Key? key,
+    super.key,
     required this.alignment,
     required this.controller,
     required this.child,
-  }) : super(key: key);
+  });
 
   final Alignment alignment;
 
@@ -45,7 +45,7 @@ class _SlideAnimationState extends State<SlideAnimation>
   ///处理下内容widget动画方向
   void _dealContentAnimate() {
     Alignment? alignment = widget.alignment;
-    var offset = const Offset(0, 0);
+    var offset = Offset.zero;
 
     if (alignment == Alignment.bottomCenter ||
         alignment == Alignment.bottomLeft ||

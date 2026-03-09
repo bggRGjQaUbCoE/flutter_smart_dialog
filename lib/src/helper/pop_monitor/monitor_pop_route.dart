@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/data/smart_tag.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/route_record.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
-
-import '../../../flutter_smart_dialog.dart';
-import '../../data/smart_tag.dart';
 
 class MonitorPopRoute with WidgetsBindingObserver {
   factory MonitorPopRoute() => instance;
@@ -20,7 +19,7 @@ class MonitorPopRoute with WidgetsBindingObserver {
   }
 
   @override
-  Future<bool> didPopRoute() async {
+  Future<bool> didPopRoute() {
     return MonitorPopRoute.handBackEvent();
   }
 

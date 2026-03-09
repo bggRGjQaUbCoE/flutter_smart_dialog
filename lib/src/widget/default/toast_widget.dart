@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
-import '../../kit/view_utils.dart';
+import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 
 class ToastWidget extends StatelessWidget {
-  const ToastWidget({Key? key, required this.msg}) : super(key: key);
+  const ToastWidget({super.key, required this.msg});
 
   ///toast msg
   final String msg;

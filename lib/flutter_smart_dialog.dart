@@ -1,4 +1,4 @@
-library flutter_smart_dialog;
+library;
 
 /// config
 export 'src/config/enum_config.dart';

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 class MaskAnimation extends StatefulWidget {
   const MaskAnimation({
-    Key? key,
+    super.key,
     required this.controller,
     required this.maskWidget,
     required this.maskColor,
     required this.usePenetrate,
-  }) : super(key: key);
+  });
 
   final AnimationController controller;
 

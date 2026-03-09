@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 class ScaleAnimation extends StatefulWidget {
   const ScaleAnimation({
-    Key? key,
+    super.key,
     required this.controller,
     required this.child,
     this.alignment,
-  }) : super(key: key);
+  });
 
   final AnimationController controller;
 
@@ -39,7 +39,7 @@ class _ScaleAnimationState extends State<ScaleAnimation> {
   @override
   Widget build(BuildContext context) {
     return ScaleTransition(
-      alignment: widget.alignment ?? const Alignment(0, 0),
+      alignment: widget.alignment ?? Alignment.center,
       scale: _curvedAnimation,
       child: widget.child,
     );
