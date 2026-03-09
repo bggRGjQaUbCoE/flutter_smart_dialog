@@ -33,7 +33,7 @@ class SmartDialogPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text('SmartDialog-EasyDemo')),
+      appBar: AppBar(title: const TextField()),
       body: Container(
         margin: const EdgeInsets.all(30),
         child: Wrap(spacing: 20, runSpacing: 20, children: [

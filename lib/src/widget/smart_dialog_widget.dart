@@ -139,34 +139,47 @@ class _SmartDialogWidgetState extends State<SmartDialogWidget>
         right: widget.ignoreArea?.right ?? 0.0,
         bottom: widget.ignoreArea?.bottom ?? 0.0,
       ),
-      child: Stack(children: [
-        //暗色背景widget动画
-        MaskEvent(
-          maskTriggerType: widget.maskTriggerType,
-          onMask: widget.onMask,
-          child: MaskAnimation(
-            controller: _maskController!,
-            maskColor: widget.maskColor,
-            maskWidget: widget.maskWidget,
-            usePenetrate: widget.usePenetrate,
+      child: Stack(
+        children: [
+          //暗色背景widget动画
+          MaskEvent(
+            maskTriggerType: widget.maskTriggerType,
+            onMask: widget.onMask,
+            child: MaskAnimation(
+              controller: _maskController!,
+              maskColor: widget.maskColor,
+              maskWidget: widget.maskWidget,
+              usePenetrate: widget.usePenetrate,
+            ),
           ),
-        ),
 
-        //内容Widget动画
-        Container(
-          alignment: widget.alignment,
-          child: _buildBodyAnimation(),
-        ),
-      ]),
+          //内容Widget动画
+          Align(
+            alignment: widget.alignment,
+            child: _buildBodyAnimation(),
+          ),
+        ],
+      ),
     );
   }
 
+  Widget get fade =>
+      FadeAnimation(controller: _bodyController, child: widget.child);
+
+  Widget get scale =>
+      ScaleAnimation(controller: _bodyController, child: widget.child);
+
+  Widget get slide => SlideAnimation(
+        controller: _bodyController,
+        alignment: widget.alignment,
+        child: widget.child,
+      );
+
   Widget _buildBodyAnimation() {
-    var child = widget.child;
     if (widget.animationBuilder != null) {
       return widget.animationBuilder!.call(
         _bodyController,
-        child,
+        widget.child,
         _animationParam = AnimationParam(
           alignment: widget.alignment,
           animationTime: widget.animationTime,
@@ -175,34 +188,26 @@ class _SmartDialogWidgetState extends State<SmartDialogWidget>
     }
 
     var type = widget.animationType;
-    Widget fade = FadeAnimation(controller: _bodyController, child: child);
-    Widget scale = ScaleAnimation(controller: _bodyController, child: child);
-    Widget slide = SlideAnimation(
-      controller: _bodyController,
-      alignment: widget.alignment,
-      child: child,
-    );
-    Widget animation = fade;
 
     //select different animation
-    if (type == SmartAnimationType.fade) {
-      animation = fade;
-    } else if (type == SmartAnimationType.scale) {
-      animation = scale;
-    } else if (type == SmartAnimationType.centerFade_otherSlide) {
-      if (widget.alignment == Alignment.center) {
-        animation = fade;
-      } else {
-        animation = slide;
-      }
-    } else if (type == SmartAnimationType.centerScale_otherSlide) {
-      if (widget.alignment == Alignment.center) {
-        animation = scale;
-      } else {
-        animation = slide;
-      }
+    switch (type) {
+      case SmartAnimationType.fade:
+        return fade;
+      case SmartAnimationType.scale:
+        return scale;
+      case SmartAnimationType.centerFade_otherSlide:
+        if (widget.alignment == Alignment.center) {
+          return fade;
+        } else {
+          return slide;
+        }
+      case SmartAnimationType.centerScale_otherSlide:
+        if (widget.alignment == Alignment.center) {
+          return scale;
+        } else {
+          return slide;
+        }
     }
-    return animation;
   }
 
   ///等待动画结束,关闭动画资源

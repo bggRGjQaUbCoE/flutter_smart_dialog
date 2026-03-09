@@ -310,40 +310,37 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
       );
     }
 
-    var type = widget.animationType;
-    Widget fade = FadeAnimation(controller: _bodyController, child: child);
-    Widget scale = ScaleAnimation(
-      controller: _bodyController,
-      alignment: _scaleAlignment ?? Alignment.center,
-      child: child,
-    );
-    Widget size = SizeAnimation(
-      alignment: alignment,
-      controller: _bodyController,
-      child: child,
-    );
-    Widget animation = fade;
+    Widget fade() => FadeAnimation(controller: _bodyController, child: child);
+    Widget scale() => ScaleAnimation(
+          controller: _bodyController,
+          alignment: _scaleAlignment ?? Alignment.center,
+          child: child,
+        );
+    Widget size() => SizeAnimation(
+          alignment: alignment,
+          controller: _bodyController,
+          child: child,
+        );
 
     //select different animation
-    if (type == SmartAnimationType.fade) {
-      animation = fade;
-    } else if (type == SmartAnimationType.scale) {
-      animation = scale;
-    } else if (type == SmartAnimationType.centerFade_otherSlide) {
-      if (alignment == Alignment.center) {
-        animation = fade;
-      } else {
-        animation = size;
-      }
-    } else if (type == SmartAnimationType.centerScale_otherSlide) {
-      if (alignment == Alignment.center) {
-        animation = scale;
-      } else {
-        animation = size;
-      }
+    switch (widget.animationType) {
+      case SmartAnimationType.fade:
+        return fade();
+      case SmartAnimationType.scale:
+        return scale();
+      case SmartAnimationType.centerFade_otherSlide:
+        if (alignment == Alignment.center) {
+          return fade();
+        } else {
+          return size();
+        }
+      case SmartAnimationType.centerScale_otherSlide:
+        if (alignment == Alignment.center) {
+          return scale();
+        } else {
+          return size();
+        }
     }
-
-    return animation;
   }
 
   ///等待动画结束,关闭动画资源

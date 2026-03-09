@@ -75,31 +75,32 @@ class CustomToast extends BaseDialog {
     }
 
     try {
-      if (displayType == SmartToastType.normal) {
-        await normalToast(
-          time: displayTime,
-          onShowToast: showToast,
-          mainDialog: mainDialog,
-        );
-      } else if (displayType == SmartToastType.last) {
-        await lastToast(
-          time: displayTime,
-          onShowToast: showToast,
-          mainDialog: mainDialog,
-        );
-      } else if (displayType == SmartToastType.onlyRefresh) {
-        await onlyRefresh(
-          time: displayTime,
-          widget: widget,
-          onShowToast: showToast,
-          mainDialog: mainDialog,
-        );
-      } else if (displayType == SmartToastType.multi) {
-        await multiToast(
-          time: displayTime,
-          onShowToast: showToast,
-          mainDialog: mainDialog,
-        );
+      switch (displayType) {
+        case SmartToastType.normal:
+          await normalToast(
+            time: displayTime,
+            onShowToast: showToast,
+            mainDialog: mainDialog,
+          );
+        case SmartToastType.last:
+          await lastToast(
+            time: displayTime,
+            onShowToast: showToast,
+            mainDialog: mainDialog,
+          );
+        case SmartToastType.onlyRefresh:
+          await onlyRefresh(
+            time: displayTime,
+            widget: widget,
+            onShowToast: showToast,
+            mainDialog: mainDialog,
+          );
+        case SmartToastType.multi:
+          await multiToast(
+            time: displayTime,
+            onShowToast: showToast,
+            mainDialog: mainDialog,
+          );
       }
     } catch (_) {}
   }

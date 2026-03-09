@@ -9,19 +9,13 @@ abstract class BaseController {
     CloseType closeType,
     SmartNonAnimationType nonAnimationType,
   ) {
-    if (nonAnimationType == SmartNonAnimationType.closeDialog_nonAnimation) {
-      return true;
-    } else if (closeType == CloseType.route &&
-        nonAnimationType == SmartNonAnimationType.routeClose_nonAnimation) {
-      return true;
-    } else if (closeType == CloseType.mask &&
-        nonAnimationType == SmartNonAnimationType.maskClose_nonAnimation) {
-      return true;
-    } else if (closeType == CloseType.back &&
-        nonAnimationType == SmartNonAnimationType.maskClose_nonAnimation) {
-      return true;
-    }
-
-    return false;
+    return switch (nonAnimationType) {
+      SmartNonAnimationType.closeDialog_nonAnimation => true,
+      SmartNonAnimationType.routeClose_nonAnimation =>
+        closeType == CloseType.route,
+      SmartNonAnimationType.maskClose_nonAnimation =>
+        closeType == CloseType.mask || closeType == CloseType.back,
+      _ => false,
+    };
   }
 }

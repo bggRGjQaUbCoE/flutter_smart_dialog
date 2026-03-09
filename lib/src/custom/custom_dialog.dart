@@ -297,31 +297,35 @@ class CustomDialog extends BaseDialog {
     bool force = false,
     CloseType closeType = CloseType.normal,
   }) {
-    if (type == DialogType.dialog ||
-        type == DialogType.custom ||
-        type == DialogType.attach) {
-      return _closeSingle<T>(
-        type: type,
-        tag: tag,
-        result: result,
-        force: force,
-        closeType: closeType,
-      );
-    } else {
-      DialogType? allType;
-      if (type == DialogType.allDialog) allType = DialogType.dialog;
-      if (type == DialogType.allCustom) allType = DialogType.custom;
-      if (type == DialogType.allAttach) allType = DialogType.attach;
-      if (allType == null) return null;
-
-      return _closeAll<T>(
-        type: allType,
-        tag: tag,
-        result: result,
-        force: force,
-        closeType: closeType,
-      );
+    final DialogType allType;
+    switch (type) {
+      case DialogType.dialog:
+      case DialogType.custom:
+      case DialogType.attach:
+        return _closeSingle<T>(
+          type: type,
+          tag: tag,
+          result: result,
+          force: force,
+          closeType: closeType,
+        );
+      case DialogType.allDialog:
+        allType = DialogType.dialog;
+      case DialogType.allCustom:
+        allType = DialogType.custom;
+      case DialogType.allAttach:
+        allType = DialogType.attach;
+      case DialogType.notify:
+      case DialogType.allNotify:
+        return null;
     }
+    return _closeAll<T>(
+      type: allType,
+      tag: tag,
+      result: result,
+      force: force,
+      closeType: closeType,
+    );
   }
 
   static Future<void> _closeAll<T>({

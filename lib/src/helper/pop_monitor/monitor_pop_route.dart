@@ -32,14 +32,16 @@ class MonitorPopRoute with WidgetsBindingObserver {
       if (await loadingInfo.onBack?.call() == true) {
         return true;
       }
-      if (loadingInfo.backType == SmartBackType.normal) {
-        DialogProxy.instance.dismiss(
-          status: SmartStatus.loading,
-          closeType: CloseType.back,
-        );
-        return true;
-      } else if (loadingInfo.backType == SmartBackType.block) {
-        return true;
+      switch (loadingInfo.backType) {
+        case SmartBackType.normal:
+          DialogProxy.instance.dismiss(
+            status: SmartStatus.loading,
+            closeType: CloseType.back,
+          );
+          return true;
+        case SmartBackType.block:
+          return true;
+        case _:
       }
     }
 
@@ -52,15 +54,17 @@ class MonitorPopRoute with WidgetsBindingObserver {
         if (await item.onBack?.call() == true) {
           return true;
         }
-        if (item.backType == SmartBackType.normal) {
-          DialogProxy.instance.dismiss(
-            status: SmartStatus.notify,
-            closeType: CloseType.back,
-            tag: item.tag,
-          );
-          return true;
-        } else if (item.backType == SmartBackType.block) {
-          return true;
+        switch (item.backType) {
+          case SmartBackType.normal:
+            DialogProxy.instance.dismiss(
+              status: SmartStatus.notify,
+              closeType: CloseType.back,
+              tag: item.tag,
+            );
+            return true;
+          case SmartBackType.block:
+            return true;
+          case _:
         }
       }
     }
@@ -71,14 +75,16 @@ class MonitorPopRoute with WidgetsBindingObserver {
       if (await lastDialog.onBack?.call() == true) {
         return true;
       }
-      if (lastDialog.backType == SmartBackType.normal) {
-        DialogProxy.instance.dismiss(
-          status: SmartStatus.dialog,
-          closeType: CloseType.back,
-        );
-        return true;
-      } else if (lastDialog.backType == SmartBackType.block) {
-        return true;
+      switch (lastDialog.backType) {
+        case SmartBackType.normal:
+          DialogProxy.instance.dismiss(
+            status: SmartStatus.dialog,
+            closeType: CloseType.back,
+          );
+          return true;
+        case SmartBackType.block:
+          return true;
+        case _:
       }
     }
 

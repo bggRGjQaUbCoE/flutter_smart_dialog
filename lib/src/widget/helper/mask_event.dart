@@ -21,33 +21,40 @@ class MaskEvent extends StatefulWidget {
 
 class _MaskEventState extends State<MaskEvent> {
   bool _maskTrigger = false;
+  VoidCallback? _onPointerDown;
+  VoidCallback? _onPointerMove;
+  VoidCallback? _onPointerUp;
+
+  @override
+  void initState() {
+    super.initState();
+    switch (widget.maskTriggerType) {
+      case SmartMaskTriggerType.down:
+        _onPointerDown = widget.onMask;
+      case SmartMaskTriggerType.move:
+        _onPointerMove = widget.onMask;
+      case SmartMaskTriggerType.up:
+        _onPointerUp = widget.onMask;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    Function()? onPointerDown;
-    Function()? onPointerMove;
-    Function()? onPointerUp;
-    if (widget.maskTriggerType == SmartMaskTriggerType.down) {
-      onPointerDown = widget.onMask;
-    } else if (widget.maskTriggerType == SmartMaskTriggerType.move) {
-      onPointerMove = widget.onMask;
-    } else {
-      onPointerUp = widget.onMask;
-    }
-
     return Listener(
       behavior: HitTestBehavior.translucent,
       onPointerDown: (event) {
-        onPointerDown?.call();
-        if (onPointerDown != null) _maskTrigger = true;
+        if (_onPointerDown != null) {
+          _onPointerDown!();
+          _maskTrigger = true;
+        }
       },
       onPointerMove: (event) {
-        if (!_maskTrigger) onPointerMove?.call();
-        if (onPointerMove != null) _maskTrigger = true;
+        if (!_maskTrigger) _onPointerMove?.call();
+        if (_onPointerMove != null) _maskTrigger = true;
       },
       onPointerUp: (event) {
-        onPointerUp?.call();
-        if (onPointerUp == null && !_maskTrigger) widget.onMask.call();
+        _onPointerUp?.call();
+        if (_onPointerUp == null && !_maskTrigger) widget.onMask.call();
         _maskTrigger = false;
       },
       child: widget.child,

@@ -22,18 +22,13 @@ class DebounceUtils {
       return false;
     }
 
-    var limitTime = Duration.zero;
-    if (type == DebounceType.custom) {
-      limitTime = SmartDialog.config.custom.debounceTime;
-    } else if (type == DebounceType.attach) {
-      limitTime = SmartDialog.config.attach.debounceTime;
-    } else if (type == DebounceType.notify) {
-      limitTime = SmartDialog.config.notify.debounceTime;
-    } else if (type == DebounceType.toast) {
-      limitTime = SmartDialog.config.toast.debounceTime;
-    } else if (type == DebounceType.mask) {
-      limitTime = const Duration(milliseconds: 500);
-    }
+    var limitTime = switch (type) {
+      DebounceType.custom => SmartDialog.config.custom.debounceTime,
+      DebounceType.attach => SmartDialog.config.attach.debounceTime,
+      DebounceType.notify => SmartDialog.config.notify.debounceTime,
+      DebounceType.toast => SmartDialog.config.toast.debounceTime,
+      DebounceType.mask => const Duration(milliseconds: 500),
+    };
 
     var curTime = DateTime.now();
     DateTime? lastTime = map[type];

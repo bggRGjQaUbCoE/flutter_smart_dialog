@@ -107,7 +107,7 @@ class _AttachWidgetState extends State<AttachWidget>
 
   @override
   Widget build(BuildContext context) {
-    var child = AdaptBuilder(builder: (context) {
+    var child = Builder(builder: (context) {
       _childContext = context;
       return Opacity(opacity: _postFrameOpacity, child: _originChild);
     });
@@ -279,21 +279,24 @@ class _AttachWidgetState extends State<AttachWidget>
     var type = SmartDialog.config.attach.attachAlignmentType;
 
     if (alignment == Alignment.topLeft || alignment == Alignment.bottomLeft) {
-      if (type == SmartAttachAlignmentType.inside) {
-        offset = 0;
-      } else if (type == SmartAttachAlignmentType.outside) {
-        offset = -selfSize.width;
-      } else {
-        offset = -(selfSize.width / 2);
+      switch (type) {
+        case SmartAttachAlignmentType.inside:
+          offset = 0;
+        case SmartAttachAlignmentType.center:
+          offset = -(selfSize.width / 2);
+        case SmartAttachAlignmentType.outside:
+          offset = -selfSize.width;
       }
     } else if (alignment == Alignment.topRight ||
         alignment == Alignment.bottomRight) {
-      if (type == SmartAttachAlignmentType.inside) {
-        offset = -selfSize.width;
-      } else if (type == SmartAttachAlignmentType.outside) {
-        offset = 0;
-      } else {
-        offset = -(selfSize.width / 2);
+      switch (type) {
+        case SmartAttachAlignmentType.inside:
+          offset = -selfSize.width;
+
+        case SmartAttachAlignmentType.center:
+          offset = -(selfSize.width / 2);
+        case SmartAttachAlignmentType.outside:
+          offset = 0;
       }
     }
 
@@ -395,28 +398,6 @@ class _AttachWidgetState extends State<AttachWidget>
 
   bool _isValidSize(Size size) {
     return size.width.isFinite && size.height.isFinite;
-  }
-}
-
-class AdaptBuilder extends StatelessWidget {
-  const AdaptBuilder({
-    super.key,
-    required this.builder,
-  });
-
-  final WidgetBuilder builder;
-
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return Row(mainAxisSize: MainAxisSize.min, children: [
-      Column(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-          constraints: BoxConstraints(maxWidth: size.width),
-          child: builder(context),
-        ),
-      ]),
-    ]);
   }
 }
 

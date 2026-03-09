@@ -13,7 +13,7 @@ import 'package:flutter_smart_dialog/src/widget/smart_dialog_widget.dart';
 
 ///main function : customize dialog
 class MainDialog {
-  MainDialog({required this.overlayEntry}) : _widget = Container();
+  MainDialog({required this.overlayEntry}) : _widget = const SizedBox.shrink();
 
   ///OverlayEntry instance
   final SmartOverlayEntry overlayEntry;
@@ -182,7 +182,7 @@ class MainDialog {
 
     if (useSystem && DialogProxy.contextNavigator != null) {
       var tempWidget = _widget;
-      _widget = Container();
+      _widget = const SizedBox.shrink();
       ViewUtils.addSafeUse(() {
         showDialog(
           context: DialogProxy.contextNavigator!,
@@ -220,7 +220,7 @@ class MainDialog {
     await _controller?.dismiss(closeType: closeType);
 
     //remove dialog
-    _widget = Container();
+    _widget = const SizedBox.shrink();
     overlayEntry.markNeedsBuild();
 
     if (useSystem && DialogProxy.contextNavigator != null) {

@@ -613,27 +613,18 @@ class SmartDialog {
     return DialogProxy.instance.showNotify<T>(
       widget: DialogScope(
         controller: controller,
-        builder: (context) {
-          if (builder != null) {
-            return builder(context);
-          }
-
-          Widget? widget;
-          var notifyStyle = DialogProxy.instance.notifyStyle;
-          if (notifyType == NotifyType.success) {
-            widget = notifyStyle.successBuilder?.call(msg);
-          } else if (notifyType == NotifyType.failure) {
-            widget = notifyStyle.failureBuilder?.call(msg);
-          } else if (notifyType == NotifyType.warning) {
-            widget = notifyStyle.warningBuilder?.call(msg);
-          } else if (notifyType == NotifyType.alert) {
-            widget = notifyStyle.alertBuilder?.call(msg);
-          } else if (notifyType == NotifyType.error) {
-            widget = notifyStyle.errorBuilder?.call(msg);
-          }
-
-          return widget ?? Container();
-        },
+        builder: builder ??
+            (context) {
+              var notifyStyle = DialogProxy.instance.notifyStyle;
+              var widget = switch (notifyType) {
+                NotifyType.success => notifyStyle.successBuilder?.call(msg),
+                NotifyType.failure => notifyStyle.failureBuilder?.call(msg),
+                NotifyType.warning => notifyStyle.warningBuilder?.call(msg),
+                NotifyType.error => notifyStyle.errorBuilder?.call(msg),
+                NotifyType.alert => notifyStyle.alertBuilder?.call(msg),
+              };
+              return widget ?? const SizedBox.shrink();
+            },
       ),
       alignment: alignment ?? config.notify.alignment,
       clickMaskDismiss: clickMaskDismiss ?? config.notify.clickMaskDismiss,

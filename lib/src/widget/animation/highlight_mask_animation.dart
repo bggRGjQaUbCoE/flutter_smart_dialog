@@ -57,11 +57,14 @@ class _HighlightMaskAnimationState extends State<HighlightMaskAnimation> {
     //handle mask
     late Widget mask;
     if (widget.usePenetrate) {
-      mask = Container();
+      mask = const SizedBox.shrink();
     } else if (widget.maskWidget != null) {
       mask = widget.maskWidget!;
     } else if (widget.highlightBuilder == null) {
-      mask = Container(color: widget.maskColor);
+      mask = ColoredBox(
+        color: widget.maskColor,
+        child: const SizedBox.expand(),
+      );
     } else {
       mask = ColorFiltered(
         colorFilter: ColorFilter.mode(
@@ -69,18 +72,22 @@ class _HighlightMaskAnimationState extends State<HighlightMaskAnimation> {
           widget.maskColor,
           BlendMode.srcOut,
         ),
-        child: Stack(children: [
-          Container(
-            decoration: const BoxDecoration(
-              // any color
-              color: Colors.white,
-              backgroundBlendMode: BlendMode.dstOut,
+        child: Stack(
+          children: [
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                // any color
+                color: Colors.white,
+                backgroundBlendMode: BlendMode.dstOut,
+              ),
+              child: SizedBox.expand(),
             ),
-          ),
 
-          //dissolve mask, highlight location
-          widget.highlightBuilder!.call(widget.targetOffset, widget.targetSize)
-        ]),
+            //dissolve mask, highlight location
+            widget.highlightBuilder!
+                .call(widget.targetOffset, widget.targetSize)
+          ],
+        ),
       );
     }
 

@@ -180,7 +180,7 @@ class _FlutterSmartDialogState extends State<FlutterSmartDialog> {
               DialogProxy.contextToast = context;
             }
 
-            return widget.child ?? Container();
+            return widget.child ?? const SizedBox.shrink();
           },
         ),
 

@@ -354,60 +354,61 @@ class DialogProxy {
     bool force = false,
     CloseType closeType = CloseType.normal,
   }) {
-    if (status == SmartStatus.smart) {
-      var loading = config.loading.isExist;
+    switch (status) {
+      case SmartStatus.smart:
+        var loading = config.loading.isExist;
 
-      if (loading &&
-          (tag == null || (dialogQueue.isEmpty && notifyQueue.isEmpty))) {
-        return loadingInfo.loadingWidget.dismiss(closeType: closeType);
-      }
+        if (loading &&
+            (tag == null || (dialogQueue.isEmpty && notifyQueue.isEmpty))) {
+          return loadingInfo.loadingWidget.dismiss(closeType: closeType);
+        }
 
-      if (notifyQueue.isNotEmpty) {
-        bool useNotify = (tag == null);
-        if (tag != null) {
-          for (var element in notifyQueue) {
-            if (element.tag == tag) {
-              useNotify = true;
+        if (notifyQueue.isNotEmpty) {
+          bool useNotify = (tag == null);
+          if (tag != null) {
+            for (var element in notifyQueue) {
+              if (element.tag == tag) {
+                useNotify = true;
+              }
             }
           }
+          if (useNotify) {
+            return CustomNotify.dismiss<T>(
+              type: DialogType.notify,
+              tag: tag,
+              result: result,
+              force: force,
+              closeType: closeType,
+            );
+          }
         }
-        if (useNotify) {
-          return CustomNotify.dismiss<T>(
-            type: DialogType.notify,
+
+        if (dialogQueue.isNotEmpty) {
+          return CustomDialog.dismiss<T>(
+            type: DialogType.dialog,
             tag: tag,
             result: result,
             force: force,
             closeType: closeType,
           );
         }
-      }
-
-      if (dialogQueue.isNotEmpty) {
-        return CustomDialog.dismiss<T>(
-          type: DialogType.dialog,
+      case SmartStatus.toast:
+        return CustomToast.dismiss();
+      case SmartStatus.allToast:
+        return CustomToast.dismiss(closeAll: true);
+      case SmartStatus.loading:
+        return loadingInfo.loadingWidget.dismiss(closeType: closeType);
+      case SmartStatus.notify:
+      case SmartStatus.allNotify:
+        return CustomNotify.dismiss<T>(
+          type: _convertEnum(status)!,
           tag: tag,
           result: result,
           force: force,
           closeType: closeType,
         );
-      }
-    } else if (status == SmartStatus.toast) {
-      return CustomToast.dismiss();
-    } else if (status == SmartStatus.allToast) {
-      return CustomToast.dismiss(closeAll: true);
-    } else if (status == SmartStatus.loading) {
-      return loadingInfo.loadingWidget.dismiss(closeType: closeType);
-    } else if (status == SmartStatus.notify ||
-        status == SmartStatus.allNotify) {
-      return CustomNotify.dismiss<T>(
-        type: _convertEnum(status)!,
-        tag: tag,
-        result: result,
-        force: force,
-        closeType: closeType,
-      );
+      case _:
     }
-
     DialogType? type = _convertEnum(status);
     if (type == null) return null;
     return CustomDialog.dismiss<T>(
@@ -420,23 +421,16 @@ class DialogProxy {
   }
 
   DialogType? _convertEnum(SmartStatus status) {
-    if (status == SmartStatus.dialog) {
-      return DialogType.dialog;
-    } else if (status == SmartStatus.custom) {
-      return DialogType.custom;
-    } else if (status == SmartStatus.attach) {
-      return DialogType.attach;
-    } else if (status == SmartStatus.notify) {
-      return DialogType.notify;
-    } else if (status == SmartStatus.allDialog) {
-      return DialogType.allDialog;
-    } else if (status == SmartStatus.allCustom) {
-      return DialogType.allCustom;
-    } else if (status == SmartStatus.allAttach) {
-      return DialogType.allAttach;
-    } else if (status == SmartStatus.allNotify) {
-      return DialogType.allNotify;
-    }
-    return null;
+    return switch (status) {
+      SmartStatus.custom => DialogType.custom,
+      SmartStatus.attach => DialogType.attach,
+      SmartStatus.dialog => DialogType.dialog,
+      SmartStatus.notify => DialogType.notify,
+      SmartStatus.allCustom => DialogType.allCustom,
+      SmartStatus.allAttach => DialogType.allAttach,
+      SmartStatus.allDialog => DialogType.allDialog,
+      SmartStatus.allNotify => DialogType.allNotify,
+      _ => null,
+    };
   }
 }
