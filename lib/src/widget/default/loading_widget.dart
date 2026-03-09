@@ -13,7 +13,7 @@ class LoadingWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
       decoration: BoxDecoration(
         color: ThemeStyle.backgroundColor,
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: const BorderRadius.all(Radius.circular(15)),
       ),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         //loading animation

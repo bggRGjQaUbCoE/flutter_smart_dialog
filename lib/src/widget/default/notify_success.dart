@@ -13,7 +13,7 @@ class NotifySuccess extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: const BorderRadius.all(Radius.circular(8)),
         color: ThemeStyle.backgroundColor,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
