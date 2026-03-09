@@ -17,17 +17,18 @@ class NotifyAlter extends StatelessWidget {
         color: ThemeStyle.backgroundColor,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Icon(
-          Icons.priority_high_outlined,
-          size: 22,
-          color: ThemeStyle.textColor,
-        ),
-        Container(
-          margin: const EdgeInsets.only(top: 5),
-          child: Text(msg, style: TextStyle(color: ThemeStyle.textColor)),
-        ),
-      ]),
+      child: Column(
+        spacing: 5,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.priority_high_outlined,
+            size: 22,
+            color: ThemeStyle.textColor,
+          ),
+          Text(msg, style: TextStyle(color: ThemeStyle.textColor)),
+        ],
+      ),
     );
   }
 }
