@@ -69,9 +69,9 @@ class _ToastHelperState extends State<ToastHelper> with WidgetsBindingObserver {
         return;
       }
 
-      var screen = MediaQuery.of(context).size;
-      var childToBottom = screen.height - (selfOffset!.dy + selfSize!.height);
-      var keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+      var screenHeight = MediaQuery.heightOf(context);
+      var childToBottom = screenHeight - (selfOffset!.dy + selfSize!.height);
+      var keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
       if (childToBottom < 0) {
         _updateKeyboardHeight(keyboardHeight);
         return;

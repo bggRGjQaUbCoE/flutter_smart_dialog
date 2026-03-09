@@ -180,7 +180,7 @@ class _AttachWidgetState extends State<AttachWidget>
     }
 
     final selfSize = selfRenderBox.size;
-    final screen = MediaQuery.of(context).size;
+    final screen = MediaQuery.sizeOf(context);
     if (!_isValidSize(selfSize) || !_isValidSize(screen)) {
       return;
     }
@@ -312,7 +312,7 @@ class _AttachWidgetState extends State<AttachWidget>
     bool fixedVertical = false,
   }) {
     final childRenderBox = _safeRenderBox(_childContext);
-    final screen = MediaQuery.of(context).size;
+    final screen = MediaQuery.sizeOf(context);
     var rectInfo = RectInfo(left: left, right: right, top: top, bottom: bottom);
     if (childRenderBox == null || !_isValidSize(screen)) {
       return rectInfo;
