@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/config/smart_config.dart';
 import 'package:flutter_smart_dialog/src/data/animation_param.dart';
+import 'package:flutter_smart_dialog/src/data/show_param.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/kit/dialog_kit.dart';
 import 'package:flutter_smart_dialog/src/kit/typedef.dart';
@@ -191,7 +192,7 @@ class SmartDialog {
       'useSystem is true; tag, keepSingle and permanent prohibit setting values',
     );
 
-    return DialogProxy.instance.show<T>(
+    final param = SmartShowCustomParam(
       widget: DialogScope(
         controller: controller,
         builder: (context) => builder(context),
@@ -223,6 +224,7 @@ class SmartDialog {
               : (backDismiss ? SmartBackType.normal : SmartBackType.block)),
       onBack: onBack,
     );
+    return DialogProxy.instance.show<T>(param: param);
   }
 
   /// attach dialog
@@ -448,7 +450,7 @@ class SmartDialog {
       'useSystem is true; tag, keepSingle and permanent prohibit setting values',
     );
 
-    return DialogProxy.instance.showAttach<T>(
+    final param = SmartShowAttachParam(
       targetContext: targetContext,
       widget: DialogScope(
         controller: controller,
@@ -480,12 +482,14 @@ class SmartDialog {
       useSystem: useSystem ?? false,
       bindPage: (bindPage ?? config.attach.bindPage) && bindWidget == null,
       bindWidget: bindWidget,
+      ignoreArea: null,
       backType: backType ??
           (backDismiss == null
               ? config.attach.backType
               : (backDismiss ? SmartBackType.normal : SmartBackType.block)),
       onBack: onBack,
     );
+    return DialogProxy.instance.showAttach<T>(param: param);
   }
 
   /// By setting NotifyType, many different types of Notify dialog can be used
@@ -610,7 +614,7 @@ class SmartDialog {
     SmartBackType? backType,
     SmartOnBack? onBack,
   }) {
-    return DialogProxy.instance.showNotify<T>(
+    final param = SmartShowNotifyParam(
       widget: DialogScope(
         controller: controller,
         builder: builder ??
@@ -645,6 +649,7 @@ class SmartDialog {
       backType: backType ?? config.notify.backType,
       onBack: onBack,
     );
+    return DialogProxy.instance.showNotify<T>(param: param);
   }
 
   /// loading dialog
@@ -756,7 +761,7 @@ class SmartDialog {
     SmartOnBack? onBack,
     WidgetBuilder? builder,
   }) {
-    return DialogProxy.instance.showLoading<T>(
+    final param = SmartShowLoadingParam(
       widget: DialogScope(
         controller: controller,
         builder: (context) {
@@ -784,6 +789,7 @@ class SmartDialog {
               : (backDismiss ? SmartBackType.normal : SmartBackType.block)),
       onBack: onBack,
     );
+    return DialogProxy.instance.showLoading<T>(param: param);
   }
 
   /// toast message
@@ -892,7 +898,7 @@ class SmartDialog {
     SmartToastType? displayType,
     WidgetBuilder? builder,
   }) {
-    return DialogProxy.instance.showToast(
+    final param = SmartShowToastParam(
       widget: DialogScope(
         controller: controller,
         builder: (context) {
@@ -918,6 +924,7 @@ class SmartDialog {
       displayType: displayType ?? config.toast.displayType,
       consumeEvent: consumeEvent ?? config.toast.consumeEvent,
     );
+    return DialogProxy.instance.showToast(param: param);
   }
 
   /// close dialog

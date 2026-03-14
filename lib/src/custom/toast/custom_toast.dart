@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/custom/main_dialog.dart';
 import 'package:flutter_smart_dialog/src/custom/toast/toast_tool.dart';
-import 'package:flutter_smart_dialog/src/data/animation_param.dart';
 import 'package:flutter_smart_dialog/src/data/base_dialog.dart';
+import 'package:flutter_smart_dialog/src/data/show_param.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/kit/debounce_utils.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
@@ -19,86 +19,75 @@ class CustomToast extends BaseDialog {
   CustomToast({required SmartOverlayEntry overlayEntry}) : super(overlayEntry);
 
   Future<void> showToast({
-    required Alignment alignment,
-    required bool clickMaskDismiss,
-    required SmartAnimationType animationType,
-    required List<SmartNonAnimationType> nonAnimationTypes,
-    required AnimationBuilder? animationBuilder,
-    required bool usePenetrate,
-    required bool useAnimation,
-    required Duration animationTime,
-    required Color maskColor,
-    required Widget? maskWidget,
-    required Duration displayTime,
-    required VoidCallback? onDismiss,
-    required VoidCallback? onMask,
-    required bool debounce,
-    required SmartToastType displayType,
-    required Widget widget,
+    required SmartShowToastParam param,
   }) async {
-    if (DebounceUtils.instance.banContinue(DebounceType.toast, debounce)) {
+    if (DebounceUtils.instance
+        .banContinue(DebounceType.toast, param.debounce)) {
       return;
     }
 
-    void showToast() {
+    void showCurrentToast() {
       SmartDialog.config.toast.isExist = true;
       overlayEntry.remove();
       overlay(DialogProxy.contextToast).insert(overlayEntry);
 
       mainDialog.show(
-        widget: widget,
-        alignment: alignment,
-        maskColor: maskColor,
-        maskWidget: maskWidget,
-        animationTime: animationTime,
-        animationType: animationType,
-        nonAnimationTypes: nonAnimationTypes,
-        animationBuilder: animationBuilder,
-        useAnimation: useAnimation,
-        usePenetrate: usePenetrate,
-        onDismiss: onDismiss,
-        useSystem: false,
-        reuse: false,
-        awaitOverType: SmartDialog.config.toast.awaitOverType,
-        maskTriggerType: SmartDialog.config.toast.maskTriggerType,
-        ignoreArea: null,
-        keepSingle: false,
-        onMask: () {
-          onMask?.call();
-          if (!clickMaskDismiss ||
-              DebounceUtils.instance.banContinue(DebounceType.mask, true)) {
-            return;
-          }
-          ToastTool.instance.dismiss();
-        },
+        param: SmartMainDialogParam(
+          widget: param.widget,
+          alignment: param.alignment,
+          clickMaskDismiss: param.clickMaskDismiss,
+          animationType: param.animationType,
+          nonAnimationTypes: param.nonAnimationTypes,
+          animationBuilder: param.animationBuilder,
+          usePenetrate: param.usePenetrate,
+          useAnimation: param.useAnimation,
+          animationTime: param.animationTime,
+          maskColor: param.maskColor,
+          maskWidget: param.maskWidget,
+          onDismiss: param.onDismiss,
+          useSystem: false,
+          reuse: false,
+          awaitOverType: SmartDialog.config.toast.awaitOverType,
+          maskTriggerType: SmartDialog.config.toast.maskTriggerType,
+          ignoreArea: null,
+          keepSingle: false,
+          onMask: () {
+            param.onMask?.call();
+            if (!param.clickMaskDismiss ||
+                DebounceUtils.instance.banContinue(DebounceType.mask, true)) {
+              return;
+            }
+            ToastTool.instance.dismiss();
+          },
+        ),
       );
     }
 
     try {
-      switch (displayType) {
+      switch (param.displayType) {
         case SmartToastType.normal:
           await normalToast(
-            time: displayTime,
-            onShowToast: showToast,
+            time: param.displayTime,
+            onShowToast: showCurrentToast,
             mainDialog: mainDialog,
           );
         case SmartToastType.last:
           await lastToast(
-            time: displayTime,
-            onShowToast: showToast,
+            time: param.displayTime,
+            onShowToast: showCurrentToast,
             mainDialog: mainDialog,
           );
         case SmartToastType.onlyRefresh:
           await onlyRefresh(
-            time: displayTime,
-            widget: widget,
-            onShowToast: showToast,
+            time: param.displayTime,
+            widget: param.widget,
+            onShowToast: showCurrentToast,
             mainDialog: mainDialog,
           );
         case SmartToastType.multi:
           await multiToast(
-            time: displayTime,
-            onShowToast: showToast,
+            time: param.displayTime,
+            onShowToast: showCurrentToast,
             mainDialog: mainDialog,
           );
       }
