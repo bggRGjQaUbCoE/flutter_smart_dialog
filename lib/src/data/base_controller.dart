@@ -14,7 +14,9 @@ abstract class BaseController {
       SmartNonAnimationType.routeClose_nonAnimation =>
         closeType == CloseType.route,
       SmartNonAnimationType.maskClose_nonAnimation =>
-        closeType == CloseType.mask || closeType == CloseType.back,
+        closeType == CloseType.mask,
+      SmartNonAnimationType.backClose_nonAnimation =>
+        closeType == CloseType.back,
       _ => false,
     };
   }
