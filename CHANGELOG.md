@@ -1,3 +1,6 @@
+# [5.1.1]
+* Fix [#292](https://github.com/fluttercandies/flutter_smart_dialog/issues/292): keep `SmartToastType.onlyRefresh` content updates working after the current toast is dismissed by tapping the mask
+
 # [5.1.0]
 * Refactor: optimize the internal `show` parameter passing pipeline (`show`/`showAttach`/`showNotify`/`showLoading`/`showToast`) by introducing internal parameter models and passing them through the full chain
 * Keep external API usage unchanged (no public method signature changes)
