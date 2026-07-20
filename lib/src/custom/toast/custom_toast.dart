@@ -171,6 +171,9 @@ class CustomToast extends BaseDialog {
     }
 
     if (toastQueue.isEmpty) {
+      // A previous onlyRefresh toast may have been dismissed manually. Its
+      // controller is bound to the disposed DialogScope and must not be reused.
+      _onlyToastController = null;
       toastQueue.addLast(ToastInfo(
         type: SmartToastType.onlyRefresh,
         mainDialog: mainDialog,
