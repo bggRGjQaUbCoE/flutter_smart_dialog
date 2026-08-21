@@ -38,6 +38,7 @@ dependencies:
 #  flutter_smart_dialog:
 #    path: ..\
 
+  material_ui: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
