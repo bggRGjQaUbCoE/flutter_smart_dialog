@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:material_ui/material_ui.dart';
 
-import '../../../flutter_smart_dialog.dart';
-import 'custom_toast.dart';
+import '../../config/enum_config.dart';
+import '../../smart_dialog.dart';
+import '../../widget/helper/dialog_scope.dart';
+import '../main_dialog.dart';
 
 class ToastTool {
   static ToastTool? _instance;
@@ -13,88 +15,249 @@ class ToastTool {
 
   ToastTool._();
 
-  Timer? _curTime;
-  Completer<void>? _curCompleter;
+  final Queue<ToastInfo> toastQueue = ListQueue<ToastInfo>();
+  final List<ToastInfo> _multiToasts = <ToastInfo>[];
 
-  Queue<ToastInfo> toastQueue = ListQueue();
+  Future<void> show(ToastInfo info) {
+    return switch (info.type) {
+      SmartToastType.normal => _showNormal(info),
+      SmartToastType.last => _showLast(info),
+      SmartToastType.onlyRefresh => _showOnlyRefresh(info),
+      SmartToastType.multi => _showMulti(info),
+    };
+  }
 
   Future<void> dismiss({bool closeAll = false}) async {
-    if (toastQueue.isEmpty) {
-      return;
-    }
-
     if (closeAll) {
-      clearAllToast();
-      SmartDialog.config.toast.isExist = false;
+      await _closeAll();
       return;
     }
 
-    var curToast = toastQueue.first;
-    toastQueue.remove(curToast);
-    if (toastQueue.isEmpty) {
-      SmartDialog.config.toast.isExist = false;
+    final serial = _activeSerial;
+    if (serial != null) {
+      await _close(serial, dispatchNext: true);
+      return;
     }
-
-    await curToast.mainDialog.dismiss();
-    if (curToast.mainDialog.overlayEntry.mounted) {
-      curToast.mainDialog.overlayEntry.remove();
+    if (_multiToasts.isNotEmpty) {
+      await _close(_multiToasts.last);
     }
-    await Future.delayed(SmartDialog.config.toast.intervalTime);
   }
 
-  void clearAllToast() {
-    if (toastQueue.isEmpty) {
-      return;
+  Future<void> dismissInfo(ToastInfo info) async {
+    await _close(info, dispatchNext: info == _activeSerial);
+  }
+
+  Future<void> _showNormal(ToastInfo info) {
+    toastQueue.addLast(info);
+    if (toastQueue.length > 1) {
+      return Future<void>.value();
+    }
+    return _startSerial(info);
+  }
+
+  Future<void> _showLast(ToastInfo info) async {
+    await _clearSerial();
+    toastQueue.addLast(info);
+    await _startSerial(info);
+  }
+
+  Future<void> _showOnlyRefresh(ToastInfo info) {
+    final active = _activeSerial;
+    if (active?.type == SmartToastType.onlyRefresh && toastQueue.length == 1) {
+      active!
+        ..refresh(info.refreshWidget)
+        ..displayTime = info.displayTime;
+      _scheduleSerialTimer(active);
+      return Future<void>.value();
     }
 
-    cancelLastDelay();
-    for (var element in toastQueue) {
-      if (element.mainDialog.overlayEntry.mounted) {
-        element.mainDialog.overlayEntry.remove();
+    if (toastQueue.isEmpty) {
+      toastQueue.addLast(info);
+      unawaited(_startSerial(info));
+      return Future<void>.value();
+    }
+
+    return _replaceSerialWithOnlyRefresh(info);
+  }
+
+  Future<void> _replaceSerialWithOnlyRefresh(ToastInfo info) async {
+    await _clearSerial();
+    toastQueue.addLast(info);
+    unawaited(_startSerial(info));
+  }
+
+  Future<void> _showMulti(ToastInfo info) {
+    _multiToasts.add(info);
+    _show(info);
+    info.timer = Timer(info.displayTime, () {
+      info.completeDisplay();
+      unawaited(_close(info));
+    });
+    return Future<void>.value();
+  }
+
+  Future<void> _startSerial(ToastInfo info) {
+    _show(info);
+    _scheduleSerialTimer(info);
+    return info.displayCompleter.future;
+  }
+
+  void _show(ToastInfo info) {
+    if (info.closed || info.shown) return;
+    info.shown = true;
+    info.onShow();
+    _syncExist();
+  }
+
+  void _scheduleSerialTimer(ToastInfo info) {
+    info.timer?.cancel();
+    info.timer = Timer(info.displayTime, () {
+      info.completeDisplay();
+      unawaited(_close(info, dispatchNext: true));
+    });
+  }
+
+  Future<void> _close(ToastInfo info, {bool dispatchNext = false}) async {
+    if (info.closed) return;
+    if (info.closing) return info.closeCompleter.future;
+
+    info.closing = true;
+    info.timer?.cancel();
+    info.timer = null;
+    info.completeDisplay();
+
+    if (info.shown) {
+      await info.mainDialog.dismiss();
+      info.mainDialog.overlayEntry.remove();
+    }
+
+    toastQueue.remove(info);
+    _multiToasts.remove(info);
+    info
+      ..closing = false
+      ..closed = true
+      ..completeClose();
+    _syncExist();
+
+    if (dispatchNext && toastQueue.isNotEmpty) {
+      await Future<void>.delayed(SmartDialog.config.toast.intervalTime);
+      final next = toastQueue.first;
+      if (!next.shown && !next.closed) {
+        unawaited(_startSerial(next));
       }
     }
+  }
+
+  Future<void> _clearSerial() async {
+    if (toastQueue.isEmpty) return;
+    final entries = toastQueue.toList(growable: false);
     toastQueue.clear();
+    final active = entries.first.shown ? entries.first : null;
+    for (final info in entries) {
+      if (identical(info, active)) continue;
+      _cancelQueued(info);
+    }
+    if (active != null) {
+      await _close(active);
+    }
+    _syncExist();
   }
 
-  Future<void> delay(Duration duration, {VoidCallback? onInvoke}) {
-    var completer = _curCompleter = Completer();
-    _curTime = Timer(duration, () {
-      if (!completer.isCompleted) completer.complete();
-      onInvoke?.call();
-    });
-    return completer.future;
+  Future<void> _closeAll() async {
+    final serial = toastQueue.toList(growable: false);
+    toastQueue.clear();
+    final activeSerial = serial.isNotEmpty && serial.first.shown
+        ? serial.first
+        : null;
+    for (final info in serial) {
+      if (identical(info, activeSerial)) continue;
+      _cancelQueued(info);
+    }
+
+    final active = <ToastInfo>[
+      if (activeSerial != null) activeSerial,
+      ..._multiToasts,
+    ];
+    await Future.wait<void>(active.map((info) => _close(info)));
+    _syncExist();
   }
 
-  void cancelLastDelay() async {
-    _curTime?.cancel();
-    if (!(_curCompleter?.isCompleted ?? true)) _curCompleter?.complete();
+  void _cancelQueued(ToastInfo info) {
+    info.timer?.cancel();
+    info.timer = null;
+    info.completeDisplay();
+    info.closed = true;
+    info.completeClose();
+  }
+
+  ToastInfo? get _activeSerial {
+    if (toastQueue.isEmpty) return null;
+    final first = toastQueue.first;
+    return first.shown && !first.closed ? first : null;
+  }
+
+  void _syncExist() {
+    SmartDialog.config.toast.isExist =
+        _activeSerial != null || _multiToasts.any((info) => !info.closed);
   }
 
   void resetForTest() {
-    cancelLastDelay();
-    _curTime = null;
-    _curCompleter = null;
-    for (final info in toastQueue) {
-      info.mainDialog.overlayEntry.remove();
-    }
+    final entries = <ToastInfo>{...toastQueue, ..._multiToasts};
     toastQueue.clear();
-    CustomToast.resetForTest();
-    SmartDialog.config.toast.isExist = false;
+    _multiToasts.clear();
+    for (final info in entries) {
+      info.timer?.cancel();
+      info.mainDialog.resetForTest();
+      info.mainDialog.overlayEntry.remove();
+      info.completeDisplay();
+      info.closed = true;
+      info.completeClose();
+    }
+    _syncExist();
+  }
+}
+
+class ToastInfo {
+  ToastInfo({
+    required this.type,
+    required this.mainDialog,
+    required this.displayTime,
+    required this.onShow,
+    required this.refreshScope,
+    required this.refreshWidget,
+  });
+
+  final SmartToastType type;
+  final MainDialog mainDialog;
+  Duration displayTime;
+  final void Function() onShow;
+  final DialogScope? refreshScope;
+  final Widget refreshWidget;
+
+  final Completer<void> displayCompleter = Completer<void>();
+  final Completer<void> closeCompleter = Completer<void>();
+  Timer? timer;
+  SmartDialogController? refreshController;
+  bool shown = false;
+  bool closing = false;
+  bool closed = false;
+
+  void refresh(Widget widget) {
+    final scope = refreshScope;
+    if (scope == null) return;
+    refreshController ??= scope.controller ?? SmartDialogController();
+    if (scope.controller == null) {
+      scope.info.action?.setController(refreshController);
+    }
+    scope.info.action?.replaceBuilder(widget);
+    refreshController?.refresh();
   }
 
-  Future<void> dispatchNext() async {
-    if (toastQueue.isEmpty) {
-      return;
-    }
+  void completeDisplay() {
+    if (!displayCompleter.isCompleted) displayCompleter.complete();
+  }
 
-    var nextToast = toastQueue.first;
-    if (nextToast.type == SmartToastType.normal) {
-      await CustomToast.normalToast(
-        time: nextToast.time,
-        onShowToast: nextToast.onShowToast,
-        mainDialog: nextToast.mainDialog,
-        newToast: false,
-      );
-    }
+  void completeClose() {
+    if (!closeCompleter.isCompleted) closeCompleter.complete();
   }
 }
