@@ -1,7 +1,8 @@
-# Unreleased
+# [5.3.0]
 * Breaking: remove the deprecated `backDismiss` parameters and `SmartConfigCustom`/`SmartConfigAttach.backDismiss`; use `backType: SmartBackType.normal` for the old `true` behavior or `SmartBackType.block` for the old `false` behavior
 * Breaking: remove the deprecated `showAttach.replaceBuilder` parameter; use `adjustBuilder` and return an `AttachAdjustParam` with a builder when replacing the attached widget
 * Breaking: remove deprecated `SmartConfig.checkExist()` and `SmartConfig.isExist*` members; use `SmartDialog.checkExist()`
+* Migrate flutter_boost back interception from Flutter's deprecated scoped callback to `PopEntry` without changing dialog-first back behavior
 * Add deterministic regression coverage for dialog, loading, notify, route, attach, and all toast display modes
 * Keep every rapid `show` awaiter associated with its own completion policy when a loading or `keepSingle` dialog is reused
 * Unify toast timer and overlay ownership so stale timers cannot dismiss newer toasts, `allToast` includes multi toasts, and `onDismiss` fires once for each displayed toast
