@@ -38,7 +38,9 @@ jobs:
         run: |
           flutter analyze .
       - name: Generate dartdoc
-        run: dart run dartdoc .
+        run: |
+          dart pub global activate dartdoc 9.0.9
+          dart pub global run dartdoc .
       - name: Validate publish package
         run: flutter pub publish --dry-run
   test:

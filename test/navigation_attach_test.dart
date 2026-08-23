@@ -21,11 +21,13 @@ void main() {
     await tester.pump();
     expect(find.text('bound-dialog'), findsOneWidget);
 
-    navigatorKey.currentState!.push<void>(
-      MaterialPageRoute<void>(
-        builder: (_) => const Scaffold(body: Text('second-page')),
-      ),
-    );
+    navigatorKey.currentState!
+        .push<void>(
+          MaterialPageRoute<void>(
+            builder: (_) => const Scaffold(body: Text('second-page')),
+          ),
+        )
+        .ignore();
     await tester.pumpAndSettle();
     expect(find.text('bound-dialog'), findsNothing);
 
@@ -34,6 +36,38 @@ void main() {
     expect(find.text('bound-dialog'), findsOneWidget);
 
     await dismissAndPump<void>(tester);
+    await disposeSmartDialogApp(tester);
+  });
+
+  testWidgets('popping a bound route removes its dialogs', (tester) async {
+    final navigatorKey = GlobalKey<NavigatorState>();
+    await pumpSmartDialogApp(
+      tester,
+      navigatorKey: navigatorKey,
+      navigatorObservers: [FlutterSmartDialog.observer],
+    );
+
+    navigatorKey.currentState!
+        .push<void>(
+          MaterialPageRoute<void>(
+            builder: (_) => const Scaffold(body: Text('dialog-owner-page')),
+          ),
+        )
+        .ignore();
+    await tester.pumpAndSettle();
+    SmartDialog.show<void>(
+      tag: 'route-owned-dialog',
+      bindPage: true,
+      useAnimation: false,
+      builder: (_) => const Text('route-owned-dialog'),
+    ).ignore();
+    await tester.pump();
+    expect(find.text('route-owned-dialog'), findsOneWidget);
+
+    navigatorKey.currentState!.pop();
+    await tester.pumpAndSettle();
+    expect(SmartDialog.checkExist(tag: 'route-owned-dialog'), isFalse);
+    expect(find.text('route-owned-dialog'), findsNothing);
     await disposeSmartDialogApp(tester);
   });
 
@@ -100,6 +134,48 @@ void main() {
     await tester.pump();
 
     expect(find.text('builder-only-attach'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+
+    await dismissAndPump<void>(tester, status: SmartStatus.attach);
+    await disposeSmartDialogApp(tester);
+  });
+
+  testWidgets('showAttach safely handles a context disposed before showing', (
+    tester,
+  ) async {
+    BuildContext? staleContext;
+    StateSetter? updateHome;
+    var includeTarget = true;
+    await pumpSmartDialogApp(
+      tester,
+      home: StatefulBuilder(
+        builder: (context, setState) {
+          updateHome = setState;
+          return Scaffold(
+            body: includeTarget
+                ? Builder(
+                    builder: (context) {
+                      staleContext = context;
+                      return const SizedBox(width: 20, height: 20);
+                    },
+                  )
+                : const SizedBox.shrink(),
+          );
+        },
+      ),
+    );
+
+    updateHome!(() => includeTarget = false);
+    await tester.pump();
+    expect(staleContext!.mounted, isFalse);
+
+    SmartDialog.showAttach<void>(
+      targetContext: staleContext,
+      useAnimation: false,
+      builder: (_) => const Text('stale-context-attach'),
+    ).ignore();
+    await tester.pump();
+    await tester.pump();
     expect(tester.takeException(), isNull);
 
     await dismissAndPump<void>(tester, status: SmartStatus.attach);

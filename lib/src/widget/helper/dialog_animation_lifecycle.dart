@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:material_ui/material_ui.dart';
 
 import '../../config/enum_config.dart';
@@ -10,8 +12,8 @@ class DialogAnimationLifecycle {
     required Duration duration,
   }) : maskController = AnimationController(vsync: vsync, duration: duration),
        bodyController = AnimationController(vsync: vsync, duration: duration) {
-    maskController.forward();
-    bodyController.forward();
+    unawaited(maskController.forward());
+    unawaited(bodyController.forward());
   }
 
   final AnimationController maskController;
@@ -21,14 +23,14 @@ class DialogAnimationLifecycle {
     maskController.duration = duration;
     bodyController.duration = duration;
     bodyController.value = 0;
-    bodyController.forward();
+    unawaited(bodyController.forward());
   }
 
   Future<void> dismiss(Duration duration, {VoidCallback? onDismiss}) async {
     maskController.duration = duration;
     bodyController.duration = duration;
-    maskController.reverse();
-    bodyController.reverse();
+    unawaited(maskController.reverse());
+    unawaited(bodyController.reverse());
     onDismiss?.call();
     await Future<void>.delayed(duration);
   }

@@ -37,6 +37,27 @@ void main() {
     await disposeSmartDialogApp(tester);
   });
 
+  testWidgets('rapid loading calls all complete when shared loading closes', (
+    tester,
+  ) async {
+    await pumpSmartDialogApp(tester);
+    SmartDialog.config.loading = SmartConfigLoading(
+      awaitOverType: SmartAwaitOverType.dialogDismiss,
+      useAnimation: false,
+    );
+
+    final first = SmartDialog.showLoading<void>(msg: 'loading-first');
+    final second = SmartDialog.showLoading<void>(msg: 'loading-second');
+    await tester.pump();
+    expect(find.text('loading-second'), findsOneWidget);
+
+    await dismissAndPump<void>(tester, status: SmartStatus.loading);
+    await first;
+    await second;
+    expect(find.text('loading-second'), findsNothing);
+    await disposeSmartDialogApp(tester);
+  });
+
   testWidgets('notify auto-dismisses and invokes its callback once', (
     tester,
   ) async {
@@ -99,6 +120,34 @@ void main() {
     expect(find.text('notify-two'), findsOneWidget);
 
     await dismissAndPump<void>(tester, status: SmartStatus.allNotify);
+    await disposeSmartDialogApp(tester);
+  });
+
+  testWidgets('rapid keepSingle notifications preserve every result waiter', (
+    tester,
+  ) async {
+    await pumpSmartDialogApp(tester);
+    SmartDialog.config.notify = SmartConfigNotify(
+      displayTime: null,
+      awaitOverType: SmartAwaitOverType.dialogDismiss,
+      useAnimation: false,
+    );
+
+    final first = SmartDialog.showNotify<int>(
+      msg: 'notify-first',
+      notifyType: NotifyType.success,
+      keepSingle: true,
+    );
+    final second = SmartDialog.showNotify<int>(
+      msg: 'notify-second',
+      notifyType: NotifyType.warning,
+      keepSingle: true,
+    );
+    await tester.pump();
+    expect(find.text('notify-second'), findsOneWidget);
+
+    await dismissAndPump<int>(tester, status: SmartStatus.notify, result: 11);
+    expect(await Future.wait<int?>([first, second]), [11, 11]);
     await disposeSmartDialogApp(tester);
   });
 }
