@@ -21,7 +21,11 @@ class SmartDialog {
   /// SmartDialog global config
   ///
   /// SmartDialog全局配置
-  static SmartConfig config = DialogProxy.instance.config;
+  static SmartConfig get config => DialogProxy.instance.config;
+
+  static set config(SmartConfig value) {
+    DialogProxy.instance.config = value;
+  }
 
   /// custom dialog
   ///

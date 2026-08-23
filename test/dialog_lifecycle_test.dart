@@ -1,10 +1,31 @@
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/config/smart_config.dart';
+import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'test_harness.dart';
 
 void main() {
+  testWidgets('replacing SmartDialog.config keeps a single source of truth', (
+    tester,
+  ) async {
+    await pumpSmartDialogApp(tester);
+    final replacement = SmartConfig()
+      ..custom = SmartConfigCustom(useAnimation: false);
+
+    SmartDialog.config = replacement;
+
+    expect(identical(SmartDialog.config, replacement), isTrue);
+    expect(identical(DialogProxy.instance.config, replacement), isTrue);
+    SmartDialog.show<void>(builder: (_) => const Text('replacement-config'));
+    await tester.pump();
+    expect(find.text('replacement-config'), findsOneWidget);
+
+    await dismissAndPump<void>(tester);
+    await disposeSmartDialogApp(tester);
+  });
+
   testWidgets('custom dialog returns a result and calls onDismiss once', (
     tester,
   ) async {
@@ -135,6 +156,100 @@ void main() {
     expect(find.text('keep-single-second'), findsOneWidget);
 
     await dismissAndPump<void>(tester, status: SmartStatus.allCustom);
+    await disposeSmartDialogApp(tester);
+  });
+
+  testWidgets('rapid keepSingle dismiss completes every waiting show', (
+    tester,
+  ) async {
+    await pumpSmartDialogApp(tester);
+    SmartDialog.config.custom = SmartConfigCustom(
+      awaitOverType: SmartAwaitOverType.dialogDismiss,
+      useAnimation: false,
+    );
+    var firstDismissCount = 0;
+    var secondDismissCount = 0;
+
+    final first = SmartDialog.show<int>(
+      keepSingle: true,
+      onDismiss: () => firstDismissCount++,
+      builder: (_) => const Text('waiter-first'),
+    );
+    final second = SmartDialog.show<int>(
+      keepSingle: true,
+      onDismiss: () => secondDismissCount++,
+      builder: (_) => const Text('waiter-second'),
+    );
+    await tester.pump();
+
+    await dismissAndPump<int>(tester, result: 9);
+    expect(await Future.wait<int?>([first, second]), [9, 9]);
+    expect(firstDismissCount, 0);
+    expect(secondDismissCount, 1);
+    await disposeSmartDialogApp(tester);
+  });
+
+  testWidgets('rapid none awaiters complete relative to their own call', (
+    tester,
+  ) async {
+    await pumpSmartDialogApp(tester);
+    SmartDialog.config.custom = SmartConfigCustom(
+      awaitOverType: SmartAwaitOverType.none,
+      useAnimation: false,
+    );
+    var firstCompleted = false;
+    var secondCompleted = false;
+
+    SmartDialog.show<void>(
+      keepSingle: true,
+      builder: (_) => const Text('none-first'),
+    ).then((_) => firstCompleted = true);
+    await tester.pump(const Duration(milliseconds: 5));
+    SmartDialog.show<void>(
+      keepSingle: true,
+      builder: (_) => const Text('none-second'),
+    ).then((_) => secondCompleted = true);
+
+    await tester.pump(const Duration(milliseconds: 5));
+    expect(firstCompleted, isTrue);
+    expect(secondCompleted, isFalse);
+    await tester.pump(const Duration(milliseconds: 5));
+    expect(secondCompleted, isTrue);
+
+    await dismissAndPump<void>(tester);
+    await disposeSmartDialogApp(tester);
+  });
+
+  testWidgets('rapid appear awaiters keep their individual durations', (
+    tester,
+  ) async {
+    await pumpSmartDialogApp(tester);
+    SmartDialog.config.custom = SmartConfigCustom(
+      awaitOverType: SmartAwaitOverType.dialogAppear,
+      useAnimation: false,
+    );
+    var firstCompleted = false;
+    var secondCompleted = false;
+
+    SmartDialog.show<void>(
+      keepSingle: true,
+      animationTime: const Duration(milliseconds: 20),
+      builder: (_) => const Text('appear-first'),
+    ).then((_) => firstCompleted = true);
+    await tester.pump(const Duration(milliseconds: 5));
+    SmartDialog.show<void>(
+      keepSingle: true,
+      animationTime: const Duration(milliseconds: 40),
+      builder: (_) => const Text('appear-second'),
+    ).then((_) => secondCompleted = true);
+
+    await tester.pump(const Duration(milliseconds: 15));
+    expect(firstCompleted, isTrue);
+    expect(secondCompleted, isFalse);
+    await tester.pump(const Duration(milliseconds: 25));
+    expect(secondCompleted, isTrue);
+
+    await dismissAndPump<void>(tester);
     await disposeSmartDialogApp(tester);
   });
 

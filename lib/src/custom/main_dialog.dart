@@ -22,10 +22,10 @@ class MainDialog {
 
   bool visible = true;
   BaseController? _controller;
-  Completer<dynamic>? _completer;
+  final Set<Completer<dynamic>> _dismissCompleters = {};
   VoidCallback? _onDismiss;
   Widget _widget;
-  SmartAwaitOverType _awaitOverType = SmartAwaitOverType.dialogDismiss;
+  bool _hasShown = false;
 
   Future<T?> show<T>({required SmartMainDialogParam param}) {
     //custom dialog
@@ -50,15 +50,16 @@ class MainDialog {
       child: param.widget,
     );
 
-    _handleCommonOperate(
+    final completer = Completer<T?>();
+    _handleCommonOperate<T>(
       animationTime: param.animationTime,
       onDismiss: param.onDismiss,
       useSystem: param.useSystem,
       awaitOverType: param.awaitOverType,
+      completer: completer,
     );
 
     //wait dialog dismiss
-    var completer = _completer = Completer<T?>();
     return completer.future;
   }
 
@@ -91,15 +92,16 @@ class MainDialog {
       child: param.widget,
     );
 
-    _handleCommonOperate(
+    final completer = Completer<T?>();
+    _handleCommonOperate<T>(
       animationTime: param.animationTime,
       onDismiss: param.onDismiss,
       useSystem: param.useSystem,
       awaitOverType: param.awaitOverType,
+      completer: completer,
     );
 
     //wait dialog dismiss
-    var completer = _completer = Completer<T?>();
     return completer.future;
   }
 
@@ -109,32 +111,33 @@ class MainDialog {
   }) {
     List<SmartNonAnimationType> nonAnimations = [...nonAnimationTypes];
     var continueKeepSingle = SmartNonAnimationType.continueKeepSingle;
-    if (nonAnimations.contains(continueKeepSingle) &&
-        keepSingle &&
-        _completer != null) {
+    if (nonAnimations.contains(continueKeepSingle) && keepSingle && _hasShown) {
       nonAnimations.add(SmartNonAnimationType.openDialog_nonAnimation);
     }
 
     return nonAnimations;
   }
 
-  void _handleCommonOperate({
+  void _handleCommonOperate<T>({
     required Duration animationTime,
     required VoidCallback? onDismiss,
     required bool useSystem,
     required SmartAwaitOverType awaitOverType,
+    required Completer<T?> completer,
   }) {
-    _awaitOverType = awaitOverType;
-
-    //SmartAwaitOverType.none
-    Future.delayed(const Duration(milliseconds: 10), () {
-      _handleAwaitOver(awaitOverType: SmartAwaitOverType.none);
-    });
-
-    //SmartAwaitOverType.dialogAppear
-    Future.delayed(animationTime, () {
-      _handleAwaitOver(awaitOverType: SmartAwaitOverType.dialogAppear);
-    });
+    _hasShown = true;
+    switch (awaitOverType) {
+      case SmartAwaitOverType.none:
+        Future<void>.delayed(const Duration(milliseconds: 10), () {
+          _complete(completer);
+        });
+      case SmartAwaitOverType.dialogAppear:
+        Future<void>.delayed(animationTime, () {
+          _complete(completer);
+        });
+      case SmartAwaitOverType.dialogDismiss:
+        _dismissCompleters.add(completer);
+    }
 
     _onDismiss = onDismiss;
 
@@ -157,13 +160,8 @@ class MainDialog {
     overlayEntry.markNeedsBuild();
   }
 
-  void _handleAwaitOver<T>({
-    required SmartAwaitOverType awaitOverType,
-    T? result,
-  }) {
-    if (awaitOverType == _awaitOverType) {
-      if (!(_completer?.isCompleted ?? true)) _completer?.complete(result);
-    }
+  void _complete<T>(Completer<T?> completer, [T? result]) {
+    if (!completer.isCompleted) completer.complete(result);
   }
 
   Future<void> dismiss<T>({
@@ -189,10 +187,23 @@ class MainDialog {
     await ViewUtils.awaitPostFrame();
 
     //end waiting
-    _handleAwaitOver<T>(
-      awaitOverType: SmartAwaitOverType.dialogDismiss,
-      result: result,
-    );
+    final completers = _dismissCompleters.toList(growable: false);
+    _dismissCompleters.clear();
+    for (final completer in completers) {
+      _complete<dynamic>(completer, result);
+    }
+  }
+
+  void resetForTest() {
+    for (final completer in _dismissCompleters) {
+      _complete<dynamic>(completer);
+    }
+    _dismissCompleters.clear();
+    _controller = null;
+    _onDismiss = null;
+    _widget = Container();
+    _hasShown = false;
+    visible = true;
   }
 
   Widget getWidget() => Offstage(offstage: !visible, child: _widget);

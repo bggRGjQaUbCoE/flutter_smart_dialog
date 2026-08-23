@@ -97,12 +97,14 @@ class DialogProxy {
   void resetForTest() {
     for (final info in dialogQueue) {
       info.displayTimer?.cancel();
+      info.dialog.mainDialog.resetForTest();
       info.dialog.overlayEntry.remove();
     }
     dialogQueue.clear();
 
     for (final info in notifyQueue) {
       info.displayTimer?.cancel();
+      info.dialog.mainDialog.resetForTest();
       info.dialog.overlayEntry.remove();
     }
     notifyQueue.clear();
