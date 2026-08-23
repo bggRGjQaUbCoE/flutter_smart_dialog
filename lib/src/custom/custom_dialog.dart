@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/config/enum_config.dart';
 import 'package:flutter_smart_dialog/src/data/base_dialog.dart';
 import 'package:flutter_smart_dialog/src/data/dialog_info.dart';
@@ -16,16 +15,17 @@ import 'package:flutter_smart_dialog/src/kit/typedef.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 import 'package:flutter_smart_dialog/src/smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/smart_overlay_entry.dart';
+import 'package:material_ui/material_ui.dart';
 
 ///main function : custom dialog
 class CustomDialog extends BaseDialog {
   CustomDialog({required SmartOverlayEntry overlayEntry}) : super(overlayEntry);
 
-  Future<T?> show<T>({
-    required SmartShowCustomParam param,
-  }) {
-    if (DebounceUtils.instance
-        .banContinue(DebounceType.custom, param.debounce)) {
+  Future<T?> show<T>({required SmartShowCustomParam param}) {
+    if (DebounceUtils.instance.banContinue(
+      DebounceType.custom,
+      param.debounce,
+    )) {
       return Future.value(null);
     }
 
@@ -55,8 +55,11 @@ class CustomDialog extends BaseDialog {
         animationTime: param.animationTime,
         maskColor: param.maskColor,
         maskWidget: param.maskWidget,
-        onDismiss:
-            _handleDismiss(param.onDismiss, param.displayTime, dialogInfo),
+        onDismiss: _handleDismiss(
+          param.onDismiss,
+          param.displayTime,
+          dialogInfo,
+        ),
         useSystem: param.useSystem,
         reuse: true,
         awaitOverType: SmartDialog.config.custom.awaitOverType,
@@ -76,11 +79,11 @@ class CustomDialog extends BaseDialog {
     );
   }
 
-  Future<T?> showAttach<T>({
-    required SmartShowAttachParam param,
-  }) {
-    if (DebounceUtils.instance
-        .banContinue(DebounceType.attach, param.debounce)) {
+  Future<T?> showAttach<T>({required SmartShowAttachParam param}) {
+    if (DebounceUtils.instance.banContinue(
+      DebounceType.attach,
+      param.debounce,
+    )) {
       return Future.value(null);
     }
 
@@ -126,8 +129,11 @@ class CustomDialog extends BaseDialog {
           dismiss(closeType: CloseType.mask, tag: dialogInfo.tag);
         },
         highlightBuilder: param.highlightBuilder,
-        onDismiss:
-            _handleDismiss(param.onDismiss, param.displayTime, dialogInfo),
+        onDismiss: _handleDismiss(
+          param.onDismiss,
+          param.displayTime,
+          dialogInfo,
+        ),
         maskTriggerType: SmartDialog.config.attach.maskTriggerType,
         useSystem: param.useSystem,
         awaitOverType: SmartDialog.config.attach.awaitOverType,
@@ -229,8 +235,9 @@ class CustomDialog extends BaseDialog {
 
     // insert the dialog carrier into the page
     ViewUtils.addSafeUse(() {
-      NotifyInfo? firstNotify =
-          proxy.notifyQueue.isNotEmpty ? proxy.notifyQueue.first : null;
+      NotifyInfo? firstNotify = proxy.notifyQueue.isNotEmpty
+          ? proxy.notifyQueue.first
+          : null;
       BuildContext overlayContext = dialogInfo.type == DialogType.custom
           ? DialogProxy.contextCustom
           : DialogProxy.contextAttach;

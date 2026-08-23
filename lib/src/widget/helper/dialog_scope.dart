@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:material_ui/material_ui.dart';
 
 part 'smart_dialog_controller.dart';
 
@@ -49,13 +49,15 @@ class _DialogScopeState extends State<DialogScope>
 
   @override
   void setController(SmartDialogController? controller) {
-    controller?._setListener(_callback = () {
-      ViewUtils.addSafeUse(() {
-        if (mounted) {
-          setState(() {});
-        }
-      });
-    });
+    controller?._setListener(
+      _callback = () {
+        ViewUtils.addSafeUse(() {
+          if (mounted) {
+            setState(() {});
+          }
+        });
+      },
+    );
   }
 
   @override

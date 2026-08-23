@@ -9,16 +9,14 @@ import 'package:flutter_smart_dialog/src/widget/helper/smart_overlay_entry.dart'
 
 class CustomLoading extends BaseDialog {
   CustomLoading({required SmartOverlayEntry overlayEntry})
-      : super(overlayEntry);
+    : super(overlayEntry);
 
   Timer? _timer;
   Timer? _displayTimer;
   bool _canDismiss = false;
   Future Function()? _canDismissCallback;
 
-  Future<T?> showLoading<T>({
-    required SmartShowLoadingParam param,
-  }) {
+  Future<T?> showLoading<T>({required SmartShowLoadingParam param}) {
     List<SmartNonAnimationType> nonAnimations = [...param.nonAnimationTypes];
     var continueLoading = SmartNonAnimationType.continueLoading_nonAnimation;
     if (SmartDialog.config.loading.isExist &&
@@ -89,5 +87,14 @@ class CustomLoading extends BaseDialog {
       SmartDialog.config.loading.isExist = false;
       await _canDismissCallback?.call();
     }
+  }
+
+  void resetForTest() {
+    _timer?.cancel();
+    _timer = null;
+    _displayTimer?.cancel();
+    _displayTimer = null;
+    _canDismiss = false;
+    _canDismissCallback = null;
   }
 }

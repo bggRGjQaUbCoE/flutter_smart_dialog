@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ToastHelper extends StatefulWidget {
   const ToastHelper({
@@ -37,10 +37,12 @@ class _ToastHelperState extends State<ToastHelper> {
 
   @override
   Widget build(BuildContext context) {
-    var child = Builder(builder: (context) {
-      _childContext = context;
-      return widget.child;
-    });
+    var child = Builder(
+      builder: (context) {
+        _childContext = context;
+        return widget.child;
+      },
+    );
 
     return Padding(
       padding: EdgeInsets.only(bottom: _keyboardHeight),
@@ -92,8 +94,9 @@ class _ToastHelperState extends State<ToastHelper> {
     }
 
     try {
-      var selfOffset =
-          renderObject.localToGlobal(renderObject.size.bottomLeft(Offset.zero));
+      var selfOffset = renderObject.localToGlobal(
+        renderObject.size.bottomLeft(Offset.zero),
+      );
       var screenHeight = MediaQuery.heightOf(context);
       _childToBottom = screenHeight - selfOffset.dy;
       return true;

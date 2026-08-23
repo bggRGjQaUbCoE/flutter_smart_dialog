@@ -33,10 +33,7 @@ class MyApp extends StatelessWidget {
           width: 180,
           color: Colors.black,
           alignment: Alignment.center,
-          child: const Text(
-            'test two',
-            style: TextStyle(color: Colors.white),
-          ),
+          child: const Text('test two', style: TextStyle(color: Colors.white)),
         );
         return child;
       },

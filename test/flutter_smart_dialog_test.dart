@@ -26,12 +26,15 @@ void main() {
     });
   });
 
-  testWidgets('onlyRefresh keeps refreshing after a mask dismissal',
-      (tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: const Scaffold(body: SizedBox.expand()),
-      builder: FlutterSmartDialog.init(),
-    ));
+  testWidgets('onlyRefresh keeps refreshing after a mask dismissal', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: const Scaffold(body: SizedBox.expand()),
+        builder: FlutterSmartDialog.init(),
+      ),
+    );
     await tester.pump();
 
     void showToast(String message) {

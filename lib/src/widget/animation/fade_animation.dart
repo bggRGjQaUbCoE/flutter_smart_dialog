@@ -35,9 +35,6 @@ class _FadeAnimationState extends State<FadeAnimation> {
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _curvedAnimation,
-      child: widget.child,
-    );
+    return FadeTransition(opacity: _curvedAnimation, child: widget.child);
   }
 }

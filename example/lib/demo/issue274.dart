@@ -13,7 +13,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      ),
       builder: FlutterSmartDialog.init(),
       home: const MyHomePage(),
     );
@@ -39,7 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: const Center(
         child: SelectableText(
-            "this is a long select text to test smart dialog with copy"),
+          "this is a long select text to test smart dialog with copy",
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,

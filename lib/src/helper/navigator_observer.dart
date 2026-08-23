@@ -28,7 +28,9 @@ class SmartNavigatorObserver extends NavigatorObserver {
 
   @override
   Future<void> didPop(
-      Route<dynamic> route, Route<dynamic>? previousRoute) async {
+    Route<dynamic> route,
+    Route<dynamic>? previousRoute,
+  ) async {
     RouteRecord.curRoute = previousRoute;
     RouteRecord.instance.pop(route, previousRoute);
     _removeDialog(route);
@@ -47,11 +49,13 @@ class SmartNavigatorObserver extends NavigatorObserver {
       return;
     }
 
-    var checkDialog = SmartDialog.checkExist(dialogTypes: {
-      SmartAllDialogType.custom,
-      SmartAllDialogType.attach,
-      SmartAllDialogType.loading,
-    });
+    var checkDialog = SmartDialog.checkExist(
+      dialogTypes: {
+        SmartAllDialogType.custom,
+        SmartAllDialogType.attach,
+        SmartAllDialogType.loading,
+      },
+    );
     if (!checkDialog || route.settings.name == SmartTag.systemDialog) {
       return;
     }

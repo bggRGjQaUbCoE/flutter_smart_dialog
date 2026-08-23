@@ -1,11 +1,11 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/custom/main_dialog.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/smart_overlay_entry.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// base dialog：encapsulate common logic
 class BaseDialog {
   BaseDialog(this.overlayEntry)
-      : mainDialog = MainDialog(overlayEntry: overlayEntry);
+    : mainDialog = MainDialog(overlayEntry: overlayEntry);
 
   ///OverlayEntry instance
   final SmartOverlayEntry overlayEntry;

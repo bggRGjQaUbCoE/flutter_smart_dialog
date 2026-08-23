@@ -6,24 +6,30 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:example/main.dart';
-import 'package:material_ui/material_ui.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
+  testWidgets('standalone Material UI example shows a SmartDialog toast', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MyApp());
-
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('SmartDialog-EasyDemo'), findsOneWidget);
+    expect(find.text('showToast'), findsOneWidget);
+
+    await tester.tap(find.text('showToast'));
+    await tester.pump();
+
+    expect(find.textContaining('test toast ----'), findsOneWidget);
+
+    final dismissFuture = SmartDialog.dismiss(status: SmartStatus.allToast);
+    await tester.pump(SmartDialog.config.toast.animationTime);
+    await tester.pump(const Duration(milliseconds: 50));
+    await dismissFuture;
+    await tester.pump();
+
+    expect(find.textContaining('test toast ----'), findsNothing);
   });
 }

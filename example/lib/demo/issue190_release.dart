@@ -38,11 +38,7 @@ class MyApp extends StatelessWidget {
                 debounce: true,
               );
             },
-            child: Container(
-              width: 200,
-              height: 200,
-              color: Colors.red,
-            ),
+            child: Container(width: 200, height: 200, color: Colors.red),
           ),
         ),
       ),

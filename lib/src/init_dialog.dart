@@ -1,4 +1,3 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/navigator_observer.dart';
@@ -12,6 +11,7 @@ import 'package:flutter_smart_dialog/src/widget/default/notify_failure.dart';
 import 'package:flutter_smart_dialog/src/widget/default/notify_success.dart';
 import 'package:flutter_smart_dialog/src/widget/default/notify_warning.dart';
 import 'package:flutter_smart_dialog/src/widget/default/toast_widget.dart';
+import 'package:material_ui/material_ui.dart';
 
 typedef FlutterSmartToastBuilder = Widget Function(String msg);
 typedef FlutterSmartLoadingBuilder = Widget Function(String msg);
@@ -117,9 +117,11 @@ class _FlutterSmartDialogState extends State<FlutterSmartDialog> {
     });
 
     // init param
-    styleBuilder = widget.styleBuilder ??
+    styleBuilder =
+        widget.styleBuilder ??
         (Widget child) => Material(color: Colors.transparent, child: child);
-    initType = widget.initType ??
+    initType =
+        widget.initType ??
         {
           SmartInitType.custom,
           SmartInitType.attach,
@@ -160,37 +162,39 @@ class _FlutterSmartDialogState extends State<FlutterSmartDialog> {
   @override
   Widget build(BuildContext context) {
     return styleBuilder(
-      Overlay(initialEntries: [
-        //main layout
-        OverlayEntry(
-          builder: (BuildContext context) {
-            if (initType.contains(SmartInitType.custom)) {
-              DialogProxy.contextCustom = context;
-            }
+      Overlay(
+        initialEntries: [
+          //main layout
+          OverlayEntry(
+            builder: (BuildContext context) {
+              if (initType.contains(SmartInitType.custom)) {
+                DialogProxy.contextCustom = context;
+              }
 
-            if (initType.contains(SmartInitType.attach)) {
-              DialogProxy.contextAttach = context;
-            }
+              if (initType.contains(SmartInitType.attach)) {
+                DialogProxy.contextAttach = context;
+              }
 
-            if (initType.contains(SmartInitType.notify)) {
-              DialogProxy.contextNotify = context;
-            }
+              if (initType.contains(SmartInitType.notify)) {
+                DialogProxy.contextNotify = context;
+              }
 
-            if (initType.contains(SmartInitType.toast)) {
-              DialogProxy.contextToast = context;
-            }
+              if (initType.contains(SmartInitType.toast)) {
+                DialogProxy.contextToast = context;
+              }
 
-            return widget.child ?? const SizedBox.shrink();
-          },
-        ),
+              return widget.child ?? const SizedBox.shrink();
+            },
+          ),
 
-        // if (initType.contains(SmartInitType.notify))
-        //   DialogProxy.instance.entryNotify,
+          // if (initType.contains(SmartInitType.notify))
+          //   DialogProxy.instance.entryNotify,
 
-        //provided separately for loading
-        if (initType.contains(SmartInitType.loading))
-          DialogProxy.instance.entryLoading,
-      ]),
+          //provided separately for loading
+          if (initType.contains(SmartInitType.loading))
+            DialogProxy.instance.entryLoading,
+        ],
+      ),
     );
   }
 

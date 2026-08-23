@@ -1,8 +1,8 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/config/enum_config.dart';
 import 'package:flutter_smart_dialog/src/data/animation_param.dart';
 import 'package:flutter_smart_dialog/src/data/attach_model.dart';
 import 'package:flutter_smart_dialog/src/kit/typedef.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SmartShowParamBase {
   SmartShowParamBase({
@@ -206,12 +206,13 @@ class SmartShowAttachParam extends SmartShowCustomParam {
     Size targetSize,
     Offset selfOffset,
     Size selfSize,
-  )? replaceBuilder;
+  )?
+  replaceBuilder;
   final AttachAdjustParam Function(AttachParam attachParam)? adjustBuilder;
   final Offset Function(Size selfSize)? scalePointBuilder;
   final Rect? maskIgnoreArea;
   final Positioned Function(Offset targetOffset, Size targetSize)?
-      highlightBuilder;
+  highlightBuilder;
 
   @override
   SmartShowAttachParam copyWith({
@@ -246,7 +247,8 @@ class SmartShowAttachParam extends SmartShowCustomParam {
       Size targetSize,
       Offset selfOffset,
       Size selfSize,
-    )? replaceBuilder,
+    )?
+    replaceBuilder,
     AttachAdjustParam Function(AttachParam attachParam)? adjustBuilder,
     Offset Function(Size selfSize)? scalePointBuilder,
     Rect? maskIgnoreArea,
@@ -562,12 +564,13 @@ class SmartMainAttachParam extends SmartShowParamBase {
     Size targetSize,
     Offset selfOffset,
     Size selfSize,
-  )? replaceBuilder;
+  )?
+  replaceBuilder;
   final AttachAdjustParam Function(AttachParam attachParam)? adjustBuilder;
   final Offset Function(Size selfSize)? scalePointBuilder;
   final Rect? maskIgnoreArea;
   final Positioned Function(Offset targetOffset, Size targetSize)?
-      highlightBuilder;
+  highlightBuilder;
   final SmartMaskTriggerType maskTriggerType;
   final bool useSystem;
   final SmartAwaitOverType awaitOverType;

@@ -2,11 +2,13 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 void main() {
-  runApp(MaterialApp(
-    navigatorObservers: [FlutterSmartDialog.observer],
-    builder: FlutterSmartDialog.init(),
-    home: const MyApp(),
-  ));
+  runApp(
+    MaterialApp(
+      navigatorObservers: [FlutterSmartDialog.observer],
+      builder: FlutterSmartDialog.init(),
+      home: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -15,16 +17,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Test"),
-      ),
+      appBar: AppBar(title: const Text("Test")),
       body: Center(
-        child: Builder(builder: (ctx) {
-          return ElevatedButton(
-            onPressed: () => show(ctx),
-            child: const Text("Click"),
-          );
-        }),
+        child: Builder(
+          builder: (ctx) {
+            return ElevatedButton(
+              onPressed: () => show(ctx),
+              child: const Text("Click"),
+            );
+          },
+        ),
       ),
     );
   }

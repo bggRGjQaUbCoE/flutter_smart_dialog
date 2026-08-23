@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/config/enum_config.dart';
 import 'package:flutter_smart_dialog/src/data/base_controller.dart';
 import 'package:flutter_smart_dialog/src/data/show_param.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 import 'package:flutter_smart_dialog/src/widget/attach_dialog_widget.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/smart_overlay_entry.dart';
 import 'package:flutter_smart_dialog/src/widget/smart_dialog_widget.dart';
+import 'package:material_ui/material_ui.dart';
 
 ///main function : customize dialog
 class MainDialog {
@@ -26,9 +26,7 @@ class MainDialog {
   Widget _widget;
   SmartAwaitOverType _awaitOverType = SmartAwaitOverType.dialogDismiss;
 
-  Future<T?> show<T>({
-    required SmartMainDialogParam param,
-  }) {
+  Future<T?> show<T>({required SmartMainDialogParam param}) {
     //custom dialog
     _widget = SmartDialogWidget(
       key: param.reuse ? _uniqueKey : UniqueKey(),
@@ -63,9 +61,7 @@ class MainDialog {
     return completer.future;
   }
 
-  Future<T?> showAttach<T>({
-    required SmartMainAttachParam param,
-  }) {
+  Future<T?> showAttach<T>({required SmartMainAttachParam param}) {
     //attach dialog
     _widget = AttachDialogWidget(
       key: _uniqueKey,

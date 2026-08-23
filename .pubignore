@@ -1,0 +1,20 @@
+# Development and generated files
+.dart_tool/
+.pub/
+build/
+coverage/
+pubspec.lock
+**/Flutter/ephemeral/flutter_native_integration.env
+.github/
+.codex/
+.claude/
+.idea/
+.vscode/
+AGENTS.md
+CODEOWNERS
+
+# Repository-only documentation and generated platform runners
+docs/
+linux/
+macos/
+windows/

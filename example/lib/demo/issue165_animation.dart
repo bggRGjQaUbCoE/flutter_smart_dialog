@@ -25,13 +25,17 @@ class MyApp extends StatelessWidget {
   void _show() {
     SmartDialog.show(
       animationTime: const Duration(milliseconds: 3000),
-      animationBuilder: (
-        AnimationController controller,
-        Widget child,
-        AnimationParam animationParam,
-      ) {
-        return CustomAnimation(animationParam: animationParam, child: child);
-      },
+      animationBuilder:
+          (
+            AnimationController controller,
+            Widget child,
+            AnimationParam animationParam,
+          ) {
+            return CustomAnimation(
+              animationParam: animationParam,
+              child: child,
+            );
+          },
       builder: (_) {
         return Container(
           color: Colors.white,
@@ -85,8 +89,10 @@ class _CustomAnimationState extends State<CustomAnimation>
   Widget build(BuildContext context) {
     return needReverse
         ? RotationTransition(
-            turns:
-                CurvedAnimation(parent: _controller, curve: Curves.elasticIn),
+            turns: CurvedAnimation(
+              parent: _controller,
+              curve: Curves.elasticIn,
+            ),
             child: widget.child,
           )
         : FadeTransition(
@@ -96,8 +102,10 @@ class _CustomAnimationState extends State<CustomAnimation>
             ),
             child: ScaleTransition(
               scale: _controller.drive(
-                Tween<double>(begin: 1.5, end: 1.0)
-                    .chain(CurveTween(curve: Curves.easeInOut)),
+                Tween<double>(
+                  begin: 1.5,
+                  end: 1.0,
+                ).chain(CurveTween(curve: Curves.easeInOut)),
               ),
               child: widget.child,
             ),

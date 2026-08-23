@@ -13,17 +13,19 @@ class MyApp extends StatelessWidget {
       builder: FlutterSmartDialog.init(),
       home: Scaffold(
         body: Center(
-          child: Builder(builder: (ctx) {
-            return ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  ctx,
-                  MaterialPageRoute(builder: (context) => const TestPage()),
-                );
-              },
-              child: const Text('jump page'),
-            );
-          }),
+          child: Builder(
+            builder: (ctx) {
+              return ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    ctx,
+                    MaterialPageRoute(builder: (context) => const TestPage()),
+                  );
+                },
+                child: const Text('jump page'),
+              );
+            },
+          ),
         ),
       ),
     );

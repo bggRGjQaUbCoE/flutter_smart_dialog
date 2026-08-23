@@ -1,9 +1,9 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/data/smart_tag.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/route_record.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:material_ui/material_ui.dart';
 
 class MonitorPopRoute with WidgetsBindingObserver {
   factory MonitorPopRoute() => instance;

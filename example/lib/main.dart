@@ -36,43 +36,44 @@ class SmartDialogPage extends StatelessWidget {
       appBar: AppBar(title: const TextField()),
       body: Container(
         margin: const EdgeInsets.all(30),
-        child: Wrap(spacing: 20, runSpacing: 20, children: [
-          //toast
-          ElevatedButton(
-            onPressed: () => _showToast(),
-            child: const Text('showToast'),
-          ),
+        child: Wrap(
+          spacing: 20,
+          runSpacing: 20,
+          children: [
+            //toast
+            ElevatedButton(
+              onPressed: () => _showToast(),
+              child: const Text('showToast'),
+            ),
 
-          //loading
-          ElevatedButton(
-            onPressed: () => _showLoading(),
-            child: const Text('showLoading'),
-          ),
+            //loading
+            ElevatedButton(
+              onPressed: () => _showLoading(),
+              child: const Text('showLoading'),
+            ),
 
-          //notify
-          ElevatedButton(
-            onPressed: () => _showNotify(),
-            child: const Text('showNotify'),
-          ),
+            //notify
+            ElevatedButton(
+              onPressed: () => _showNotify(),
+              child: const Text('showNotify'),
+            ),
 
-          //dialog
-          ElevatedButton(
-            onPressed: () => _show(),
-            child: const Text('show'),
-          ),
+            //dialog
+            ElevatedButton(onPressed: () => _show(), child: const Text('show')),
 
-          //attach
-          ElevatedButton(
-            onPressed: () => _showAttach(context),
-            child: const Text('showAttach'),
-          ),
+            //attach
+            ElevatedButton(
+              onPressed: () => _showAttach(context),
+              child: const Text('showAttach'),
+            ),
 
-          //attach
-          ElevatedButton(
-            onPressed: () => _bindPage(context),
-            child: const Text('bindPage'),
-          ),
-        ]),
+            //attach
+            ElevatedButton(
+              onPressed: () => _bindPage(context),
+              child: const Text('bindPage'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -92,21 +93,23 @@ class SmartDialogPage extends StatelessWidget {
   }
 
   void _show() async {
-    SmartDialog.show(builder: (_) {
-      return Container(
-        height: 80,
-        width: 180,
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        alignment: Alignment.center,
-        child: const Text(
-          'easy custom dialog',
-          style: TextStyle(color: Colors.white),
-        ),
-      );
-    });
+    SmartDialog.show(
+      builder: (_) {
+        return Container(
+          height: 80,
+          width: 180,
+          decoration: BoxDecoration(
+            color: Colors.black,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          alignment: Alignment.center,
+          child: const Text(
+            'easy custom dialog',
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+      },
+    );
   }
 
   void _showAttach(BuildContext ctx) {
@@ -133,12 +136,14 @@ class SmartDialogPage extends StatelessWidget {
             color: Colors.white,
           ),
           alignment: Alignment.center,
-          child: Builder(builder: (context) {
-            return ElevatedButton(
-              onPressed: () => attachDialog(context),
-              child: const Text('target widget'),
-            );
-          }),
+          child: Builder(
+            builder: (context) {
+              return ElevatedButton(
+                onPressed: () => attachDialog(context),
+                child: const Text('target widget'),
+              );
+            },
+          ),
         );
       },
     );
@@ -146,30 +151,35 @@ class SmartDialogPage extends StatelessWidget {
 
   void _bindPage(BuildContext ctx) {
     //target widget
-    SmartDialog.show(builder: (_) {
-      return Container(
-        height: 300,
-        width: 500,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          color: Colors.white,
-        ),
-        alignment: Alignment.center,
-        child: ElevatedButton(
-          onPressed: () {
-            Navigator.push(ctx, MaterialPageRoute(builder: (_) {
-              return Scaffold(
-                appBar: AppBar(
-                  title: const Text("New Page"),
+    SmartDialog.show(
+      builder: (_) {
+        return Container(
+          height: 300,
+          width: 500,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.white,
+          ),
+          alignment: Alignment.center,
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                ctx,
+                MaterialPageRoute(
+                  builder: (_) {
+                    return Scaffold(
+                      appBar: AppBar(title: const Text("New Page")),
+                      body: const Center(child: Text("New Page")),
+                    );
+                  },
                 ),
-                body: const Center(child: Text("New Page")),
               );
-            }));
-          },
-          child: const Text('to new page'),
-        ),
-      );
-    });
+            },
+            child: const Text('to new page'),
+          ),
+        );
+      },
+    );
   }
 
   void _showLoading() async {

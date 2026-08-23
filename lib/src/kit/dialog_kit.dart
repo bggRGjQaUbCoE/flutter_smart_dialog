@@ -8,10 +8,7 @@ class DialogKit {
 
   DialogKit._();
 
-  bool checkExist({
-    String? tag,
-    required Set<SmartAllDialogType> dialogTypes,
-  }) {
+  bool checkExist({String? tag, required Set<SmartAllDialogType> dialogTypes}) {
     var dialogProxy = DialogProxy.instance;
     if (tag != null) {
       for (var element in dialogProxy.dialogQueue) {

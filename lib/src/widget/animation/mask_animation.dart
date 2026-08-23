@@ -46,10 +46,10 @@ class _MaskAnimationState extends State<MaskAnimation> {
       child: widget.usePenetrate
           ? null
           : widget.maskWidget ??
-              ColoredBox(
-                color: widget.maskColor,
-                child: const SizedBox.expand(),
-              ),
+                ColoredBox(
+                  color: widget.maskColor,
+                  child: const SizedBox.expand(),
+                ),
     );
   }
 }

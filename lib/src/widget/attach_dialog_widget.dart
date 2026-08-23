@@ -1,4 +1,3 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/data/animation_param.dart';
 import 'package:flutter_smart_dialog/src/data/base_controller.dart';
@@ -11,23 +10,23 @@ import 'package:flutter_smart_dialog/src/widget/animation/size_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/attach_widget.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/dialog_scope.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/mask_event.dart';
+import 'package:material_ui/material_ui.dart';
 
-typedef HighlightBuilder = Positioned Function(
-  Offset targetOffset,
-  Size targetSize,
-);
+typedef HighlightBuilder =
+    Positioned Function(
+      Offset targetOffset,
+      Size targetSize,
+    );
 
-typedef TargetBuilder = Offset Function(
-  Offset targetOffset,
-  Size targetSize,
-);
+typedef TargetBuilder = Offset Function(Offset targetOffset, Size targetSize);
 
-typedef ReplaceBuilder = Widget Function(
-  Offset targetOffset,
-  Size targetSize,
-  Offset selfOffset,
-  Size selfSize,
-);
+typedef ReplaceBuilder =
+    Widget Function(
+      Offset targetOffset,
+      Size targetSize,
+      Offset selfOffset,
+      Size selfSize,
+    );
 
 typedef AdjustBuilder = AttachAdjustParam Function(AttachParam attachParam);
 
@@ -312,15 +311,15 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
 
     Widget fade() => FadeAnimation(controller: _bodyController, child: child);
     Widget scale() => ScaleAnimation(
-          controller: _bodyController,
-          alignment: _scaleAlignment ?? Alignment.center,
-          child: child,
-        );
+      controller: _bodyController,
+      alignment: _scaleAlignment ?? Alignment.center,
+      child: child,
+    );
     Widget size() => SizeAnimation(
-          alignment: alignment,
-          controller: _bodyController,
-          child: child,
-        );
+      alignment: alignment,
+      controller: _bodyController,
+      child: child,
+    );
 
     //select different animation
     switch (widget.animationType) {

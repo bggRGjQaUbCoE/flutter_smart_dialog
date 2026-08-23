@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/config/enum_config.dart';
+import 'package:material_ui/material_ui.dart';
 
 ///show() global config
 ///

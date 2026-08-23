@@ -1,6 +1,6 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/widget/attach_dialog_widget.dart';
+import 'package:material_ui/material_ui.dart';
 
 class HighlightMaskAnimation extends StatefulWidget {
   const HighlightMaskAnimation({
@@ -84,8 +84,10 @@ class _HighlightMaskAnimationState extends State<HighlightMaskAnimation> {
             ),
 
             //dissolve mask, highlight location
-            widget.highlightBuilder!
-                .call(widget.targetOffset, widget.targetSize)
+            widget.highlightBuilder!.call(
+              widget.targetOffset,
+              widget.targetSize,
+            ),
           ],
         ),
       );

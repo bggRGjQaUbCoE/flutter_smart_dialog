@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/config/enum_config.dart';
 import 'package:flutter_smart_dialog/src/config/smart_config.dart';
 import 'package:flutter_smart_dialog/src/custom/custom_dialog.dart';
@@ -16,6 +15,7 @@ import 'package:flutter_smart_dialog/src/data/show_param.dart';
 import 'package:flutter_smart_dialog/src/init_dialog.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/smart_overlay_entry.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/toast_helper.dart';
+import 'package:material_ui/material_ui.dart';
 
 enum CloseType {
   // back event
@@ -49,6 +49,8 @@ class DialogProxy {
   late Queue<NotifyInfo> notifyQueue;
   late LoadingInfo loadingInfo = LoadingInfo();
 
+  bool _loadingInitialized = false;
+
   static DialogProxy? _instance;
 
   static DialogProxy get instance => _instance ??= DialogProxy._internal();
@@ -77,16 +79,50 @@ class DialogProxy {
 
   void initialize(Set<SmartInitType> initType) {
     if (initType.contains(SmartInitType.loading)) {
-      entryLoading = SmartOverlayEntry(builder: (_) {
-        return loadingInfo.loadingWidget.getWidget();
-      });
+      entryLoading = SmartOverlayEntry(
+        builder: (_) {
+          return loadingInfo.loadingWidget.getWidget();
+        },
+      );
       loadingInfo.loadingWidget = CustomLoading(overlayEntry: entryLoading);
+      _loadingInitialized = true;
     }
   }
 
-  Future<T?> show<T>({
-    required SmartShowCustomParam param,
-  }) {
+  /// Resets process-wide dialog state between widget tests.
+  ///
+  /// This is intentionally kept under `src` and is not part of the package's
+  /// public API.
+  void resetForTest() {
+    for (final info in dialogQueue) {
+      info.displayTimer?.cancel();
+      info.dialog.overlayEntry.remove();
+    }
+    dialogQueue.clear();
+
+    for (final info in notifyQueue) {
+      info.displayTimer?.cancel();
+      info.dialog.overlayEntry.remove();
+    }
+    notifyQueue.clear();
+
+    if (_loadingInitialized) {
+      loadingInfo.loadingWidget.resetForTest();
+    }
+    loadingInfo.backType = null;
+    loadingInfo.onBack = null;
+
+    final defaults = SmartConfig();
+    config
+      ..custom = defaults.custom
+      ..attach = defaults.attach
+      ..notify = defaults.notify
+      ..loading = defaults.loading
+      ..toast = defaults.toast;
+    contextNavigator = null;
+  }
+
+  Future<T?> show<T>({required SmartShowCustomParam param}) {
     CustomDialog? dialog;
     var entry = SmartOverlayEntry(
       builder: (BuildContext context) => dialog!.getWidget(),
@@ -95,9 +131,7 @@ class DialogProxy {
     return dialog.show<T>(param: param);
   }
 
-  Future<T?> showNotify<T>({
-    required SmartShowNotifyParam param,
-  }) {
+  Future<T?> showNotify<T>({required SmartShowNotifyParam param}) {
     CustomNotify? dialog;
     var entry = SmartOverlayEntry(
       builder: (BuildContext context) => dialog!.getWidget(),
@@ -106,9 +140,7 @@ class DialogProxy {
     return dialog.showNotify<T>(param: param);
   }
 
-  Future<T?> showAttach<T>({
-    required SmartShowAttachParam param,
-  }) {
+  Future<T?> showAttach<T>({required SmartShowAttachParam param}) {
     CustomDialog? dialog;
     var entry = SmartOverlayEntry(
       builder: (BuildContext context) => dialog!.getWidget(),
@@ -126,9 +158,7 @@ class DialogProxy {
     return loadingInfo.loadingWidget.showLoading<T>(param: param);
   }
 
-  Future<void> showToast({
-    required SmartShowToastParam param,
-  }) {
+  Future<void> showToast({required SmartShowToastParam param}) {
     CustomToast? toast;
     var entry = SmartOverlayEntry(
       builder: (BuildContext context) => toast!.getWidget(),
@@ -136,8 +166,10 @@ class DialogProxy {
     toast = CustomToast(overlayEntry: entry);
     return toast.showToast(
       param: param.copyWith(
-        widget:
-            ToastHelper(consumeEvent: param.consumeEvent, child: param.widget),
+        widget: ToastHelper(
+          consumeEvent: param.consumeEvent,
+          child: param.widget,
+        ),
       ),
     );
   }

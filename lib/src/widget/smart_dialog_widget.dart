@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/config/enum_config.dart';
 import 'package:flutter_smart_dialog/src/data/animation_param.dart';
 import 'package:flutter_smart_dialog/src/data/base_controller.dart';
@@ -11,6 +10,7 @@ import 'package:flutter_smart_dialog/src/widget/animation/mask_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/scale_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/slide_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/mask_event.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SmartDialogWidget extends StatefulWidget {
   const SmartDialogWidget({
@@ -170,10 +170,10 @@ class _SmartDialogWidgetState extends State<SmartDialogWidget>
       ScaleAnimation(controller: _bodyController, child: widget.child);
 
   Widget get slide => SlideAnimation(
-        controller: _bodyController,
-        alignment: widget.alignment,
-        child: widget.child,
-      );
+    controller: _bodyController,
+    alignment: widget.alignment,
+    child: widget.child,
+  );
 
   Widget _buildBodyAnimation() {
     if (widget.animationBuilder != null) {

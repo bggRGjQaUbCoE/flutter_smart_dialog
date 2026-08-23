@@ -1,8 +1,8 @@
 import 'dart:collection';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/data/dialog_info.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
+import 'package:material_ui/material_ui.dart';
 
 class RouteRecord {
   factory RouteRecord() => instance;
@@ -76,5 +76,10 @@ class RouteRecord {
     }
 
     return item.route == route && item.bindPage;
+  }
+
+  void resetForTest() {
+    routeQueue.clear();
+    curRoute = null;
   }
 }
