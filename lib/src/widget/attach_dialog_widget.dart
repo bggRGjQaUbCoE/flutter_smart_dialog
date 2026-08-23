@@ -1,10 +1,10 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/data/base_controller.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/highlight_mask_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/scale_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/attach_widget.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/dialog_scope.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/mask_event.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../config/enum_config.dart';
 import '../data/animation_param.dart';
@@ -18,7 +18,7 @@ import 'helper/dialog_animation_lifecycle.dart';
 
 class AttachDialogWidget extends StatefulWidget {
   const AttachDialogWidget({
-    Key? key,
+    super.key,
     required this.child,
     required this.targetContext,
     required this.targetBuilder,
@@ -39,7 +39,7 @@ class AttachDialogWidget extends StatefulWidget {
     required this.maskWidget,
     required this.maskTriggerType,
     required this.maskIgnoreArea,
-  }) : super(key: key);
+  });
 
   ///target context
   final BuildContext? targetContext;

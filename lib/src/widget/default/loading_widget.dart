@@ -1,8 +1,8 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:material_ui/material_ui.dart';
 
 class LoadingWidget extends StatelessWidget {
-  const LoadingWidget({Key? key, required this.msg}) : super(key: key);
+  const LoadingWidget({super.key, required this.msg});
 
   ///loading msg
   final String msg;

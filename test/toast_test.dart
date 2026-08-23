@@ -16,14 +16,14 @@ void main() {
       displayTime: const Duration(milliseconds: 100),
       animationTime: Duration.zero,
       useAnimation: false,
-    );
+    ).ignore();
     SmartDialog.showToast(
       'normal-second',
       displayType: SmartToastType.normal,
       displayTime: const Duration(milliseconds: 100),
       animationTime: Duration.zero,
       useAnimation: false,
-    );
+    ).ignore();
     await tester.pump();
     expect(find.text('normal-first'), findsOneWidget);
     expect(find.text('normal-second'), findsNothing);
@@ -52,7 +52,7 @@ void main() {
       displayTime: const Duration(seconds: 1),
       useAnimation: false,
       onDismiss: () => oldDismissCount++,
-    );
+    ).ignore();
     await tester.pump();
     final lastFuture = SmartDialog.showToast(
       'last-new',
@@ -85,14 +85,14 @@ void main() {
       displayType: SmartToastType.onlyRefresh,
       displayTime: const Duration(milliseconds: 100),
       useAnimation: false,
-    );
+    ).ignore();
     await tester.pump(const Duration(milliseconds: 10));
     SmartDialog.showToast(
       'newer-last-toast',
       displayType: SmartToastType.last,
       displayTime: const Duration(milliseconds: 300),
       useAnimation: false,
-    );
+    ).ignore();
     for (var i = 0; i < 4; i++) {
       await tester.pump(const Duration(milliseconds: 1));
     }
@@ -118,7 +118,7 @@ void main() {
         useAnimation: false,
         displayTime: const Duration(seconds: 1),
         displayType: SmartToastType.onlyRefresh,
-      );
+      ).ignore();
     }
 
     showToast('before-dismiss');
@@ -150,13 +150,13 @@ void main() {
       displayType: SmartToastType.multi,
       displayTime: const Duration(milliseconds: 100),
       useAnimation: false,
-    );
+    ).ignore();
     SmartDialog.showToast(
       'multi-second',
       displayType: SmartToastType.multi,
       displayTime: const Duration(milliseconds: 150),
       useAnimation: false,
-    );
+    ).ignore();
     await tester.pump();
 
     expect(find.text('multi-first'), findsOneWidget);
@@ -187,21 +187,21 @@ void main() {
       displayTime: const Duration(seconds: 1),
       useAnimation: false,
       onDismiss: () => serialDismissCount++,
-    );
+    ).ignore();
     SmartDialog.showToast(
       'all-queued',
       displayType: SmartToastType.normal,
       displayTime: const Duration(seconds: 1),
       useAnimation: false,
       onDismiss: () => queuedDismissCount++,
-    );
+    ).ignore();
     SmartDialog.showToast(
       'all-multi',
       displayType: SmartToastType.multi,
       displayTime: const Duration(seconds: 1),
       useAnimation: false,
       onDismiss: () => multiDismissCount++,
-    );
+    ).ignore();
     await tester.pump();
 
     await dismissAndPump<void>(tester, status: SmartStatus.allToast);
@@ -228,13 +228,13 @@ void main() {
       displayType: SmartToastType.multi,
       displayTime: const Duration(seconds: 1),
       useAnimation: false,
-    );
+    ).ignore();
     SmartDialog.showToast(
       'priority-serial',
       displayType: SmartToastType.normal,
       displayTime: const Duration(seconds: 1),
       useAnimation: false,
-    );
+    ).ignore();
     await tester.pump();
 
     await dismissAndPump<void>(tester, status: SmartStatus.toast);
@@ -262,7 +262,7 @@ void main() {
       'standalone-cupertino-ui',
       useAnimation: false,
       displayTime: const Duration(milliseconds: 100),
-    );
+    ).ignore();
     await tester.pump();
     expect(find.text('standalone-cupertino-ui'), findsOneWidget);
 

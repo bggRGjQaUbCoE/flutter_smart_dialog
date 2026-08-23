@@ -1,12 +1,12 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SmartOverlayEntry extends OverlayEntry {
   SmartOverlayEntry({
-    required WidgetBuilder builder,
-    bool opaque = false,
-    bool maintainState = false,
-  }) : super(builder: builder, opaque: opaque, maintainState: maintainState);
+    required super.builder,
+    super.opaque,
+    super.maintainState,
+  });
 
   bool _disposedByOwner = false;
 

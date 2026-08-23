@@ -1,9 +1,12 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ToastHelper extends StatefulWidget {
-  const ToastHelper({Key? key, required this.consumeEvent, required this.child})
-    : super(key: key);
+  const ToastHelper({
+    super.key,
+    required this.consumeEvent,
+    required this.child,
+  });
 
   final bool consumeEvent;
 

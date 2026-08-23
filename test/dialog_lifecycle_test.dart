@@ -18,7 +18,9 @@ void main() {
 
     expect(identical(SmartDialog.config, replacement), isTrue);
     expect(identical(DialogProxy.instance.config, replacement), isTrue);
-    SmartDialog.show<void>(builder: (_) => const Text('replacement-config'));
+    SmartDialog.show<void>(
+      builder: (_) => const Text('replacement-config'),
+    ).ignore();
     await tester.pump();
     expect(find.text('replacement-config'), findsOneWidget);
 
@@ -61,12 +63,12 @@ void main() {
       tag: 'first',
       useAnimation: false,
       builder: (_) => const Text('first-dialog'),
-    );
+    ).ignore();
     SmartDialog.show<void>(
       tag: 'second',
       useAnimation: false,
       builder: (_) => const Text('second-dialog'),
-    );
+    ).ignore();
     await tester.pump();
 
     expect(SmartDialog.checkExist(tag: 'first'), isTrue);
@@ -94,12 +96,12 @@ void main() {
       tag: 'duplicate',
       useAnimation: false,
       builder: (_) => const Text('duplicate-oldest'),
-    );
+    ).ignore();
     SmartDialog.show<void>(
       tag: 'duplicate',
       useAnimation: false,
       builder: (_) => const Text('duplicate-newest'),
-    );
+    ).ignore();
     await tester.pump();
 
     await dismissAndPump<void>(tester, tag: 'duplicate');
@@ -123,7 +125,7 @@ void main() {
       permanent: true,
       useAnimation: false,
       builder: (_) => const Text('permanent-dialog'),
-    );
+    ).ignore();
     await tester.pump();
 
     await dismissAndPump<void>(tester, tag: 'permanent');
@@ -143,13 +145,13 @@ void main() {
       keepSingle: true,
       useAnimation: false,
       builder: (_) => const Text('keep-single-first'),
-    );
+    ).ignore();
     await tester.pump();
     SmartDialog.show<void>(
       keepSingle: true,
       useAnimation: false,
       builder: (_) => const Text('keep-single-second'),
-    );
+    ).ignore();
     await tester.pump();
 
     expect(find.text('keep-single-first'), findsNothing);
@@ -203,12 +205,12 @@ void main() {
     SmartDialog.show<void>(
       keepSingle: true,
       builder: (_) => const Text('none-first'),
-    ).then((_) => firstCompleted = true);
+    ).then((_) => firstCompleted = true).ignore();
     await tester.pump(const Duration(milliseconds: 5));
     SmartDialog.show<void>(
       keepSingle: true,
       builder: (_) => const Text('none-second'),
-    ).then((_) => secondCompleted = true);
+    ).then((_) => secondCompleted = true).ignore();
 
     await tester.pump(const Duration(milliseconds: 5));
     expect(firstCompleted, isTrue);
@@ -235,13 +237,13 @@ void main() {
       keepSingle: true,
       animationTime: const Duration(milliseconds: 20),
       builder: (_) => const Text('appear-first'),
-    ).then((_) => firstCompleted = true);
+    ).then((_) => firstCompleted = true).ignore();
     await tester.pump(const Duration(milliseconds: 5));
     SmartDialog.show<void>(
       keepSingle: true,
       animationTime: const Duration(milliseconds: 40),
       builder: (_) => const Text('appear-second'),
-    ).then((_) => secondCompleted = true);
+    ).then((_) => secondCompleted = true).ignore();
 
     await tester.pump(const Duration(milliseconds: 15));
     expect(firstCompleted, isTrue);
@@ -264,7 +266,7 @@ void main() {
       controller: controller,
       useAnimation: false,
       builder: (_) => Text('value-$value'),
-    );
+    ).ignore();
     await tester.pump();
     expect(find.text('value-0'), findsOneWidget);
 

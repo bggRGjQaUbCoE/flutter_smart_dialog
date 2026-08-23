@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../kit/view_utils.dart';
 
 class NotifyError extends StatelessWidget {
-  const NotifyError({Key? key, required this.msg}) : super(key: key);
+  const NotifyError({super.key, required this.msg});
 
   final String msg;
 

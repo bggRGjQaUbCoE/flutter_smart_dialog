@@ -127,7 +127,7 @@ class ToastTool {
     info.completeDisplay();
 
     if (info.shown) {
-      await info.mainDialog.dismiss();
+      await info.mainDialog.dismiss<void>();
       info.mainDialog.overlayEntry.remove();
     }
 
@@ -174,10 +174,7 @@ class ToastTool {
       _cancelQueued(info);
     }
 
-    final active = <ToastInfo>[
-      if (activeSerial != null) activeSerial,
-      ..._multiToasts,
-    ];
+    final active = <ToastInfo>[?activeSerial, ..._multiToasts];
     await Future.wait<void>(active.map((info) => _close(info)));
     _syncExist();
   }

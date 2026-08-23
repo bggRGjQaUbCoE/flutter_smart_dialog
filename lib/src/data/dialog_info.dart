@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/kit/typedef.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../flutter_smart_dialog.dart';
 import '../helper/dialog_proxy.dart';

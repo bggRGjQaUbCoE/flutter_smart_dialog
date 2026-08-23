@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../kit/view_utils.dart';
 
 class ToastWidget extends StatelessWidget {
-  const ToastWidget({Key? key, required this.msg}) : super(key: key);
+  const ToastWidget({super.key, required this.msg});
 
   ///toast msg
   final String msg;

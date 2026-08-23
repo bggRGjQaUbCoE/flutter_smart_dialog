@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../helper/dialog_proxy.dart';
 
@@ -16,7 +16,7 @@ class ViewUtils {
   }
 
   static Future<void> awaitSafeUse({VoidCallback? onPostFrame}) async {
-    final completer = Completer();
+    final completer = Completer<void>();
     var schedulerPhase = schedulerBinding.schedulerPhase;
     if (schedulerPhase == SchedulerPhase.persistentCallbacks) {
       widgetsBinding.addPostFrameCallback((timeStamp) {
@@ -32,7 +32,7 @@ class ViewUtils {
   }
 
   static Future<void> awaitPostFrame({VoidCallback? onPostFrame}) async {
-    final completer = Completer();
+    final completer = Completer<void>();
     widgetsBinding.addPostFrameCallback((timeStamp) {
       onPostFrame?.call();
       if (!completer.isCompleted) completer.complete();

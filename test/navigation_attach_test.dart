@@ -17,7 +17,7 @@ void main() {
       bindPage: true,
       useAnimation: false,
       builder: (_) => const Text('bound-dialog'),
-    );
+    ).ignore();
     await tester.pump();
     expect(find.text('bound-dialog'), findsOneWidget);
 
@@ -71,7 +71,7 @@ void main() {
         alignment: alignment,
         useAnimation: false,
         builder: (_) => Text('attach-${alignment.x}-${alignment.y}'),
-      );
+      ).ignore();
       await tester.pump();
       expect(find.text('attach-${alignment.x}-${alignment.y}'), findsOneWidget);
       expect(tester.takeException(), isNull);
@@ -95,7 +95,7 @@ void main() {
         height: 20,
         child: Text('builder-only-attach'),
       ),
-    );
+    ).ignore();
     await tester.pump();
     await tester.pump();
 

@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/data/show_param.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../config/enum_config.dart';
 import '../data/base_dialog.dart';
@@ -16,7 +16,7 @@ class CustomLoading extends BaseDialog {
   Timer? _timer;
   Timer? _displayTimer;
   bool _canDismiss = false;
-  Future Function()? _canDismissCallback;
+  Future<void> Function()? _canDismissCallback;
 
   Future<T?> showLoading<T>({required SmartShowLoadingParam param}) {
     List<SmartNonAnimationType> nonAnimations = [...param.nonAnimationTypes];
@@ -33,7 +33,8 @@ class CustomLoading extends BaseDialog {
     _timer?.cancel();
     _timer = Timer(SmartDialog.config.loading.leastLoadingTime, () {
       _canDismiss = true;
-      _canDismissCallback?.call();
+      final callback = _canDismissCallback;
+      if (callback != null) unawaited(callback());
     });
 
     return mainDialog.show<T>(
@@ -59,7 +60,7 @@ class CustomLoading extends BaseDialog {
         onMask: () {
           param.onMask?.call();
           if (!param.clickMaskDismiss) return;
-          _realDismiss();
+          unawaited(_realDismiss());
         },
       ),
     );
@@ -68,7 +69,9 @@ class CustomLoading extends BaseDialog {
   VoidCallback _handleDismiss(VoidCallback? onDismiss, Duration? displayTime) {
     _displayTimer?.cancel();
     if (displayTime != null) {
-      _displayTimer = Timer(displayTime, () => dismiss());
+      _displayTimer = Timer(displayTime, () {
+        unawaited(dismiss());
+      });
     }
 
     return () {
@@ -79,7 +82,7 @@ class CustomLoading extends BaseDialog {
 
   Future<void> _realDismiss({CloseType closeType = CloseType.normal}) async {
     SmartDialog.config.loading.isExist = false;
-    await mainDialog.dismiss(closeType: closeType);
+    await mainDialog.dismiss<void>(closeType: closeType);
   }
 
   Future<void> dismiss({CloseType closeType = CloseType.normal}) async {

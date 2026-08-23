@@ -4,11 +4,11 @@ import '../../config/enum_config.dart';
 
 class MaskEvent extends StatefulWidget {
   const MaskEvent({
-    Key? key,
+    super.key,
     required this.maskTriggerType,
     required this.onMask,
     required this.child,
-  }) : super(key: key);
+  });
 
   final SmartMaskTriggerType maskTriggerType;
 
@@ -25,9 +25,9 @@ class _MaskEventState extends State<MaskEvent> {
 
   @override
   Widget build(BuildContext context) {
-    Function()? onPointerDown;
-    Function()? onPointerMove;
-    Function()? onPointerUp;
+    VoidCallback? onPointerDown;
+    VoidCallback? onPointerMove;
+    VoidCallback? onPointerUp;
     if (widget.maskTriggerType == SmartMaskTriggerType.down) {
       onPointerDown = widget.onMask;
     } else if (widget.maskTriggerType == SmartMaskTriggerType.move) {

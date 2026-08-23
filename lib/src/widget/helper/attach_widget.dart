@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../config/enum_config.dart';
 import '../../data/attach_model.dart';
@@ -22,7 +22,7 @@ typedef CoverBuilder =
 
 class AttachWidget extends StatefulWidget {
   const AttachWidget({
-    Key? key,
+    super.key,
     required this.targetContext,
     required this.targetBuilder,
     required this.beforeBuilder,
@@ -31,7 +31,7 @@ class AttachWidget extends StatefulWidget {
     required this.builder,
     this.belowBuilder,
     this.aboveBuilder,
-  }) : super(key: key);
+  });
 
   /// target widget
   final BuildContext? targetContext;
@@ -386,7 +386,7 @@ class _AttachWidgetState extends State<AttachWidget>
 }
 
 class AdaptBuilder extends StatelessWidget {
-  const AdaptBuilder({Key? key, required this.builder}) : super(key: key);
+  const AdaptBuilder({super.key, required this.builder});
 
   final WidgetBuilder builder;
 

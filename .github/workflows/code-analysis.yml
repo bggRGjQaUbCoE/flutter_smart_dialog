@@ -38,9 +38,9 @@ jobs:
         run: |
           flutter analyze .
       - name: Generate dartdoc
-        run: |
-          dart pub global activate dartdoc
-          dart pub global run dartdoc .
+        run: dart run dartdoc .
+      - name: Validate publish package
+        run: flutter pub publish --dry-run
   test:
     needs: [code-analysis]
     permissions:
@@ -48,7 +48,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        flutter-version: ['']
+        include:
+          - flutter-version: '3.44.0'
+            coverage: false
+          - flutter-version: ''
+            coverage: true
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -61,5 +65,17 @@ jobs:
         run: |
           flutter --version
           flutter pub get
+      - name: Test with coverage
+        if: matrix.coverage
+        run: flutter test --coverage
+      - name: Enforce coverage threshold
+        if: matrix.coverage
+        run: dart run tool/check_coverage.dart coverage/lcov.info 60
       - name: Test
+        if: ${{ !matrix.coverage }}
         run: flutter test
+      - name: Test example
+        working-directory: example
+        run: |
+          flutter pub get
+          flutter test

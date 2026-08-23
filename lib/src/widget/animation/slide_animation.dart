@@ -2,11 +2,11 @@ import 'package:material_ui/material_ui.dart';
 
 class SlideAnimation extends StatefulWidget {
   const SlideAnimation({
-    Key? key,
+    super.key,
     required this.alignment,
     required this.controller,
     required this.child,
-  }) : super(key: key);
+  });
 
   final Alignment alignment;
 

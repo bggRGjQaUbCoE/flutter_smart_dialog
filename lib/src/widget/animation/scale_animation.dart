@@ -2,11 +2,11 @@ import 'package:material_ui/material_ui.dart';
 
 class ScaleAnimation extends StatefulWidget {
   const ScaleAnimation({
-    Key? key,
+    super.key,
     required this.controller,
     required this.child,
     this.alignment,
-  }) : super(key: key);
+  });
 
   final AnimationController controller;
 

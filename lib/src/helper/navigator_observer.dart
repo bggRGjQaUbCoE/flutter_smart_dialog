@@ -1,6 +1,8 @@
-import 'package:material_ui/material_ui.dart';
+import 'dart:async';
+
 import 'package:flutter_smart_dialog/src/data/smart_tag.dart';
 import 'package:flutter_smart_dialog/src/helper/route_record.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../config/enum_config.dart';
 import '../data/dialog_info.dart';
@@ -60,9 +62,11 @@ class SmartNavigatorObserver extends NavigatorObserver {
     }
 
     if (SmartDialog.config.loading.isExist) {
-      DialogProxy.instance.dismiss(
-        status: SmartStatus.loading,
-        closeType: CloseType.route,
+      unawaited(
+        DialogProxy.instance.dismiss<void>(
+          status: SmartStatus.loading,
+          closeType: CloseType.route,
+        ),
       );
     }
 
@@ -74,10 +78,12 @@ class SmartNavigatorObserver extends NavigatorObserver {
       }
     }
     for (var i = removeList.length; i > 0; i--) {
-      DialogProxy.instance.dismiss(
-        status: SmartStatus.dialog,
-        closeType: CloseType.route,
-        tag: removeList[i - 1].tag,
+      unawaited(
+        DialogProxy.instance.dismiss<void>(
+          status: SmartStatus.dialog,
+          closeType: CloseType.route,
+          tag: removeList[i - 1].tag,
+        ),
       );
     }
   }

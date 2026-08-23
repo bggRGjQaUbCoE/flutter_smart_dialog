@@ -5,7 +5,7 @@ import '../../kit/typedef.dart';
 
 class HighlightMaskAnimation extends StatefulWidget {
   const HighlightMaskAnimation({
-    Key? key,
+    super.key,
     required this.controller,
     required this.maskWidget,
     required this.maskColor,
@@ -14,7 +14,7 @@ class HighlightMaskAnimation extends StatefulWidget {
     required this.targetSize,
     required this.highlightBuilder,
     required this.nonAnimationTypes,
-  }) : super(key: key);
+  });
 
   final AnimationController controller;
 

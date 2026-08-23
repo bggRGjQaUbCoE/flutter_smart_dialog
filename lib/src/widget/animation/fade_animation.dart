@@ -1,8 +1,11 @@
 import 'package:material_ui/material_ui.dart';
 
 class FadeAnimation extends StatefulWidget {
-  const FadeAnimation({Key? key, required this.controller, required this.child})
-    : super(key: key);
+  const FadeAnimation({
+    super.key,
+    required this.controller,
+    required this.child,
+  });
 
   final AnimationController controller;
 

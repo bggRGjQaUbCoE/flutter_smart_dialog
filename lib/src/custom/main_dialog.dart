@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/data/base_controller.dart';
 import 'package:flutter_smart_dialog/src/data/show_param.dart';
 import 'package:flutter_smart_dialog/src/data/smart_tag.dart';
@@ -8,6 +7,7 @@ import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 import 'package:flutter_smart_dialog/src/widget/attach_dialog_widget.dart';
 import 'package:flutter_smart_dialog/src/widget/smart_dialog_widget.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../config/enum_config.dart';
 import '../widget/helper/smart_overlay_entry.dart';
@@ -128,13 +128,17 @@ class MainDialog {
     _hasShown = true;
     switch (awaitOverType) {
       case SmartAwaitOverType.none:
-        Future<void>.delayed(const Duration(milliseconds: 10), () {
-          _complete(completer);
-        });
+        unawaited(
+          Future<void>.delayed(const Duration(milliseconds: 10), () {
+            _complete(completer);
+          }),
+        );
       case SmartAwaitOverType.dialogAppear:
-        Future<void>.delayed(animationTime, () {
-          _complete(completer);
-        });
+        unawaited(
+          Future<void>.delayed(animationTime, () {
+            _complete(completer);
+          }),
+        );
       case SmartAwaitOverType.dialogDismiss:
         _dismissCompleters.add(completer);
     }
@@ -145,13 +149,15 @@ class MainDialog {
       var tempWidget = _widget;
       _widget = Container();
       ViewUtils.addSafeUse(() {
-        showDialog(
-          context: DialogProxy.contextNavigator!,
-          barrierColor: Colors.transparent,
-          barrierDismissible: false,
-          useSafeArea: false,
-          routeSettings: const RouteSettings(name: SmartTag.systemDialog),
-          builder: (BuildContext context) => tempWidget,
+        unawaited(
+          showDialog<void>(
+            context: DialogProxy.contextNavigator!,
+            barrierColor: Colors.transparent,
+            barrierDismissible: false,
+            useSafeArea: false,
+            routeSettings: const RouteSettings(name: SmartTag.systemDialog),
+            builder: (BuildContext context) => tempWidget,
+          ),
         );
       });
     }

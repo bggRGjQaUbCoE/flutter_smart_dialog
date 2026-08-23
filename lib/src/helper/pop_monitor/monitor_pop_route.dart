@@ -1,7 +1,9 @@
-import 'package:material_ui/material_ui.dart';
+import 'dart:async';
+
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/route_record.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../flutter_smart_dialog.dart';
 import '../../data/smart_tag.dart';
@@ -34,9 +36,11 @@ class MonitorPopRoute with WidgetsBindingObserver {
         return true;
       }
       if (loadingInfo.backType == SmartBackType.normal) {
-        DialogProxy.instance.dismiss(
-          status: SmartStatus.loading,
-          closeType: CloseType.back,
+        unawaited(
+          DialogProxy.instance.dismiss<void>(
+            status: SmartStatus.loading,
+            closeType: CloseType.back,
+          ),
         );
         return true;
       } else if (loadingInfo.backType == SmartBackType.block) {
@@ -54,10 +58,12 @@ class MonitorPopRoute with WidgetsBindingObserver {
           return true;
         }
         if (item.backType == SmartBackType.normal) {
-          DialogProxy.instance.dismiss(
-            status: SmartStatus.notify,
-            closeType: CloseType.back,
-            tag: item.tag,
+          unawaited(
+            DialogProxy.instance.dismiss<void>(
+              status: SmartStatus.notify,
+              closeType: CloseType.back,
+              tag: item.tag,
+            ),
           );
           return true;
         } else if (item.backType == SmartBackType.block) {
@@ -73,9 +79,11 @@ class MonitorPopRoute with WidgetsBindingObserver {
         return true;
       }
       if (lastDialog.backType == SmartBackType.normal) {
-        DialogProxy.instance.dismiss(
-          status: SmartStatus.dialog,
-          closeType: CloseType.back,
+        unawaited(
+          DialogProxy.instance.dismiss<void>(
+            status: SmartStatus.dialog,
+            closeType: CloseType.back,
+          ),
         );
         return true;
       } else if (lastDialog.backType == SmartBackType.block) {

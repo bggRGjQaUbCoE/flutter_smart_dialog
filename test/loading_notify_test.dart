@@ -49,7 +49,7 @@ void main() {
       displayTime: const Duration(milliseconds: 100),
       useAnimation: false,
       onDismiss: () => dismissCount++,
-    );
+    ).ignore();
     await tester.pump();
     expect(find.text('notify-message'), findsOneWidget);
     expect(
@@ -80,14 +80,14 @@ void main() {
       tag: 'notify-one',
       displayTime: null,
       useAnimation: false,
-    );
+    ).ignore();
     SmartDialog.showNotify<void>(
       msg: 'notify-two',
       notifyType: NotifyType.warning,
       tag: 'notify-two',
       displayTime: null,
       useAnimation: false,
-    );
+    ).ignore();
     await tester.pump();
 
     await dismissAndPump<void>(

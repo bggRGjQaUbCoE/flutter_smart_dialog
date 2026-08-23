@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:material_ui/material_ui.dart';
 
 part 'smart_dialog_controller.dart';
 
@@ -14,8 +14,7 @@ class DialogScopeInfo {
 }
 
 class DialogScope extends StatefulWidget {
-  DialogScope({Key? key, required this.controller, required this.builder})
-    : super(key: key);
+  DialogScope({super.key, required this.controller, required this.builder});
 
   final SmartDialogController? controller;
 

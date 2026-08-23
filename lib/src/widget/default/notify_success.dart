@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../kit/view_utils.dart';
 
 class NotifySuccess extends StatelessWidget {
-  const NotifySuccess({Key? key, required this.msg}) : super(key: key);
+  const NotifySuccess({super.key, required this.msg});
 
   final String msg;
 

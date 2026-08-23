@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  show(BuildContext context) {
+  void show(BuildContext context) {
     SmartDialog.showAttach(
       targetContext: context,
       alignment: Alignment.topCenter,

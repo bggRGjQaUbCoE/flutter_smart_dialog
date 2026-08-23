@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/data/dialog_info.dart';
 import 'package:flutter_smart_dialog/src/data/show_param.dart';
 import 'package:flutter_smart_dialog/src/data/smart_tag.dart';
@@ -9,6 +8,7 @@ import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/monitor_widget_helper.dart';
 import 'package:flutter_smart_dialog/src/helper/route_record.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../config/enum_config.dart';
 import '../data/base_dialog.dart';
@@ -74,7 +74,9 @@ class CustomDialog extends BaseDialog {
               param.permanent) {
             return;
           }
-          dismiss(closeType: CloseType.mask, tag: dialogInfo.tag);
+          unawaited(
+            dismiss<void>(closeType: CloseType.mask, tag: dialogInfo.tag),
+          );
         },
       ),
     );
@@ -127,7 +129,9 @@ class CustomDialog extends BaseDialog {
               param.permanent) {
             return;
           }
-          dismiss(closeType: CloseType.mask, tag: dialogInfo.tag);
+          unawaited(
+            dismiss<void>(closeType: CloseType.mask, tag: dialogInfo.tag),
+          );
         },
         highlightBuilder: param.highlightBuilder,
         onDismiss: _handleDismiss(
@@ -155,7 +159,9 @@ class CustomDialog extends BaseDialog {
     Timer? timer;
     final tag = dialogInfo.tag;
     if (displayTime != null && tag != null) {
-      timer = Timer(displayTime, () => dismiss(tag: tag));
+      timer = Timer(displayTime, () {
+        unawaited(dismiss<void>(tag: tag));
+      });
       dialogInfo.displayTimer = timer;
     }
 

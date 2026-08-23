@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:collection';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/custom/custom_dialog.dart';
 import 'package:flutter_smart_dialog/src/custom/custom_loading.dart';
 import 'package:flutter_smart_dialog/src/custom/custom_notify.dart';
@@ -11,6 +10,7 @@ import 'package:flutter_smart_dialog/src/data/loading_info.dart';
 import 'package:flutter_smart_dialog/src/data/notify_style.dart';
 import 'package:flutter_smart_dialog/src/data/show_param.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/toast_helper.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../config/enum_config.dart';
 import '../config/smart_config.dart';

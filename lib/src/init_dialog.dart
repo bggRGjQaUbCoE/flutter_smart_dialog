@@ -1,9 +1,9 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/helper/navigator_observer.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 import 'package:flutter_smart_dialog/src/widget/default/notify_alter.dart';
 import 'package:flutter_smart_dialog/src/widget/default/notify_error.dart';
 import 'package:flutter_smart_dialog/src/widget/default/notify_failure.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'config/enum_config.dart';
 import 'data/notify_style.dart';
@@ -21,14 +21,14 @@ typedef FlutterSmartStyleBuilder = Widget Function(Widget child);
 
 class FlutterSmartDialog extends StatefulWidget {
   const FlutterSmartDialog({
-    Key? key,
+    super.key,
     required this.child,
     this.toastBuilder,
     this.loadingBuilder,
     this.notifyStyle,
     this.styleBuilder,
     this.initType,
-  }) : super(key: key);
+  });
 
   final Widget? child;
 

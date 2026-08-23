@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:cupertino_ui/cupertino_ui.dart';
@@ -43,9 +44,11 @@ class MonitorWidgetHelper {
         _calculate(context!, item);
       }
       for (var i = removeList.length; i > 0; i--) {
-        DialogProxy.instance.dismiss(
-          status: SmartStatus.dialog,
-          tag: removeList[i - 1].tag,
+        unawaited(
+          DialogProxy.instance.dismiss<void>(
+            status: SmartStatus.dialog,
+            tag: removeList[i - 1].tag,
+          ),
         );
       }
       prohibitMonitor = false;
