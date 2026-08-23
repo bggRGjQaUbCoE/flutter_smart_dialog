@@ -1,12 +1,12 @@
 import 'dart:collection';
 
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/route_record.dart';
 import 'package:flutter_smart_dialog/src/kit/log.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 
+import '../config/enum_config.dart';
 import '../data/dialog_info.dart';
 
 class MonitorWidgetHelper {
@@ -61,7 +61,7 @@ class MonitorWidgetHelper {
       return;
     }
 
-    var renderObject = _safeRenderBox(context);
+    var renderObject = ViewUtils.findRenderBox(context);
     if (renderObject == null) {
       item.dialog.hide();
       return;
@@ -104,19 +104,6 @@ class MonitorWidgetHelper {
       return context.mounted;
     }
     return true;
-  }
-
-  RenderBox? _safeRenderBox(BuildContext context) {
-    try {
-      var renderObject = context.findRenderObject();
-      if (renderObject is RenderBox &&
-          renderObject.attached &&
-          renderObject.hasSize) {
-        return renderObject;
-      }
-    } catch (_) {}
-
-    return null;
   }
 
   void resetForTest() {

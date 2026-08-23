@@ -242,16 +242,13 @@ class CustomDialog extends BaseDialog {
       BuildContext overlayContext = dialogInfo.type == DialogType.custom
           ? DialogProxy.contextCustom
           : DialogProxy.contextAttach;
-      try {
-        overlay(overlayContext).insert(
-          overlayEntry,
-          below: firstNotify != null
-              ? firstNotify.dialog.overlayEntry
-              : proxy.entryLoading,
-        );
-      } catch (e) {
-        overlay(overlayContext).insert(overlayEntry);
-      }
+      ViewUtils.insertOverlayEntry(
+        overlayContext,
+        overlayEntry,
+        below: firstNotify != null
+            ? firstNotify.dialog.overlayEntry
+            : proxy.entryLoading,
+      );
     });
   }
 
@@ -296,14 +293,9 @@ class CustomDialog extends BaseDialog {
     required bool force,
     required CloseType closeType,
   }) async {
-    for (int i = DialogProxy.instance.dialogQueue.length; i > 0; i--) {
-      await _closeSingle<T>(
-        type: type,
-        tag: tag,
-        result: result,
-        force: force,
-        closeType: closeType,
-      );
+    final dialogs = _getDialogsForCloseAll(type: type, tag: tag, force: force);
+    for (final info in dialogs) {
+      await _closeInfo<T>(info: info, result: result, closeType: closeType);
     }
   }
 
@@ -322,6 +314,14 @@ class CustomDialog extends BaseDialog {
     );
     if (info == null || (info.permanent && !force)) return;
 
+    await _closeInfo<T>(info: info, result: result, closeType: closeType);
+  }
+
+  static Future<void> _closeInfo<T>({
+    required DialogInfo info,
+    required T? result,
+    required CloseType closeType,
+  }) async {
     //handle close dialog
     var proxy = DialogProxy.instance;
     proxy.dialogQueue.remove(info);
@@ -350,6 +350,44 @@ class CustomDialog extends BaseDialog {
     customDialog.overlayEntry.remove();
   }
 
+  static List<DialogInfo> _getDialogsForCloseAll({
+    required DialogType type,
+    required String? tag,
+    required bool force,
+  }) {
+    final queue = DialogProxy.instance.dialogQueue;
+    if (tag != null) {
+      final matches = <DialogInfo>[];
+      for (final info in queue) {
+        if (info.tag != tag) continue;
+        if (info.permanent && !force) break;
+        matches.add(info);
+      }
+      return matches;
+    }
+
+    final dialogs = queue.toList(growable: false).reversed;
+    final matches = <DialogInfo>[];
+    if (force) {
+      matches.addAll(dialogs.where((info) => info.permanent));
+    }
+    for (final info in dialogs) {
+      if (info.permanent) {
+        if (!force &&
+            info.dialog.mainDialog.visible &&
+            (type == DialogType.dialog || info.type == type)) {
+          break;
+        }
+        continue;
+      }
+      if (!info.dialog.mainDialog.visible && !info.useSystem) continue;
+      if (type == DialogType.dialog || info.type == type) {
+        matches.add(info);
+      }
+    }
+    return matches;
+  }
+
   static DialogInfo? _getDialog({
     DialogType type = DialogType.dialog,
     String? tag,
@@ -361,35 +399,30 @@ class CustomDialog extends BaseDialog {
 
     DialogInfo? info;
     var dialogQueue = proxy.dialogQueue;
-    var list = dialogQueue.toList();
 
     //handle dialog with tag
     if (tag != null) {
-      for (var i = dialogQueue.length - 1; i >= 0; i--) {
-        if (dialogQueue.isEmpty) break;
-        if (list[i].tag == tag) info = list[i];
+      for (final item in dialogQueue) {
+        if (item.tag == tag) return item;
       }
-      return info;
+      return null;
     }
 
     //handle permanent dialog
     if (force) {
-      for (var i = dialogQueue.length - 1; i >= 0; i--) {
-        if (dialogQueue.isEmpty) break;
-        if (list[i].permanent) return list[i];
+      for (final item in dialogQueue) {
+        if (item.permanent) info = item;
       }
+      if (info != null) return info;
     }
 
     //handle normal dialog
-    for (var i = dialogQueue.length - 1; i >= 0; i--) {
-      if (dialogQueue.isEmpty) break;
-      var item = list[i];
+    for (final item in dialogQueue) {
       if (!item.dialog.mainDialog.visible && !item.useSystem) {
         continue;
       }
       if (type == DialogType.dialog || item.type == type) {
         info = item;
-        break;
       }
     }
 

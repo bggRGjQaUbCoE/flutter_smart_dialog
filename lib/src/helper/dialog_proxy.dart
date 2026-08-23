@@ -163,11 +163,8 @@ class DialogProxy {
     );
     toast = CustomToast(overlayEntry: entry);
     return toast.showToast(
-      param: param.copyWith(
-        widget: ToastHelper(
-          consumeEvent: param.consumeEvent,
-          child: param.widget,
-        ),
+      param: param.withWidget(
+        ToastHelper(consumeEvent: param.consumeEvent, child: param.widget),
       ),
     );
   }
@@ -245,23 +242,19 @@ class DialogProxy {
   }
 
   DialogType? _convertEnum(SmartStatus status) {
-    if (status == SmartStatus.dialog) {
-      return DialogType.dialog;
-    } else if (status == SmartStatus.custom) {
-      return DialogType.custom;
-    } else if (status == SmartStatus.attach) {
-      return DialogType.attach;
-    } else if (status == SmartStatus.notify) {
-      return DialogType.notify;
-    } else if (status == SmartStatus.allDialog) {
-      return DialogType.allDialog;
-    } else if (status == SmartStatus.allCustom) {
-      return DialogType.allCustom;
-    } else if (status == SmartStatus.allAttach) {
-      return DialogType.allAttach;
-    } else if (status == SmartStatus.allNotify) {
-      return DialogType.allNotify;
-    }
-    return null;
+    return switch (status) {
+      SmartStatus.dialog => DialogType.dialog,
+      SmartStatus.custom => DialogType.custom,
+      SmartStatus.attach => DialogType.attach,
+      SmartStatus.notify => DialogType.notify,
+      SmartStatus.allDialog => DialogType.allDialog,
+      SmartStatus.allCustom => DialogType.allCustom,
+      SmartStatus.allAttach => DialogType.allAttach,
+      SmartStatus.allNotify => DialogType.allNotify,
+      SmartStatus.smart ||
+      SmartStatus.toast ||
+      SmartStatus.allToast ||
+      SmartStatus.loading => null,
+    };
   }
 }

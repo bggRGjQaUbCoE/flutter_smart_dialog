@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/data/show_param.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 
+import '../config/enum_config.dart';
 import '../data/base_dialog.dart';
+import '../smart_dialog.dart';
 import '../widget/helper/smart_overlay_entry.dart';
 
 class CustomLoading extends BaseDialog {

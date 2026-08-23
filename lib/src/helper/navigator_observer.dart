@@ -1,9 +1,10 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/data/smart_tag.dart';
 import 'package:flutter_smart_dialog/src/helper/route_record.dart';
 
+import '../config/enum_config.dart';
 import '../data/dialog_info.dart';
+import '../smart_dialog.dart';
 import 'dialog_proxy.dart';
 
 class SmartNavigatorObserver extends NavigatorObserver {

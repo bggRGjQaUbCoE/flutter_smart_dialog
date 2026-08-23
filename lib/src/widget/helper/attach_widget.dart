@@ -1,8 +1,10 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 
-import '../attach_dialog_widget.dart';
+import '../../config/enum_config.dart';
+import '../../data/attach_model.dart';
+import '../../kit/typedef.dart';
+import '../../smart_dialog.dart';
 
 typedef AttachBuilder =
     Widget Function(Widget child, AttachAdjustParam? adjustParam);
@@ -175,7 +177,7 @@ class _AttachWidgetState extends State<AttachWidget>
   }
 
   void _handleLocation() {
-    final selfRenderBox = _safeRenderBox(_childContext);
+    final selfRenderBox = ViewUtils.findRenderBox(_childContext);
     if (selfRenderBox == null ||
         !_isValidOffset(targetOffset) ||
         !_isValidSize(targetSize)) {
@@ -313,7 +315,7 @@ class _AttachWidgetState extends State<AttachWidget>
     bool fixedHorizontal = false,
     bool fixedVertical = false,
   }) {
-    final childRenderBox = _safeRenderBox(_childContext);
+    final childRenderBox = ViewUtils.findRenderBox(_childContext);
     final screen = MediaQuery.of(context).size;
     var rectInfo = RectInfo(left: left, right: right, top: top, bottom: bottom);
     if (childRenderBox == null || !_isValidSize(screen)) {
@@ -355,7 +357,7 @@ class _AttachWidgetState extends State<AttachWidget>
   }
 
   bool _tryUpdateTargetInfo() {
-    final renderBox = _safeRenderBox(widget.targetContext);
+    final renderBox = ViewUtils.findRenderBox(widget.targetContext);
     if (renderBox == null) {
       return false;
     }
@@ -372,22 +374,6 @@ class _AttachWidgetState extends State<AttachWidget>
     } catch (_) {
       return false;
     }
-  }
-
-  RenderBox? _safeRenderBox(BuildContext? context) {
-    if (context == null) {
-      return null;
-    }
-
-    try {
-      final renderObject = context.findRenderObject();
-      if (renderObject is RenderBox &&
-          renderObject.attached &&
-          renderObject.hasSize) {
-        return renderObject;
-      }
-    } catch (_) {}
-    return null;
   }
 
   bool _isValidOffset(Offset offset) {

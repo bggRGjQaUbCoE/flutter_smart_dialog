@@ -64,6 +64,36 @@ void main() {
     await disposeSmartDialogApp(tester);
   });
 
+  testWidgets('duplicate tags are dismissed in insertion order', (
+    tester,
+  ) async {
+    await pumpSmartDialogApp(tester);
+
+    SmartDialog.show<void>(
+      tag: 'duplicate',
+      useAnimation: false,
+      builder: (_) => const Text('duplicate-oldest'),
+    );
+    SmartDialog.show<void>(
+      tag: 'duplicate',
+      useAnimation: false,
+      builder: (_) => const Text('duplicate-newest'),
+    );
+    await tester.pump();
+
+    await dismissAndPump<void>(tester, tag: 'duplicate');
+    expect(find.text('duplicate-oldest'), findsNothing);
+    expect(find.text('duplicate-newest'), findsOneWidget);
+
+    await dismissAndPump<void>(
+      tester,
+      status: SmartStatus.allCustom,
+      tag: 'duplicate',
+    );
+    expect(find.text('duplicate-newest'), findsNothing);
+    await disposeSmartDialogApp(tester);
+  });
+
   testWidgets('permanent dialog requires a forced dismissal', (tester) async {
     await pumpSmartDialogApp(tester);
 

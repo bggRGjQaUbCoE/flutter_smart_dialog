@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
-import '../attach_dialog_widget.dart';
+import '../../config/enum_config.dart';
+import '../../kit/typedef.dart';
 
 class HighlightMaskAnimation extends StatefulWidget {
   const HighlightMaskAnimation({

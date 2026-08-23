@@ -48,6 +48,32 @@ class ViewUtils {
     var brightness = Theme.of(DialogProxy.contextNavigator!).brightness;
     return brightness == Brightness.dark;
   }
+
+  static RenderBox? findRenderBox(BuildContext? context) {
+    if (context == null) return null;
+    try {
+      final renderObject = context.findRenderObject();
+      if (renderObject is RenderBox &&
+          renderObject.attached &&
+          renderObject.hasSize) {
+        return renderObject;
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  static void insertOverlayEntry(
+    BuildContext context,
+    OverlayEntry entry, {
+    OverlayEntry? below,
+  }) {
+    final overlayState = overlay(context);
+    try {
+      overlayState.insert(entry, below: below);
+    } catch (_) {
+      overlayState.insert(entry);
+    }
+  }
 }
 
 class ThemeStyle {
