@@ -118,4 +118,9 @@ class MonitorWidgetHelper {
 
     return null;
   }
+
+  void resetForTest() {
+    monitorDialogQueue.clear();
+    prohibitMonitor = false;
+  }
 }

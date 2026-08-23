@@ -39,4 +39,6 @@ class DebounceUtils {
 
     return banContinue;
   }
+
+  void resetForTest() => map.clear();
 }

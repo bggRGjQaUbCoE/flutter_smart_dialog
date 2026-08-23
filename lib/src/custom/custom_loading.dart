@@ -89,4 +89,13 @@ class CustomLoading extends BaseDialog {
       await _canDismissCallback?.call();
     }
   }
+
+  void resetForTest() {
+    _timer?.cancel();
+    _timer = null;
+    _displayTimer?.cancel();
+    _displayTimer = null;
+    _canDismiss = false;
+    _canDismissCallback = null;
+  }
 }

@@ -50,6 +50,8 @@ class DialogProxy {
   late Queue<NotifyInfo> notifyQueue;
   late LoadingInfo loadingInfo = LoadingInfo();
 
+  bool _loadingInitialized = false;
+
   static DialogProxy? _instance;
 
   static DialogProxy get instance => _instance ??= DialogProxy._internal();
@@ -84,7 +86,41 @@ class DialogProxy {
         },
       );
       loadingInfo.loadingWidget = CustomLoading(overlayEntry: entryLoading);
+      _loadingInitialized = true;
     }
+  }
+
+  /// Resets process-wide dialog state between widget tests.
+  ///
+  /// This is intentionally kept under `src` and is not part of the package's
+  /// public API.
+  void resetForTest() {
+    for (final info in dialogQueue) {
+      info.displayTimer?.cancel();
+      info.dialog.overlayEntry.remove();
+    }
+    dialogQueue.clear();
+
+    for (final info in notifyQueue) {
+      info.displayTimer?.cancel();
+      info.dialog.overlayEntry.remove();
+    }
+    notifyQueue.clear();
+
+    if (_loadingInitialized) {
+      loadingInfo.loadingWidget.resetForTest();
+    }
+    loadingInfo.backType = null;
+    loadingInfo.onBack = null;
+
+    final defaults = SmartConfig();
+    config
+      ..custom = defaults.custom
+      ..attach = defaults.attach
+      ..notify = defaults.notify
+      ..loading = defaults.loading
+      ..toast = defaults.toast;
+    contextNavigator = null;
   }
 
   Future<T?> show<T>({required SmartShowCustomParam param}) {

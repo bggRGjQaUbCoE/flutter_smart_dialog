@@ -78,4 +78,9 @@ class RouteRecord {
 
     return item.route == route && item.bindPage;
   }
+
+  void resetForTest() {
+    routeQueue.clear();
+    curRoute = null;
+  }
 }

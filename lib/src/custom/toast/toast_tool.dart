@@ -70,6 +70,18 @@ class ToastTool {
     if (!(_curCompleter?.isCompleted ?? true)) _curCompleter?.complete();
   }
 
+  void resetForTest() {
+    cancelLastDelay();
+    _curTime = null;
+    _curCompleter = null;
+    for (final info in toastQueue) {
+      info.mainDialog.overlayEntry.remove();
+    }
+    toastQueue.clear();
+    CustomToast.resetForTest();
+    SmartDialog.config.toast.isExist = false;
+  }
+
   Future<void> dispatchNext() async {
     if (toastQueue.isEmpty) {
       return;

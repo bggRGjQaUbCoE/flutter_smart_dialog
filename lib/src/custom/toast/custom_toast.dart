@@ -169,6 +169,13 @@ class CustomToast extends BaseDialog {
   static DialogScope? _onlyDialogScope;
   static SmartDialogController? _onlyToastController;
 
+  static void resetForTest() {
+    _onlyTime?.cancel();
+    _onlyTime = null;
+    _onlyDialogScope = null;
+    _onlyToastController = null;
+  }
+
   static Future<void> onlyRefresh({
     required Duration time,
     required Widget? widget,
