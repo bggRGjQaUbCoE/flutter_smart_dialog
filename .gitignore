@@ -30,6 +30,8 @@ pubspec.lock
 .pub-cache/
 .pub/
 build/
+coverage/
+**/Flutter/ephemeral/flutter_native_integration.env
 
 # Android related
 **/android/**/gradle-wrapper.jar

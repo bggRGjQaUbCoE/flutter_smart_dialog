@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' as cupertino;
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/data/base_controller.dart';
@@ -63,6 +64,30 @@ void main() {
     await tester.pump(const Duration(seconds: 2));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+  });
+
+  testWidgets('works in a standalone Cupertino UI tree without a bridge',
+      (tester) async {
+    await tester.pumpWidget(cupertino.CupertinoApp(
+      home: const cupertino.CupertinoPageScaffold(
+        child: SizedBox.expand(),
+      ),
+      builder: FlutterSmartDialog.init(),
+    ));
+    await tester.pump();
+
+    SmartDialog.showToast(
+      'standalone-cupertino-ui',
+      useAnimation: false,
+      displayTime: const Duration(milliseconds: 100),
+    );
+    await tester.pump();
+
+    expect(find.text('standalone-cupertino-ui'), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 300));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
   });

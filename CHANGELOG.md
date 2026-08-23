@@ -1,3 +1,7 @@
+# [5.2.0]
+* Fix [#293](https://github.com/fluttercandies/flutter_smart_dialog/issues/293): migrate from Flutter's bundled Material and Cupertino libraries to the standalone `material_ui` and `cupertino_ui` packages introduced with Flutter 3.47
+* Require Dart 3.12 and Flutter 3.44 or later, matching the standalone UI package constraints
+
 # [5.1.1]
 * Fix [#292](https://github.com/fluttercandies/flutter_smart_dialog/issues/292): keep `SmartToastType.onlyRefresh` content updates working after the current toast is dismissed by tapping the mask
 
