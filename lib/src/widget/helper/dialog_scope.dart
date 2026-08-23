@@ -6,7 +6,7 @@ part 'smart_dialog_controller.dart';
 abstract class DialogScopeAction {
   void setController(SmartDialogController? controller);
 
-  void replaceBuilder(Widget? child);
+  void setChild(Widget? child);
 }
 
 class DialogScopeInfo {
@@ -57,7 +57,7 @@ class _DialogScopeState extends State<DialogScope>
   }
 
   @override
-  void replaceBuilder(Widget? child) {
+  void setChild(Widget? child) {
     _child = child;
   }
 

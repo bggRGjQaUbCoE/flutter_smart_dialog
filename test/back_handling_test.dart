@@ -75,4 +75,39 @@ void main() {
     await dismissAndPump<void>(tester, status: SmartStatus.allNotify);
     await disposeSmartDialogApp(tester);
   });
+
+  testWidgets('boostMonitor uses PopEntry without changing back behavior', (
+    tester,
+  ) async {
+    final navigatorKey = GlobalKey<NavigatorState>();
+    await pumpSmartDialogApp(tester, navigatorKey: navigatorKey);
+
+    final route = FlutterSmartDialog.boostMonitor(
+      MaterialPageRoute<void>(
+        builder: (_) => const Scaffold(body: Text('boost-page')),
+      ),
+    );
+    navigatorKey.currentState!.push<void>(route!).ignore();
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 2));
+
+    SmartDialog.show<void>(
+      useAnimation: false,
+      backType: SmartBackType.normal,
+      builder: (_) => const Text('boost-dialog'),
+    ).ignore();
+    await tester.pump();
+
+    await navigatorKey.currentState!.maybePop<void>();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 1));
+    expect(find.text('boost-page'), findsOneWidget);
+    expect(find.text('boost-dialog'), findsNothing);
+
+    await navigatorKey.currentState!.maybePop<void>();
+    await tester.pumpAndSettle();
+    expect(find.text('boost-page'), findsNothing);
+
+    await disposeSmartDialogApp(tester);
+  });
 }

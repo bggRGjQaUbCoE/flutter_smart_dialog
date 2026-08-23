@@ -105,7 +105,6 @@ class SmartShowAttachParam extends SmartShowCustomParam {
     required super.onBack,
     required this.targetContext,
     required this.targetBuilder,
-    required this.replaceBuilder,
     required this.adjustBuilder,
     required this.scalePointBuilder,
     required this.maskIgnoreArea,
@@ -114,7 +113,6 @@ class SmartShowAttachParam extends SmartShowCustomParam {
 
   final BuildContext? targetContext;
   final TargetBuilder? targetBuilder;
-  final ReplaceBuilder? replaceBuilder;
   final AdjustBuilder? adjustBuilder;
   final ScalePointBuilder? scalePointBuilder;
   final Rect? maskIgnoreArea;
@@ -274,7 +272,6 @@ class SmartMainAttachParam extends SmartShowParamBase {
     required super.onMask,
     required this.targetContext,
     required this.targetBuilder,
-    required this.replaceBuilder,
     required this.adjustBuilder,
     required this.scalePointBuilder,
     required this.maskIgnoreArea,
@@ -287,7 +284,6 @@ class SmartMainAttachParam extends SmartShowParamBase {
 
   final BuildContext? targetContext;
   final TargetBuilder? targetBuilder;
-  final ReplaceBuilder? replaceBuilder;
   final AdjustBuilder? adjustBuilder;
   final ScalePointBuilder? scalePointBuilder;
   final Rect? maskIgnoreArea;

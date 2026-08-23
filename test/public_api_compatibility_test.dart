@@ -15,7 +15,6 @@ void main() {
       clickMaskDismiss: false,
       debounce: false,
       debounceTime: Duration.zero,
-      backDismiss: true,
       bindPage: false,
       awaitOverType: SmartAwaitOverType.dialogDismiss,
       maskTriggerType: SmartMaskTriggerType.up,
@@ -32,7 +31,6 @@ void main() {
       clickMaskDismiss: false,
       debounce: false,
       debounceTime: Duration.zero,
-      backDismiss: true,
       bindPage: false,
       awaitOverType: SmartAwaitOverType.dialogDismiss,
       maskTriggerType: SmartMaskTriggerType.up,
@@ -124,7 +122,7 @@ void main() {
     expect(controller, isA<SmartDialogController>());
   });
 
-  testWidgets('public initialization entrypoints keep their old usage', (
+  testWidgets('public initialization entrypoints remain usable', (
     tester,
   ) async {
     final observer = FlutterSmartDialog.observer;
@@ -156,13 +154,11 @@ void main() {
   });
 }
 
-// This function is intentionally compile-only. It protects every named
-// argument used by existing applications while runtime semantics are covered
-// by the focused widget tests.
-void compileLegacyPublicCalls(BuildContext context) {
+// This function is intentionally compile-only. It protects every supported
+// named argument while runtime semantics are covered by focused widget tests.
+void compileCurrentPublicCalls(BuildContext context) {
   final controller = SmartDialogController();
 
-  // ignore: deprecated_member_use_from_same_package
   SmartDialog.show<void>(
     builder: (_) => const SizedBox.shrink(),
     controller: controller,
@@ -181,7 +177,6 @@ void compileLegacyPublicCalls(BuildContext context) {
     onMask: () {},
     displayTime: null,
     tag: 'legacy-custom',
-    backDismiss: true,
     keepSingle: false,
     permanent: false,
     useSystem: false,
@@ -192,11 +187,9 @@ void compileLegacyPublicCalls(BuildContext context) {
     onBack: () => false,
   ).ignore();
 
-  // ignore: deprecated_member_use_from_same_package
   SmartDialog.showAttach<void>(
     targetContext: context,
     builder: (_) => const SizedBox.shrink(),
-    replaceBuilder: (_, _, _, _) => const SizedBox.shrink(),
     adjustBuilder: (_) => const AttachAdjustParam(),
     controller: controller,
     targetBuilder: (_, _) => Offset.zero,
@@ -218,7 +211,6 @@ void compileLegacyPublicCalls(BuildContext context) {
     onDismiss: () {},
     displayTime: null,
     tag: 'legacy-attach',
-    backDismiss: true,
     keepSingle: false,
     permanent: false,
     useSystem: false,
@@ -253,7 +245,6 @@ void compileLegacyPublicCalls(BuildContext context) {
     onBack: () => false,
   ).ignore();
 
-  // ignore: deprecated_member_use_from_same_package
   SmartDialog.showLoading<void>(
     msg: 'legacy-loading',
     controller: controller,
@@ -270,7 +261,6 @@ void compileLegacyPublicCalls(BuildContext context) {
     onDismiss: () {},
     onMask: () {},
     displayTime: null,
-    backDismiss: true,
     backType: SmartBackType.normal,
     onBack: () => false,
     builder: (_) => const SizedBox.shrink(),

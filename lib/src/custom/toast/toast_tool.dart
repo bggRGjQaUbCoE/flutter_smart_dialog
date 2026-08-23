@@ -246,7 +246,7 @@ class ToastInfo {
     if (scope.controller == null) {
       scope.info.action?.setController(refreshController);
     }
-    scope.info.action?.replaceBuilder(widget);
+    scope.info.action?.setChild(widget);
     refreshController?.refresh();
   }
 

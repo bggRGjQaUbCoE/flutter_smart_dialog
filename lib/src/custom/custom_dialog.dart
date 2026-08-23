@@ -108,7 +108,6 @@ class CustomDialog extends BaseDialog {
         targetContext: param.targetContext,
         widget: param.widget,
         targetBuilder: param.targetBuilder,
-        replaceBuilder: param.replaceBuilder,
         adjustBuilder: param.adjustBuilder,
         alignment: param.alignment,
         clickMaskDismiss: param.clickMaskDismiss,

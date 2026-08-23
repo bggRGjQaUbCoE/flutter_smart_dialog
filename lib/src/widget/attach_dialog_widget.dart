@@ -22,7 +22,6 @@ class AttachDialogWidget extends StatefulWidget {
     required this.child,
     required this.targetContext,
     required this.targetBuilder,
-    required this.replaceBuilder,
     required this.adjustBuilder,
     required this.controller,
     required this.animationTime,
@@ -46,8 +45,6 @@ class AttachDialogWidget extends StatefulWidget {
 
   /// 自定义坐标点
   final TargetBuilder? targetBuilder;
-
-  final ReplaceBuilder? replaceBuilder;
 
   final AdjustBuilder? adjustBuilder;
 
@@ -206,28 +203,6 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
   ) {
     AttachAdjustParam? adjustParam;
 
-    //替换控件builder
-    if (widget.replaceBuilder != null) {
-      Widget replaceChildBuilder() {
-        return widget.replaceBuilder!(
-          targetOffset,
-          targetSize,
-          selfOffset,
-          selfSize,
-        );
-      }
-
-      //必须要写在DialogScope的builder之外,保证在scalePointBuilder之前触发replaceBuilder
-      replaceChildBuilder();
-      //保证controller能刷新replaceBuilder
-      if (widget.child is DialogScope) {
-        _child = DialogScope(
-          controller: (widget.child as DialogScope).controller,
-          builder: (context) => replaceChildBuilder(),
-        );
-      }
-    }
-
     // 处理调整组件
     if (widget.adjustBuilder != null) {
       adjustParam = widget.adjustBuilder!(
@@ -244,7 +219,7 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
       if (adjustWidgetBuilder != null) {
         // 必须要写在DialogScope的builder之外,保证在scalePointBuilder之前触发adjustBuilder
         adjustWidgetBuilder(context);
-        //保证controller能刷新replaceBuilder
+        // 保证 controller 能刷新 adjustBuilder 返回的组件
         if (widget.child is DialogScope) {
           _child = DialogScope(
             controller: (widget.child as DialogScope).controller,

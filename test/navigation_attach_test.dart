@@ -115,6 +115,47 @@ void main() {
     await disposeSmartDialogApp(tester);
   });
 
+  testWidgets('adjustBuilder replaces attached content', (tester) async {
+    BuildContext? targetContext;
+    var adjustCalls = 0;
+    await pumpSmartDialogApp(
+      tester,
+      home: Scaffold(
+        body: Center(
+          child: Builder(
+            builder: (context) {
+              targetContext = context;
+              return const SizedBox(width: 40, height: 40);
+            },
+          ),
+        ),
+      ),
+    );
+
+    SmartDialog.showAttach<void>(
+      targetContext: targetContext,
+      useAnimation: false,
+      builder: (_) =>
+          const SizedBox(width: 60, height: 30, child: Text('original-attach')),
+      adjustBuilder: (param) {
+        adjustCalls++;
+        return const AttachAdjustParam(
+          alignment: Alignment.bottomCenter,
+          builder: _buildAdjustedAttach,
+        );
+      },
+    ).ignore();
+    await tester.pump();
+    await tester.pump();
+
+    expect(adjustCalls, greaterThan(0));
+    expect(find.text('adjusted-attach'), findsOneWidget);
+    expect(find.text('original-attach'), findsNothing);
+
+    await dismissAndPump<void>(tester, status: SmartStatus.attach);
+    await disposeSmartDialogApp(tester);
+  });
+
   testWidgets('showAttach accepts a targetBuilder without targetContext', (
     tester,
   ) async {
@@ -181,4 +222,8 @@ void main() {
     await dismissAndPump<void>(tester, status: SmartStatus.attach);
     await disposeSmartDialogApp(tester);
   });
+}
+
+Widget _buildAdjustedAttach(BuildContext context) {
+  return const SizedBox(width: 60, height: 30, child: Text('adjusted-attach'));
 }

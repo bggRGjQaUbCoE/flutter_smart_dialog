@@ -13,14 +13,6 @@ typedef HighlightBuilder =
 
 typedef TargetBuilder = Offset Function(Offset targetOffset, Size targetSize);
 
-typedef ReplaceBuilder =
-    Widget Function(
-      Offset targetOffset,
-      Size targetSize,
-      Offset selfOffset,
-      Size selfSize,
-    );
-
 typedef AdjustBuilder = AttachAdjustParam Function(AttachParam attachParam);
 
 typedef ScalePointBuilder = Offset Function(Size selfSize);

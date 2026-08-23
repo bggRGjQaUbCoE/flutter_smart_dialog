@@ -69,7 +69,6 @@ class MainDialog {
       key: _uniqueKey,
       targetContext: param.targetContext,
       targetBuilder: param.targetBuilder,
-      replaceBuilder: param.replaceBuilder,
       adjustBuilder: param.adjustBuilder,
       controller: _controller = AttachDialogController(),
       alignment: param.alignment,
