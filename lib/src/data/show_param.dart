@@ -96,20 +96,20 @@ class SmartShowCustomParam extends SmartShowParamBase {
     required this.backType,
     required this.onBack,
   }) : super(
-          widget: widget,
-          alignment: alignment,
-          clickMaskDismiss: clickMaskDismiss,
-          animationType: animationType,
-          nonAnimationTypes: nonAnimationTypes,
-          animationBuilder: animationBuilder,
-          usePenetrate: usePenetrate,
-          useAnimation: useAnimation,
-          animationTime: animationTime,
-          maskColor: maskColor,
-          maskWidget: maskWidget,
-          onDismiss: onDismiss,
-          onMask: onMask,
-        );
+         widget: widget,
+         alignment: alignment,
+         clickMaskDismiss: clickMaskDismiss,
+         animationType: animationType,
+         nonAnimationTypes: nonAnimationTypes,
+         animationBuilder: animationBuilder,
+         usePenetrate: usePenetrate,
+         useAnimation: useAnimation,
+         animationTime: animationTime,
+         maskColor: maskColor,
+         maskWidget: maskWidget,
+         onDismiss: onDismiss,
+         onMask: onMask,
+       );
 
   final bool debounce;
   final Duration? displayTime;
@@ -213,31 +213,31 @@ class SmartShowAttachParam extends SmartShowCustomParam {
     required this.maskIgnoreArea,
     required this.highlightBuilder,
   }) : super(
-          widget: widget,
-          alignment: alignment,
-          clickMaskDismiss: clickMaskDismiss,
-          animationType: animationType,
-          nonAnimationTypes: nonAnimationTypes,
-          animationBuilder: animationBuilder,
-          usePenetrate: usePenetrate,
-          useAnimation: useAnimation,
-          animationTime: animationTime,
-          maskColor: maskColor,
-          maskWidget: maskWidget,
-          onDismiss: onDismiss,
-          onMask: onMask,
-          debounce: debounce,
-          displayTime: displayTime,
-          tag: tag,
-          keepSingle: keepSingle,
-          permanent: permanent,
-          useSystem: useSystem,
-          bindPage: bindPage,
-          bindWidget: bindWidget,
-          ignoreArea: ignoreArea,
-          backType: backType,
-          onBack: onBack,
-        );
+         widget: widget,
+         alignment: alignment,
+         clickMaskDismiss: clickMaskDismiss,
+         animationType: animationType,
+         nonAnimationTypes: nonAnimationTypes,
+         animationBuilder: animationBuilder,
+         usePenetrate: usePenetrate,
+         useAnimation: useAnimation,
+         animationTime: animationTime,
+         maskColor: maskColor,
+         maskWidget: maskWidget,
+         onDismiss: onDismiss,
+         onMask: onMask,
+         debounce: debounce,
+         displayTime: displayTime,
+         tag: tag,
+         keepSingle: keepSingle,
+         permanent: permanent,
+         useSystem: useSystem,
+         bindPage: bindPage,
+         bindWidget: bindWidget,
+         ignoreArea: ignoreArea,
+         backType: backType,
+         onBack: onBack,
+       );
 
   final BuildContext? targetContext;
   final Offset Function(Offset targetOffset, Size targetSize)? targetBuilder;
@@ -246,12 +246,13 @@ class SmartShowAttachParam extends SmartShowCustomParam {
     Size targetSize,
     Offset selfOffset,
     Size selfSize,
-  )? replaceBuilder;
+  )?
+  replaceBuilder;
   final AttachAdjustParam Function(AttachParam attachParam)? adjustBuilder;
   final Offset Function(Size selfSize)? scalePointBuilder;
   final Rect? maskIgnoreArea;
   final Positioned Function(Offset targetOffset, Size targetSize)?
-      highlightBuilder;
+  highlightBuilder;
 
   @override
   SmartShowAttachParam copyWith({
@@ -286,7 +287,8 @@ class SmartShowAttachParam extends SmartShowCustomParam {
       Size targetSize,
       Offset selfOffset,
       Size selfSize,
-    )? replaceBuilder,
+    )?
+    replaceBuilder,
     AttachAdjustParam Function(AttachParam attachParam)? adjustBuilder,
     Offset Function(Size selfSize)? scalePointBuilder,
     Rect? maskIgnoreArea,
@@ -350,20 +352,20 @@ class SmartShowNotifyParam extends SmartShowParamBase {
     required this.backType,
     required this.onBack,
   }) : super(
-          widget: widget,
-          alignment: alignment,
-          clickMaskDismiss: clickMaskDismiss,
-          animationType: animationType,
-          nonAnimationTypes: nonAnimationTypes,
-          animationBuilder: animationBuilder,
-          usePenetrate: usePenetrate,
-          useAnimation: useAnimation,
-          animationTime: animationTime,
-          maskColor: maskColor,
-          maskWidget: maskWidget,
-          onDismiss: onDismiss,
-          onMask: onMask,
-        );
+         widget: widget,
+         alignment: alignment,
+         clickMaskDismiss: clickMaskDismiss,
+         animationType: animationType,
+         nonAnimationTypes: nonAnimationTypes,
+         animationBuilder: animationBuilder,
+         usePenetrate: usePenetrate,
+         useAnimation: useAnimation,
+         animationTime: animationTime,
+         maskColor: maskColor,
+         maskWidget: maskWidget,
+         onDismiss: onDismiss,
+         onMask: onMask,
+       );
 
   final bool debounce;
   final Duration? displayTime;
@@ -437,20 +439,20 @@ class SmartShowLoadingParam extends SmartShowParamBase {
     required this.backType,
     required this.onBack,
   }) : super(
-          widget: widget,
-          alignment: alignment,
-          clickMaskDismiss: clickMaskDismiss,
-          animationType: animationType,
-          nonAnimationTypes: nonAnimationTypes,
-          animationBuilder: animationBuilder,
-          usePenetrate: usePenetrate,
-          useAnimation: useAnimation,
-          animationTime: animationTime,
-          maskColor: maskColor,
-          maskWidget: maskWidget,
-          onDismiss: onDismiss,
-          onMask: onMask,
-        );
+         widget: widget,
+         alignment: alignment,
+         clickMaskDismiss: clickMaskDismiss,
+         animationType: animationType,
+         nonAnimationTypes: nonAnimationTypes,
+         animationBuilder: animationBuilder,
+         usePenetrate: usePenetrate,
+         useAnimation: useAnimation,
+         animationTime: animationTime,
+         maskColor: maskColor,
+         maskWidget: maskWidget,
+         onDismiss: onDismiss,
+         onMask: onMask,
+       );
 
   final Duration? displayTime;
   final SmartBackType backType;
@@ -516,20 +518,20 @@ class SmartShowToastParam extends SmartShowParamBase {
     required this.displayType,
     required this.consumeEvent,
   }) : super(
-          widget: widget,
-          alignment: alignment,
-          clickMaskDismiss: clickMaskDismiss,
-          animationType: animationType,
-          nonAnimationTypes: nonAnimationTypes,
-          animationBuilder: animationBuilder,
-          usePenetrate: usePenetrate,
-          useAnimation: useAnimation,
-          animationTime: animationTime,
-          maskColor: maskColor,
-          maskWidget: maskWidget,
-          onDismiss: onDismiss,
-          onMask: onMask,
-        );
+         widget: widget,
+         alignment: alignment,
+         clickMaskDismiss: clickMaskDismiss,
+         animationType: animationType,
+         nonAnimationTypes: nonAnimationTypes,
+         animationBuilder: animationBuilder,
+         usePenetrate: usePenetrate,
+         useAnimation: useAnimation,
+         animationTime: animationTime,
+         maskColor: maskColor,
+         maskWidget: maskWidget,
+         onDismiss: onDismiss,
+         onMask: onMask,
+       );
 
   final Duration displayTime;
   final bool debounce;
@@ -600,20 +602,20 @@ class SmartMainDialogParam extends SmartShowParamBase {
     required this.ignoreArea,
     required this.keepSingle,
   }) : super(
-          widget: widget,
-          alignment: alignment,
-          clickMaskDismiss: clickMaskDismiss,
-          animationType: animationType,
-          nonAnimationTypes: nonAnimationTypes,
-          animationBuilder: animationBuilder,
-          usePenetrate: usePenetrate,
-          useAnimation: useAnimation,
-          animationTime: animationTime,
-          maskColor: maskColor,
-          maskWidget: maskWidget,
-          onDismiss: onDismiss,
-          onMask: onMask,
-        );
+         widget: widget,
+         alignment: alignment,
+         clickMaskDismiss: clickMaskDismiss,
+         animationType: animationType,
+         nonAnimationTypes: nonAnimationTypes,
+         animationBuilder: animationBuilder,
+         usePenetrate: usePenetrate,
+         useAnimation: useAnimation,
+         animationTime: animationTime,
+         maskColor: maskColor,
+         maskWidget: maskWidget,
+         onDismiss: onDismiss,
+         onMask: onMask,
+       );
 
   final bool useSystem;
   final bool reuse;
@@ -650,20 +652,20 @@ class SmartMainAttachParam extends SmartShowParamBase {
     required this.awaitOverType,
     required this.keepSingle,
   }) : super(
-          widget: widget,
-          alignment: alignment,
-          clickMaskDismiss: clickMaskDismiss,
-          animationType: animationType,
-          nonAnimationTypes: nonAnimationTypes,
-          animationBuilder: animationBuilder,
-          usePenetrate: usePenetrate,
-          useAnimation: useAnimation,
-          animationTime: animationTime,
-          maskColor: maskColor,
-          maskWidget: maskWidget,
-          onDismiss: onDismiss,
-          onMask: onMask,
-        );
+         widget: widget,
+         alignment: alignment,
+         clickMaskDismiss: clickMaskDismiss,
+         animationType: animationType,
+         nonAnimationTypes: nonAnimationTypes,
+         animationBuilder: animationBuilder,
+         usePenetrate: usePenetrate,
+         useAnimation: useAnimation,
+         animationTime: animationTime,
+         maskColor: maskColor,
+         maskWidget: maskWidget,
+         onDismiss: onDismiss,
+         onMask: onMask,
+       );
 
   final BuildContext? targetContext;
   final Offset Function(Offset targetOffset, Size targetSize)? targetBuilder;
@@ -672,12 +674,13 @@ class SmartMainAttachParam extends SmartShowParamBase {
     Size targetSize,
     Offset selfOffset,
     Size selfSize,
-  )? replaceBuilder;
+  )?
+  replaceBuilder;
   final AttachAdjustParam Function(AttachParam attachParam)? adjustBuilder;
   final Offset Function(Size selfSize)? scalePointBuilder;
   final Rect? maskIgnoreArea;
   final Positioned Function(Offset targetOffset, Size targetSize)?
-      highlightBuilder;
+  highlightBuilder;
   final SmartMaskTriggerType maskTriggerType;
   final bool useSystem;
   final SmartAwaitOverType awaitOverType;

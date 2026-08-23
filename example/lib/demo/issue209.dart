@@ -25,22 +25,23 @@ class MyApp extends StatelessWidget {
   void _show() async {
     debugPrint("before:${DateTime.now().millisecondsSinceEpoch}");
     var result = await SmartDialog.show<bool>(
-        tag: 'tag',
-        backType: SmartBackType.block,
-        clickMaskDismiss: false,
-        builder: (_) {
-          return ElevatedButton(
-            onPressed: () {
-              SmartDialog.dismiss(tag: 'tag', result: true);
-            },
-            child: const Text('关闭Dialog，显示Loading'),
-          );
-        },
-        onDismiss: () {
-          debugPrint("onDismiss:${DateTime.now().millisecondsSinceEpoch}");
-          // showLoading()放在这里能正常显示
-          // SmartDialog.showLoading();
-        });
+      tag: 'tag',
+      backType: SmartBackType.block,
+      clickMaskDismiss: false,
+      builder: (_) {
+        return ElevatedButton(
+          onPressed: () {
+            SmartDialog.dismiss(tag: 'tag', result: true);
+          },
+          child: const Text('关闭Dialog，显示Loading'),
+        );
+      },
+      onDismiss: () {
+        debugPrint("onDismiss:${DateTime.now().millisecondsSinceEpoch}");
+        // showLoading()放在这里能正常显示
+        // SmartDialog.showLoading();
+      },
+    );
 
     debugPrint("aftermiss:${DateTime.now().millisecondsSinceEpoch}");
     if (result == true) {

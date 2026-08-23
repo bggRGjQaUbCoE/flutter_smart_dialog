@@ -140,25 +140,24 @@ class _SmartDialogWidgetState extends State<SmartDialogWidget>
         right: widget.ignoreArea?.right ?? 0.0,
         bottom: widget.ignoreArea?.bottom ?? 0.0,
       ),
-      child: Stack(children: [
-        //暗色背景widget动画
-        MaskEvent(
-          maskTriggerType: widget.maskTriggerType,
-          onMask: widget.onMask,
-          child: MaskAnimation(
-            controller: _maskController!,
-            maskColor: widget.maskColor,
-            maskWidget: widget.maskWidget,
-            usePenetrate: widget.usePenetrate,
+      child: Stack(
+        children: [
+          //暗色背景widget动画
+          MaskEvent(
+            maskTriggerType: widget.maskTriggerType,
+            onMask: widget.onMask,
+            child: MaskAnimation(
+              controller: _maskController!,
+              maskColor: widget.maskColor,
+              maskWidget: widget.maskWidget,
+              usePenetrate: widget.usePenetrate,
+            ),
           ),
-        ),
 
-        //内容Widget动画
-        Container(
-          alignment: widget.alignment,
-          child: _buildBodyAnimation(),
-        ),
-      ]),
+          //内容Widget动画
+          Container(alignment: widget.alignment, child: _buildBodyAnimation()),
+        ],
+      ),
     );
   }
 

@@ -144,7 +144,7 @@ enum SmartAwaitOverType {
   /// await ends after 10 milliseconds
   ///
   /// await 10毫秒后结束
-  none
+  none,
 }
 
 /// The type of timing that is triggered when the mask is clicked
@@ -165,7 +165,7 @@ enum SmartMaskTriggerType {
   /// Triggered when the mask is tapped and then raised (up gesture)
   ///
   /// 点击到遮罩, 然后抬起手势时(up手势)触发
-  up
+  up,
 }
 
 /// For different scenes, the pop-up animation can be dynamically closed.

@@ -219,7 +219,8 @@ class SmartDialog {
       bindPage: (bindPage ?? config.custom.bindPage) && bindWidget == null,
       bindWidget: bindWidget,
       ignoreArea: ignoreArea,
-      backType: backType ??
+      backType:
+          backType ??
           (backDismiss == null
               ? config.custom.backType
               : (backDismiss ? SmartBackType.normal : SmartBackType.block)),
@@ -484,7 +485,8 @@ class SmartDialog {
       bindPage: (bindPage ?? config.attach.bindPage) && bindWidget == null,
       bindWidget: bindWidget,
       ignoreArea: null,
-      backType: backType ??
+      backType:
+          backType ??
           (backDismiss == null
               ? config.attach.backType
               : (backDismiss ? SmartBackType.normal : SmartBackType.block)),
@@ -793,7 +795,8 @@ class SmartDialog {
       onDismiss: onDismiss,
       onMask: onMask,
       displayTime: displayTime,
-      backType: backType ??
+      backType:
+          backType ??
           (backDismiss == null
               ? config.loading.backType
               : (backDismiss ? SmartBackType.normal : SmartBackType.block)),

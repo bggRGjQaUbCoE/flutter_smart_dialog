@@ -24,11 +24,12 @@ import 'package:material_ui/material_ui.dart';
 ///   },
 /// );
 /// ```
-typedef AnimationBuilder = Widget Function(
-  AnimationController controller,
-  Widget child,
-  AnimationParam animationParam,
-);
+typedef AnimationBuilder =
+    Widget Function(
+      AnimationController controller,
+      Widget child,
+      AnimationParam animationParam,
+    );
 
 /// advanced usage:
 ///

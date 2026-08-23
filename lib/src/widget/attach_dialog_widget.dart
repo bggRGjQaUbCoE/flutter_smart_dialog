@@ -13,22 +13,18 @@ import '../kit/view_utils.dart';
 import 'animation/fade_animation.dart';
 import 'animation/size_animation.dart';
 
-typedef HighlightBuilder = Positioned Function(
-  Offset targetOffset,
-  Size targetSize,
-);
+typedef HighlightBuilder =
+    Positioned Function(Offset targetOffset, Size targetSize);
 
-typedef TargetBuilder = Offset Function(
-  Offset targetOffset,
-  Size targetSize,
-);
+typedef TargetBuilder = Offset Function(Offset targetOffset, Size targetSize);
 
-typedef ReplaceBuilder = Widget Function(
-  Offset targetOffset,
-  Size targetSize,
-  Offset selfOffset,
-  Size selfSize,
-);
+typedef ReplaceBuilder =
+    Widget Function(
+      Offset targetOffset,
+      Size targetSize,
+      Offset selfOffset,
+      Size selfSize,
+    );
 
 typedef AdjustBuilder = AttachAdjustParam Function(AttachParam attachParam);
 

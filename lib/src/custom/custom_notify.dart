@@ -19,11 +19,11 @@ import '../widget/helper/smart_overlay_entry.dart';
 class CustomNotify extends BaseDialog {
   CustomNotify({required SmartOverlayEntry overlayEntry}) : super(overlayEntry);
 
-  Future<T?> showNotify<T>({
-    required SmartShowNotifyParam param,
-  }) {
-    if (DebounceUtils.instance
-        .banContinue(DebounceType.notify, param.debounce)) {
+  Future<T?> showNotify<T>({required SmartShowNotifyParam param}) {
+    if (DebounceUtils.instance.banContinue(
+      DebounceType.notify,
+      param.debounce,
+    )) {
       return Future.value(null);
     }
 
@@ -48,8 +48,11 @@ class CustomNotify extends BaseDialog {
         animationTime: param.animationTime,
         maskColor: param.maskColor,
         maskWidget: param.maskWidget,
-        onDismiss:
-            _handleDismiss(param.onDismiss, param.displayTime, notifyInfo),
+        onDismiss: _handleDismiss(
+          param.onDismiss,
+          param.displayTime,
+          notifyInfo,
+        ),
         useSystem: false,
         reuse: true,
         awaitOverType: SmartDialog.config.notify.awaitOverType,
@@ -137,10 +140,9 @@ class CustomNotify extends BaseDialog {
     // insert the dialog carrier into the page
     ViewUtils.addSafeUse(() {
       try {
-        overlay(DialogProxy.contextNotify).insert(
-          overlayEntry,
-          below: proxy.entryLoading,
-        );
+        overlay(
+          DialogProxy.contextNotify,
+        ).insert(overlayEntry, below: proxy.entryLoading);
       } catch (e) {
         overlay(DialogProxy.contextNotify).insert(overlayEntry);
       }
@@ -167,11 +169,7 @@ class CustomNotify extends BaseDialog {
     required CloseType closeType,
   }) async {
     for (int i = DialogProxy.instance.notifyQueue.length; i > 0; i--) {
-      await _closeSingle<T>(
-        tag: tag,
-        result: result,
-        closeType: closeType,
-      );
+      await _closeSingle<T>(tag: tag, result: result, closeType: closeType);
     }
   }
 

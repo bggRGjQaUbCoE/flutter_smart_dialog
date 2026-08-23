@@ -47,11 +47,13 @@ class SmartNavigatorObserver extends NavigatorObserver {
       return;
     }
 
-    var checkDialog = SmartDialog.checkExist(dialogTypes: {
-      SmartAllDialogType.custom,
-      SmartAllDialogType.attach,
-      SmartAllDialogType.loading,
-    });
+    var checkDialog = SmartDialog.checkExist(
+      dialogTypes: {
+        SmartAllDialogType.custom,
+        SmartAllDialogType.attach,
+        SmartAllDialogType.loading,
+      },
+    );
     if (!checkDialog || route.settings.name == SmartTag.systemDialog) {
       return;
     }

@@ -2,11 +2,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 
 class ToastHelper extends StatefulWidget {
-  const ToastHelper({
-    Key? key,
-    required this.consumeEvent,
-    required this.child,
-  }) : super(key: key);
+  const ToastHelper({Key? key, required this.consumeEvent, required this.child})
+    : super(key: key);
 
   final bool consumeEvent;
 
@@ -40,10 +37,12 @@ class _ToastHelperState extends State<ToastHelper> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    var child = Builder(builder: (context) {
-      _childContext = context;
-      return widget.child;
-    });
+    var child = Builder(
+      builder: (context) {
+        _childContext = context;
+        return widget.child;
+      },
+    );
 
     return Container(
       margin: EdgeInsets.only(bottom: _keyboardHeight),

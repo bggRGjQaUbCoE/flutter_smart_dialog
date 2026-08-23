@@ -1,11 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 
 class FadeAnimation extends StatefulWidget {
-  const FadeAnimation({
-    Key? key,
-    required this.controller,
-    required this.child,
-  }) : super(key: key);
+  const FadeAnimation({Key? key, required this.controller, required this.child})
+    : super(key: key);
 
   final AnimationController controller;
 
@@ -35,9 +32,6 @@ class _FadeAnimationState extends State<FadeAnimation> {
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _curvedAnimation,
-      child: widget.child,
-    );
+    return FadeTransition(opacity: _curvedAnimation, child: widget.child);
   }
 }

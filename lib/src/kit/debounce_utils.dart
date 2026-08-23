@@ -1,12 +1,6 @@
 import '../../flutter_smart_dialog.dart';
 
-enum DebounceType {
-  custom,
-  attach,
-  notify,
-  toast,
-  mask,
-}
+enum DebounceType { custom, attach, notify, toast, mask }
 
 class DebounceUtils {
   static DebounceUtils? _instance;

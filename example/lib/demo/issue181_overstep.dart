@@ -89,8 +89,10 @@ class _TestingDialogState extends State<_TestingDialog>
               animation: animationController,
               builder: (_, child) {
                 return Transform.translate(
-                  offset:
-                      Offset(0, -(100 + tween.evaluate(animationController))),
+                  offset: Offset(
+                    0,
+                    -(100 + tween.evaluate(animationController)),
+                  ),
                   child: child,
                 );
               },
@@ -106,20 +108,18 @@ class _TestingDialogState extends State<_TestingDialog>
                         SmartDialog.dismiss();
                         debugPrint("111111111111");
                       },
-                      child: const Row(children: [
-                        Icon(Icons.close),
-                        Text('<-用不了的'),
-                      ]),
+                      child: const Row(
+                        children: [Icon(Icons.close), Text('<-用不了的')],
+                      ),
                     ),
                     InkWell(
                       onTap: () {
                         SmartDialog.dismiss();
                         debugPrint("2222222222222");
                       },
-                      child: const Row(children: [
-                        Icon(Icons.close),
-                        Text('<-能用的'),
-                      ]),
+                      child: const Row(
+                        children: [Icon(Icons.close), Text('<-能用的')],
+                      ),
                     ),
                   ],
                 ),

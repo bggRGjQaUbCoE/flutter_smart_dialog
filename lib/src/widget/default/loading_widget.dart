@@ -15,19 +15,22 @@ class LoadingWidget extends StatelessWidget {
         color: ThemeStyle.backgroundColor,
         borderRadius: BorderRadius.circular(15),
       ),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        //loading animation
-        CircularProgressIndicator(
-          strokeWidth: 3,
-          valueColor: AlwaysStoppedAnimation(ThemeStyle.textColor),
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          //loading animation
+          CircularProgressIndicator(
+            strokeWidth: 3,
+            valueColor: AlwaysStoppedAnimation(ThemeStyle.textColor),
+          ),
 
-        //msg
-        Container(
-          margin: const EdgeInsets.only(top: 20),
-          child: Text(msg, style: TextStyle(color: ThemeStyle.textColor)),
-        ),
-      ]),
+          //msg
+          Container(
+            margin: const EdgeInsets.only(top: 20),
+            child: Text(msg, style: TextStyle(color: ThemeStyle.textColor)),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -78,16 +78,16 @@ class DialogProxy {
 
   void initialize(Set<SmartInitType> initType) {
     if (initType.contains(SmartInitType.loading)) {
-      entryLoading = SmartOverlayEntry(builder: (_) {
-        return loadingInfo.loadingWidget.getWidget();
-      });
+      entryLoading = SmartOverlayEntry(
+        builder: (_) {
+          return loadingInfo.loadingWidget.getWidget();
+        },
+      );
       loadingInfo.loadingWidget = CustomLoading(overlayEntry: entryLoading);
     }
   }
 
-  Future<T?> show<T>({
-    required SmartShowCustomParam param,
-  }) {
+  Future<T?> show<T>({required SmartShowCustomParam param}) {
     CustomDialog? dialog;
     var entry = SmartOverlayEntry(
       builder: (BuildContext context) => dialog!.getWidget(),
@@ -96,9 +96,7 @@ class DialogProxy {
     return dialog.show<T>(param: param);
   }
 
-  Future<T?> showNotify<T>({
-    required SmartShowNotifyParam param,
-  }) {
+  Future<T?> showNotify<T>({required SmartShowNotifyParam param}) {
     CustomNotify? dialog;
     var entry = SmartOverlayEntry(
       builder: (BuildContext context) => dialog!.getWidget(),
@@ -107,9 +105,7 @@ class DialogProxy {
     return dialog.showNotify<T>(param: param);
   }
 
-  Future<T?> showAttach<T>({
-    required SmartShowAttachParam param,
-  }) {
+  Future<T?> showAttach<T>({required SmartShowAttachParam param}) {
     CustomDialog? dialog;
     var entry = SmartOverlayEntry(
       builder: (BuildContext context) => dialog!.getWidget(),
@@ -118,17 +114,13 @@ class DialogProxy {
     return dialog.showAttach<T>(param: param);
   }
 
-  Future<T?> showLoading<T>({
-    required SmartShowLoadingParam param,
-  }) {
+  Future<T?> showLoading<T>({required SmartShowLoadingParam param}) {
     loadingInfo.onBack = param.onBack;
     loadingInfo.backType = param.backType;
     return loadingInfo.loadingWidget.showLoading<T>(param: param);
   }
 
-  Future<void> showToast({
-    required SmartShowToastParam param,
-  }) {
+  Future<void> showToast({required SmartShowToastParam param}) {
     CustomToast? toast;
     var entry = SmartOverlayEntry(
       builder: (BuildContext context) => toast!.getWidget(),
@@ -136,8 +128,10 @@ class DialogProxy {
     toast = CustomToast(overlayEntry: entry);
     return toast.showToast(
       param: param.copyWith(
-        widget:
-            ToastHelper(consumeEvent: param.consumeEvent, child: param.widget),
+        widget: ToastHelper(
+          consumeEvent: param.consumeEvent,
+          child: param.widget,
+        ),
       ),
     );
   }

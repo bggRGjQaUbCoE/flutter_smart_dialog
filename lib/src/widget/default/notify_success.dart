@@ -3,10 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import '../../kit/view_utils.dart';
 
 class NotifySuccess extends StatelessWidget {
-  const NotifySuccess({
-    Key? key,
-    required this.msg,
-  }) : super(key: key);
+  const NotifySuccess({Key? key, required this.msg}) : super(key: key);
 
   final String msg;
 
@@ -18,13 +15,16 @@ class NotifySuccess extends StatelessWidget {
         color: ThemeStyle.backgroundColor,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Icon(Icons.check, size: 22, color: ThemeStyle.textColor),
-        Container(
-          margin: const EdgeInsets.only(top: 5),
-          child: Text(msg, style: TextStyle(color: ThemeStyle.textColor)),
-        ),
-      ]),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.check, size: 22, color: ThemeStyle.textColor),
+          Container(
+            margin: const EdgeInsets.only(top: 5),
+            child: Text(msg, style: TextStyle(color: ThemeStyle.textColor)),
+          ),
+        ],
+      ),
     );
   }
 }

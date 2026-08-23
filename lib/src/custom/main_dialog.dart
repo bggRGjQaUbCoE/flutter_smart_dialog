@@ -27,9 +27,7 @@ class MainDialog {
   Widget _widget;
   SmartAwaitOverType _awaitOverType = SmartAwaitOverType.dialogDismiss;
 
-  Future<T?> show<T>({
-    required SmartMainDialogParam param,
-  }) {
+  Future<T?> show<T>({required SmartMainDialogParam param}) {
     //custom dialog
     _widget = SmartDialogWidget(
       key: param.reuse ? _uniqueKey : UniqueKey(),
@@ -64,9 +62,7 @@ class MainDialog {
     return completer.future;
   }
 
-  Future<T?> showAttach<T>({
-    required SmartMainAttachParam param,
-  }) {
+  Future<T?> showAttach<T>({required SmartMainAttachParam param}) {
     //attach dialog
     _widget = AttachDialogWidget(
       key: _uniqueKey,

@@ -27,12 +27,15 @@ void main() {
     });
   });
 
-  testWidgets('onlyRefresh keeps refreshing after a mask dismissal',
-      (tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: const Scaffold(body: SizedBox.expand()),
-      builder: FlutterSmartDialog.init(),
-    ));
+  testWidgets('onlyRefresh keeps refreshing after a mask dismissal', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: const Scaffold(body: SizedBox.expand()),
+        builder: FlutterSmartDialog.init(),
+      ),
+    );
     await tester.pump();
 
     void showToast(String message) {
@@ -68,14 +71,15 @@ void main() {
     await tester.pump(const Duration(milliseconds: 200));
   });
 
-  testWidgets('works in a standalone Cupertino UI tree without a bridge',
-      (tester) async {
-    await tester.pumpWidget(cupertino.CupertinoApp(
-      home: const cupertino.CupertinoPageScaffold(
-        child: SizedBox.expand(),
+  testWidgets('works in a standalone Cupertino UI tree without a bridge', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      cupertino.CupertinoApp(
+        home: const cupertino.CupertinoPageScaffold(child: SizedBox.expand()),
+        builder: FlutterSmartDialog.init(),
       ),
-      builder: FlutterSmartDialog.init(),
-    ));
+    );
     await tester.pump();
 
     SmartDialog.showToast(

@@ -10,16 +10,14 @@ import '../widget/helper/smart_overlay_entry.dart';
 
 class CustomLoading extends BaseDialog {
   CustomLoading({required SmartOverlayEntry overlayEntry})
-      : super(overlayEntry);
+    : super(overlayEntry);
 
   Timer? _timer;
   Timer? _displayTimer;
   bool _canDismiss = false;
   Future Function()? _canDismissCallback;
 
-  Future<T?> showLoading<T>({
-    required SmartShowLoadingParam param,
-  }) {
+  Future<T?> showLoading<T>({required SmartShowLoadingParam param}) {
     List<SmartNonAnimationType> nonAnimations = [...param.nonAnimationTypes];
     var continueLoading = SmartNonAnimationType.continueLoading_nonAnimation;
     if (SmartDialog.config.loading.isExist &&

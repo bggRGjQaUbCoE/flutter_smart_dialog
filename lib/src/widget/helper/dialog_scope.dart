@@ -14,11 +14,8 @@ class DialogScopeInfo {
 }
 
 class DialogScope extends StatefulWidget {
-  DialogScope({
-    Key? key,
-    required this.controller,
-    required this.builder,
-  }) : super(key: key);
+  DialogScope({Key? key, required this.controller, required this.builder})
+    : super(key: key);
 
   final SmartDialogController? controller;
 
@@ -49,13 +46,15 @@ class _DialogScopeState extends State<DialogScope>
 
   @override
   void setController(SmartDialogController? controller) {
-    controller?._setListener(_callback = () {
-      ViewUtils.addSafeUse(() {
-        if (mounted) {
-          setState(() {});
-        }
-      });
-    });
+    controller?._setListener(
+      _callback = () {
+        ViewUtils.addSafeUse(() {
+          if (mounted) {
+            setState(() {});
+          }
+        });
+      },
+    );
   }
 
   @override

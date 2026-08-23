@@ -99,7 +99,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               _incrementCounter();
                             },
                             child: const Text("dfdfd"),
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -112,7 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
           ),
-          Container(width: 200, height: 40, color: Colors.red)
+          Container(width: 200, height: 40, color: Colors.red),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -133,11 +133,8 @@ class Page1 extends StatelessWidget {
     return PageView(
       children: const [
         Center(
-          child: Text(
-            "page1",
-            style: TextStyle(color: Colors.red),
-          ),
-        )
+          child: Text("page1", style: TextStyle(color: Colors.red)),
+        ),
       ],
     );
   }

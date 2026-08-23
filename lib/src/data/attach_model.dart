@@ -18,10 +18,7 @@ class AttachParam {
 }
 
 class AttachAdjustParam {
-  const AttachAdjustParam({
-    this.builder,
-    this.alignment,
-  });
+  const AttachAdjustParam({this.builder, this.alignment});
 
   final WidgetBuilder? builder;
   final Alignment? alignment;

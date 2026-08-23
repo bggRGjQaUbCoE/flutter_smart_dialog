@@ -70,18 +70,23 @@ class _HighlightMaskAnimationState extends State<HighlightMaskAnimation> {
           widget.maskColor,
           BlendMode.srcOut,
         ),
-        child: Stack(children: [
-          Container(
-            decoration: const BoxDecoration(
-              // any color
-              color: Colors.white,
-              backgroundBlendMode: BlendMode.dstOut,
+        child: Stack(
+          children: [
+            Container(
+              decoration: const BoxDecoration(
+                // any color
+                color: Colors.white,
+                backgroundBlendMode: BlendMode.dstOut,
+              ),
             ),
-          ),
 
-          //dissolve mask, highlight location
-          widget.highlightBuilder!.call(widget.targetOffset, widget.targetSize)
-        ]),
+            //dissolve mask, highlight location
+            widget.highlightBuilder!.call(
+              widget.targetOffset,
+              widget.targetSize,
+            ),
+          ],
+        ),
       );
     }
 

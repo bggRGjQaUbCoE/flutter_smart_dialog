@@ -4,22 +4,19 @@ import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 
 import '../attach_dialog_widget.dart';
 
-typedef AttachBuilder = Widget Function(
-  Widget child,
-  AttachAdjustParam? adjustParam,
-);
+typedef AttachBuilder =
+    Widget Function(Widget child, AttachAdjustParam? adjustParam);
 
-typedef BeforeBuilder = AttachAdjustParam Function(
-  Offset targetOffset,
-  Size targetSize,
-  Offset selfOffset,
-  Size selfSize,
-);
+typedef BeforeBuilder =
+    AttachAdjustParam Function(
+      Offset targetOffset,
+      Size targetSize,
+      Offset selfOffset,
+      Size selfSize,
+    );
 
-typedef CoverBuilder = List<Widget> Function(
-  Offset targetOffset,
-  Size targetSize,
-);
+typedef CoverBuilder =
+    List<Widget> Function(Offset targetOffset, Size targetSize);
 
 class AttachWidget extends StatefulWidget {
   const AttachWidget({
@@ -108,26 +105,30 @@ class _AttachWidgetState extends State<AttachWidget>
 
   @override
   Widget build(BuildContext context) {
-    var child = AdaptBuilder(builder: (context) {
-      _childContext = context;
-      return Opacity(opacity: _postFrameOpacity, child: _originChild);
-    });
+    var child = AdaptBuilder(
+      builder: (context) {
+        _childContext = context;
+        return Opacity(opacity: _postFrameOpacity, child: _originChild);
+      },
+    );
 
     List<Widget> below =
         widget.belowBuilder?.call(targetOffset, targetSize) ?? [];
     List<Widget> above =
         widget.aboveBuilder?.call(targetOffset, targetSize) ?? [];
-    return Stack(children: [
-      for (var belowWidget in below) belowWidget,
-      Positioned(
-        left: _targetRect?.left,
-        right: _targetRect?.right,
-        top: _targetRect?.top,
-        bottom: _targetRect?.bottom,
-        child: widget.builder(child, _adjustParam),
-      ),
-      for (var aboveWidget in above) aboveWidget,
-    ]);
+    return Stack(
+      children: [
+        for (var belowWidget in below) belowWidget,
+        Positioned(
+          left: _targetRect?.left,
+          right: _targetRect?.right,
+          top: _targetRect?.top,
+          bottom: _targetRect?.bottom,
+          child: widget.builder(child, _adjustParam),
+        ),
+        for (var aboveWidget in above) aboveWidget,
+      ],
+    );
   }
 
   void _resetState() {
@@ -152,8 +153,9 @@ class _AttachWidgetState extends State<AttachWidget>
       // targetBuilder can work without targetContext.
       if (widget.targetContext == null && !hasTargetInfo) {
         final fallbackOffset = widget.targetBuilder!(Offset.zero, Size.zero);
-        targetOffset =
-            _isValidOffset(fallbackOffset) ? fallbackOffset : Offset.zero;
+        targetOffset = _isValidOffset(fallbackOffset)
+            ? fallbackOffset
+            : Offset.zero;
         targetSize = Size.zero;
       }
     }
@@ -203,7 +205,8 @@ class _AttachWidgetState extends State<AttachWidget>
     } else if (alignment == Alignment.topRight) {
       _targetRect = _adjustReactInfo(
         bottom: screen.height - targetOffset.dy,
-        left: targetOffset.dx +
+        left:
+            targetOffset.dx +
             targetSize.width +
             _calculateDx(alignment, selfSize),
         fixedVertical: true,
@@ -241,7 +244,8 @@ class _AttachWidgetState extends State<AttachWidget>
     } else if (alignment == Alignment.bottomRight) {
       _targetRect = _adjustReactInfo(
         top: targetOffset.dy + targetSize.height,
-        left: targetOffset.dx +
+        left:
+            targetOffset.dx +
             targetSize.width +
             _calculateDx(alignment, selfSize),
         fixedVertical: true,
@@ -396,24 +400,27 @@ class _AttachWidgetState extends State<AttachWidget>
 }
 
 class AdaptBuilder extends StatelessWidget {
-  const AdaptBuilder({
-    Key? key,
-    required this.builder,
-  }) : super(key: key);
+  const AdaptBuilder({Key? key, required this.builder}) : super(key: key);
 
   final WidgetBuilder builder;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return Row(mainAxisSize: MainAxisSize.min, children: [
-      Column(mainAxisSize: MainAxisSize.min, children: [
-        Container(
-          constraints: BoxConstraints(maxWidth: size.width),
-          child: builder(context),
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              constraints: BoxConstraints(maxWidth: size.width),
+              child: builder(context),
+            ),
+          ],
         ),
-      ]),
-    ]);
+      ],
+    );
   }
 }
 

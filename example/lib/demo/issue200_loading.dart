@@ -72,16 +72,16 @@ class _DemoPageState extends State<DemoPage> {
       barrierDismissible: false,
       builder: (BuildContext ctx) {
         return Dialog(
-          insetPadding:
-              const EdgeInsets.symmetric(vertical: 24, horizontal: 32),
+          insetPadding: const EdgeInsets.symmetric(
+            vertical: 24,
+            horizontal: 32,
+          ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           child: PopScope(
             canPop: false,
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(8)),
               child: Center(
                 child: TextButton(
                   onPressed: () {
@@ -160,16 +160,17 @@ class _TestAnimationState extends State<TestAnimation>
 
   @override
   void initState() {
-    controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    )..addListener(() {
-        if (controller.value > .3 && !isStart) {
-          isStart = true;
+    controller =
+        AnimationController(
+          duration: const Duration(milliseconds: 300),
+          vsync: this,
+        )..addListener(() {
+          if (controller.value > .3 && !isStart) {
+            isStart = true;
 
-          bodyController.forward();
-        }
-      });
+            bodyController.forward();
+          }
+        });
 
     bodyController = AnimationController(
       duration: const Duration(milliseconds: 8000),

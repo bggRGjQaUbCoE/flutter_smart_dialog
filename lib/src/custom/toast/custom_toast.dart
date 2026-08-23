@@ -19,11 +19,11 @@ typedef ToastCallback = Function();
 class CustomToast extends BaseDialog {
   CustomToast({required SmartOverlayEntry overlayEntry}) : super(overlayEntry);
 
-  Future<void> showToast({
-    required SmartShowToastParam param,
-  }) async {
-    if (DebounceUtils.instance
-        .banContinue(DebounceType.toast, param.debounce)) {
+  Future<void> showToast({required SmartShowToastParam param}) async {
+    if (DebounceUtils.instance.banContinue(
+      DebounceType.toast,
+      param.debounce,
+    )) {
       return;
     }
 
@@ -104,12 +104,14 @@ class CustomToast extends BaseDialog {
   }) async {
     var toastQueue = ToastTool.instance.toastQueue;
     if (newToast) {
-      toastQueue.addLast(ToastInfo(
-        type: SmartToastType.normal,
-        mainDialog: mainDialog,
-        time: time,
-        onShowToast: onShowToast,
-      ));
+      toastQueue.addLast(
+        ToastInfo(
+          type: SmartToastType.normal,
+          mainDialog: mainDialog,
+          time: time,
+          onShowToast: onShowToast,
+        ),
+      );
 
       if (toastQueue.length > 1) {
         return;
@@ -118,10 +120,13 @@ class CustomToast extends BaseDialog {
 
     var curToast = toastQueue.first;
     curToast.onShowToast();
-    await ToastTool.instance.delay(time, onInvoke: () async {
-      await ToastTool.instance.dismiss();
-      ToastTool.instance.dispatchNext();
-    });
+    await ToastTool.instance.delay(
+      time,
+      onInvoke: () async {
+        await ToastTool.instance.dismiss();
+        ToastTool.instance.dispatchNext();
+      },
+    );
   }
 
   static Future<void> lastToast({
@@ -132,25 +137,32 @@ class CustomToast extends BaseDialog {
     var toastQueue = ToastTool.instance.toastQueue;
     if (toastQueue.isNotEmpty) {
       for (var item in toastQueue) {
-        await ViewUtils.awaitPostFrame(onPostFrame: () {
-          item.mainDialog.overlayEntry.remove();
-        });
+        await ViewUtils.awaitPostFrame(
+          onPostFrame: () {
+            item.mainDialog.overlayEntry.remove();
+          },
+        );
       }
       toastQueue.clear();
       ToastTool.instance.cancelLastDelay();
     }
 
-    toastQueue.addLast(ToastInfo(
-      type: SmartToastType.last,
-      mainDialog: mainDialog,
-      time: time,
-      onShowToast: onShowToast,
-    ));
+    toastQueue.addLast(
+      ToastInfo(
+        type: SmartToastType.last,
+        mainDialog: mainDialog,
+        time: time,
+        onShowToast: onShowToast,
+      ),
+    );
     var curToast = toastQueue.first;
     curToast.onShowToast();
-    await ToastTool.instance.delay(curToast.time, onInvoke: () {
-      ToastTool.instance.dismiss();
-    });
+    await ToastTool.instance.delay(
+      curToast.time,
+      onInvoke: () {
+        ToastTool.instance.dismiss();
+      },
+    );
   }
 
   static Timer? _onlyTime;
@@ -174,12 +186,14 @@ class CustomToast extends BaseDialog {
       // A previous onlyRefresh toast may have been dismissed manually. Its
       // controller is bound to the disposed DialogScope and must not be reused.
       _onlyToastController = null;
-      toastQueue.addLast(ToastInfo(
-        type: SmartToastType.onlyRefresh,
-        mainDialog: mainDialog,
-        time: time,
-        onShowToast: onShowToast!,
-      ));
+      toastQueue.addLast(
+        ToastInfo(
+          type: SmartToastType.onlyRefresh,
+          mainDialog: mainDialog,
+          time: time,
+          onShowToast: onShowToast!,
+        ),
+      );
 
       _onlyDialogScope = (widget as ToastHelper).child as DialogScope;
       onShowToast.call();
