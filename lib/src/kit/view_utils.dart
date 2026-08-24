@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
+import 'package:material_ui/material_ui.dart';
 
 class ViewUtils {
   static void addSafeUse(VoidCallback callback) {
@@ -15,7 +15,7 @@ class ViewUtils {
   }
 
   static Future<void> awaitSafeUse({VoidCallback? onPostFrame}) async {
-    final completer = Completer();
+    final completer = Completer<void>();
     var schedulerPhase = schedulerBinding.schedulerPhase;
     if (schedulerPhase == SchedulerPhase.persistentCallbacks) {
       widgetsBinding.addPostFrameCallback((timeStamp) {
@@ -31,7 +31,7 @@ class ViewUtils {
   }
 
   static Future<void> awaitPostFrame({VoidCallback? onPostFrame}) async {
-    final completer = Completer();
+    final completer = Completer<void>();
     widgetsBinding.addPostFrameCallback((timeStamp) {
       onPostFrame?.call();
       if (!completer.isCompleted) completer.complete();
@@ -46,6 +46,32 @@ class ViewUtils {
 
     var brightness = Theme.of(DialogProxy.contextNavigator!).brightness;
     return brightness == Brightness.dark;
+  }
+
+  static RenderBox? findRenderBox(BuildContext? context) {
+    if (context == null) return null;
+    try {
+      final renderObject = context.findRenderObject();
+      if (renderObject is RenderBox &&
+          renderObject.attached &&
+          renderObject.hasSize) {
+        return renderObject;
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  static void insertOverlayEntry(
+    BuildContext context,
+    OverlayEntry entry, {
+    OverlayEntry? below,
+  }) {
+    final overlayState = overlay(context);
+    try {
+      overlayState.insert(entry, below: below);
+    } catch (_) {
+      overlayState.insert(entry);
+    }
   }
 }
 

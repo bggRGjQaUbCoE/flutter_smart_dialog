@@ -1,37 +1,44 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:flutter_smart_dialog/src/custom/main_dialog.dart';
 import 'package:flutter_smart_dialog/src/custom/toast/toast_tool.dart';
 import 'package:flutter_smart_dialog/src/data/base_dialog.dart';
 import 'package:flutter_smart_dialog/src/data/show_param.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/kit/debounce_utils.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:flutter_smart_dialog/src/smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/dialog_scope.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/smart_overlay_entry.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/toast_helper.dart';
-
-typedef ToastCallback = Function();
+import 'package:material_ui/material_ui.dart';
 
 class CustomToast extends BaseDialog {
   CustomToast({required SmartOverlayEntry overlayEntry}) : super(overlayEntry);
 
-  Future<void> showToast({required SmartShowToastParam param}) async {
+  Future<void> showToast({required SmartShowToastParam param}) {
     if (DebounceUtils.instance.banContinue(
       DebounceType.toast,
       param.debounce,
     )) {
-      return;
+      return Future<void>.value();
     }
 
-    void showCurrentToast() {
-      SmartDialog.config.toast.isExist = true;
-      overlayEntry.remove();
-      overlay(DialogProxy.contextToast).insert(overlayEntry);
+    late ToastInfo info;
+    info = ToastInfo(
+      type: param.displayType,
+      mainDialog: mainDialog,
+      displayTime: param.displayTime,
+      onShow: () => _showCurrent(param, info),
+      refreshScope: _findDialogScope(param.widget),
+      refreshWidget: param.widget,
+    );
+    return ToastTool.instance.show(info);
+  }
 
-      mainDialog.show(
+  void _showCurrent(SmartShowToastParam param, ToastInfo info) {
+    ViewUtils.insertOverlayEntry(DialogProxy.contextToast, overlayEntry);
+    unawaited(
+      mainDialog.show<void>(
         param: SmartMainDialogParam(
           widget: param.widget,
           alignment: param.alignment,
@@ -57,210 +64,20 @@ class CustomToast extends BaseDialog {
                 DebounceUtils.instance.banContinue(DebounceType.mask, true)) {
               return;
             }
-            ToastTool.instance.dismiss();
+            unawaited(ToastTool.instance.dismissInfo(info));
           },
         ),
-      );
-    }
-
-    try {
-      switch (param.displayType) {
-        case SmartToastType.normal:
-          await normalToast(
-            time: param.displayTime,
-            onShowToast: showCurrentToast,
-            mainDialog: mainDialog,
-          );
-        case SmartToastType.last:
-          await lastToast(
-            time: param.displayTime,
-            onShowToast: showCurrentToast,
-            mainDialog: mainDialog,
-          );
-        case SmartToastType.onlyRefresh:
-          await onlyRefresh(
-            time: param.displayTime,
-            widget: param.widget,
-            onShowToast: showCurrentToast,
-            mainDialog: mainDialog,
-          );
-        case SmartToastType.multi:
-          await multiToast(
-            time: param.displayTime,
-            onShowToast: showCurrentToast,
-            mainDialog: mainDialog,
-          );
-      }
-    } catch (_) {}
-  }
-
-  ///--------------------------multi type toast--------------------------
-
-  static Future<void> normalToast({
-    required Duration time,
-    required ToastCallback onShowToast,
-    required MainDialog mainDialog,
-    bool newToast = true,
-  }) async {
-    var toastQueue = ToastTool.instance.toastQueue;
-    if (newToast) {
-      toastQueue.addLast(
-        ToastInfo(
-          type: SmartToastType.normal,
-          mainDialog: mainDialog,
-          time: time,
-          onShowToast: onShowToast,
-        ),
-      );
-
-      if (toastQueue.length > 1) {
-        return;
-      }
-    }
-
-    var curToast = toastQueue.first;
-    curToast.onShowToast();
-    await ToastTool.instance.delay(
-      time,
-      onInvoke: () async {
-        await ToastTool.instance.dismiss();
-        ToastTool.instance.dispatchNext();
-      },
-    );
-  }
-
-  static Future<void> lastToast({
-    required Duration time,
-    required ToastCallback onShowToast,
-    required MainDialog mainDialog,
-  }) async {
-    var toastQueue = ToastTool.instance.toastQueue;
-    if (toastQueue.isNotEmpty) {
-      for (var item in toastQueue) {
-        await ViewUtils.awaitPostFrame(
-          onPostFrame: () {
-            item.mainDialog.overlayEntry.remove();
-          },
-        );
-      }
-      toastQueue.clear();
-      ToastTool.instance.cancelLastDelay();
-    }
-
-    toastQueue.addLast(
-      ToastInfo(
-        type: SmartToastType.last,
-        mainDialog: mainDialog,
-        time: time,
-        onShowToast: onShowToast,
       ),
     );
-    var curToast = toastQueue.first;
-    curToast.onShowToast();
-    await ToastTool.instance.delay(
-      curToast.time,
-      onInvoke: () {
-        ToastTool.instance.dismiss();
-      },
-    );
   }
 
-  static Timer? _onlyTime;
-  static DialogScope? _onlyDialogScope;
-  static SmartDialogController? _onlyToastController;
-
-  static void resetForTest() {
-    _onlyTime?.cancel();
-    _onlyTime = null;
-    _onlyDialogScope = null;
-    _onlyToastController = null;
-  }
-
-  static Future<void> onlyRefresh({
-    required Duration time,
-    required Widget? widget,
-    required ToastCallback? onShowToast,
-    required MainDialog mainDialog,
-  }) async {
-    var toastQueue = ToastTool.instance.toastQueue;
-    if (toastQueue.length >= 2 ||
-        (toastQueue.isNotEmpty &&
-            toastQueue.first.type != SmartToastType.onlyRefresh)) {
-      ToastTool.instance.clearAllToast();
-    }
-
-    if (toastQueue.isEmpty) {
-      // A previous onlyRefresh toast may have been dismissed manually. Its
-      // controller is bound to the disposed DialogScope and must not be reused.
-      _onlyToastController = null;
-      toastQueue.addLast(
-        ToastInfo(
-          type: SmartToastType.onlyRefresh,
-          mainDialog: mainDialog,
-          time: time,
-          onShowToast: onShowToast!,
-        ),
-      );
-
-      _onlyDialogScope = (widget as ToastHelper).child as DialogScope;
-      onShowToast.call();
-    } else if (_onlyDialogScope != null) {
-      onShowToast = null;
-      var scope = _onlyDialogScope!;
-      if (_onlyToastController == null) {
-        if (scope.controller != null) {
-          _onlyToastController = scope.controller;
-        } else {
-          scope.info.action?.setController(
-            _onlyToastController = SmartDialogController(),
-          );
-        }
-      }
-      scope.info.action?.replaceBuilder(widget);
-      _onlyToastController?.refresh();
-    }
-
-    _onlyTime?.cancel();
-    _onlyTime = Timer(time, () async {
-      await ToastTool.instance.dismiss();
-      _onlyDialogScope = null;
-      _onlyToastController = null;
-    });
-  }
-
-  static Future<void> multiToast({
-    required Duration time,
-    required ToastCallback onShowToast,
-    required MainDialog mainDialog,
-  }) async {
-    onShowToast();
-    Timer(time, () async {
-      await mainDialog.dismiss();
-      mainDialog.overlayEntry.remove();
-    });
+  DialogScope? _findDialogScope(Widget widget) {
+    if (widget is! ToastHelper || widget.child is! DialogScope) return null;
+    return widget.child as DialogScope;
   }
 
   static Future<T?> dismiss<T>({bool closeAll = false}) async {
-    ToastTool.instance.dismiss(closeAll: closeAll);
-    await Future.delayed(SmartDialog.config.toast.animationTime);
-    await Future.delayed(const Duration(milliseconds: 50));
+    await ToastTool.instance.dismiss(closeAll: closeAll);
     return null;
   }
-}
-
-class ToastInfo {
-  ToastInfo({
-    required this.type,
-    required this.mainDialog,
-    required this.time,
-    required this.onShowToast,
-  });
-
-  final MainDialog mainDialog;
-
-  final SmartToastType type;
-
-  Duration time;
-
-  final ToastCallback onShowToast;
 }

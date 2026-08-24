@@ -85,10 +85,8 @@ class _ToastHelperState extends State<ToastHelper> {
       return false;
     }
 
-    final renderObject = childContext!.findRenderObject();
-    if (renderObject is! RenderBox ||
-        !renderObject.attached ||
-        !renderObject.hasSize) {
+    final renderObject = ViewUtils.findRenderBox(childContext);
+    if (renderObject == null) {
       _childToBottom = null;
       return false;
     }

@@ -73,7 +73,9 @@ class CustomDialog extends BaseDialog {
               param.permanent) {
             return;
           }
-          dismiss(closeType: CloseType.mask, tag: dialogInfo.tag);
+          unawaited(
+            dismiss<void>(closeType: CloseType.mask, tag: dialogInfo.tag),
+          );
         },
       ),
     );
@@ -105,7 +107,6 @@ class CustomDialog extends BaseDialog {
         targetContext: param.targetContext,
         widget: param.widget,
         targetBuilder: param.targetBuilder,
-        replaceBuilder: param.replaceBuilder,
         adjustBuilder: param.adjustBuilder,
         alignment: param.alignment,
         clickMaskDismiss: param.clickMaskDismiss,
@@ -126,7 +127,9 @@ class CustomDialog extends BaseDialog {
               param.permanent) {
             return;
           }
-          dismiss(closeType: CloseType.mask, tag: dialogInfo.tag);
+          unawaited(
+            dismiss<void>(closeType: CloseType.mask, tag: dialogInfo.tag),
+          );
         },
         highlightBuilder: param.highlightBuilder,
         onDismiss: _handleDismiss(
@@ -154,7 +157,9 @@ class CustomDialog extends BaseDialog {
     Timer? timer;
     final tag = dialogInfo.tag;
     if (displayTime != null && tag != null) {
-      timer = Timer(displayTime, () => dismiss(tag: tag));
+      timer = Timer(displayTime, () {
+        unawaited(dismiss<void>(tag: tag));
+      });
       dialogInfo.displayTimer = timer;
     }
 
@@ -241,16 +246,13 @@ class CustomDialog extends BaseDialog {
       BuildContext overlayContext = dialogInfo.type == DialogType.custom
           ? DialogProxy.contextCustom
           : DialogProxy.contextAttach;
-      try {
-        overlay(overlayContext).insert(
-          overlayEntry,
-          below: firstNotify != null
-              ? firstNotify.dialog.overlayEntry
-              : proxy.entryLoading,
-        );
-      } catch (e) {
-        overlay(overlayContext).insert(overlayEntry);
-      }
+      ViewUtils.insertOverlayEntry(
+        overlayContext,
+        overlayEntry,
+        below: firstNotify != null
+            ? firstNotify.dialog.overlayEntry
+            : proxy.entryLoading,
+      );
     });
   }
 
@@ -261,35 +263,31 @@ class CustomDialog extends BaseDialog {
     bool force = false,
     CloseType closeType = CloseType.normal,
   }) {
-    final DialogType allType;
-    switch (type) {
-      case DialogType.dialog:
-      case DialogType.custom:
-      case DialogType.attach:
-        return _closeSingle<T>(
-          type: type,
-          tag: tag,
-          result: result,
-          force: force,
-          closeType: closeType,
-        );
-      case DialogType.allDialog:
-        allType = DialogType.dialog;
-      case DialogType.allCustom:
-        allType = DialogType.custom;
-      case DialogType.allAttach:
-        allType = DialogType.attach;
-      case DialogType.notify:
-      case DialogType.allNotify:
-        return null;
+    if (type == DialogType.dialog ||
+        type == DialogType.custom ||
+        type == DialogType.attach) {
+      return _closeSingle<T>(
+        type: type,
+        tag: tag,
+        result: result,
+        force: force,
+        closeType: closeType,
+      );
+    } else {
+      DialogType? allType;
+      if (type == DialogType.allDialog) allType = DialogType.dialog;
+      if (type == DialogType.allCustom) allType = DialogType.custom;
+      if (type == DialogType.allAttach) allType = DialogType.attach;
+      if (allType == null) return null;
+
+      return _closeAll<T>(
+        type: allType,
+        tag: tag,
+        result: result,
+        force: force,
+        closeType: closeType,
+      );
     }
-    return _closeAll<T>(
-      type: allType,
-      tag: tag,
-      result: result,
-      force: force,
-      closeType: closeType,
-    );
   }
 
   static Future<void> _closeAll<T>({
@@ -299,14 +297,9 @@ class CustomDialog extends BaseDialog {
     required bool force,
     required CloseType closeType,
   }) async {
-    for (int i = DialogProxy.instance.dialogQueue.length; i > 0; i--) {
-      await _closeSingle<T>(
-        type: type,
-        tag: tag,
-        result: result,
-        force: force,
-        closeType: closeType,
-      );
+    final dialogs = _getDialogsForCloseAll(type: type, tag: tag, force: force);
+    for (final info in dialogs) {
+      await _closeInfo<T>(info: info, result: result, closeType: closeType);
     }
   }
 
@@ -325,6 +318,14 @@ class CustomDialog extends BaseDialog {
     );
     if (info == null || (info.permanent && !force)) return;
 
+    await _closeInfo<T>(info: info, result: result, closeType: closeType);
+  }
+
+  static Future<void> _closeInfo<T>({
+    required DialogInfo info,
+    required T? result,
+    required CloseType closeType,
+  }) async {
     //handle close dialog
     var proxy = DialogProxy.instance;
     proxy.dialogQueue.remove(info);
@@ -353,6 +354,44 @@ class CustomDialog extends BaseDialog {
     customDialog.overlayEntry.remove();
   }
 
+  static List<DialogInfo> _getDialogsForCloseAll({
+    required DialogType type,
+    required String? tag,
+    required bool force,
+  }) {
+    final queue = DialogProxy.instance.dialogQueue;
+    if (tag != null) {
+      final matches = <DialogInfo>[];
+      for (final info in queue) {
+        if (info.tag != tag) continue;
+        if (info.permanent && !force) break;
+        matches.add(info);
+      }
+      return matches;
+    }
+
+    final dialogs = queue.toList(growable: false).reversed;
+    final matches = <DialogInfo>[];
+    if (force) {
+      matches.addAll(dialogs.where((info) => info.permanent));
+    }
+    for (final info in dialogs) {
+      if (info.permanent) {
+        if (!force &&
+            info.dialog.mainDialog.visible &&
+            (type == DialogType.dialog || info.type == type)) {
+          break;
+        }
+        continue;
+      }
+      if (!info.dialog.mainDialog.visible && !info.useSystem) continue;
+      if (type == DialogType.dialog || info.type == type) {
+        matches.add(info);
+      }
+    }
+    return matches;
+  }
+
   static DialogInfo? _getDialog({
     DialogType type = DialogType.dialog,
     String? tag,
@@ -364,35 +403,30 @@ class CustomDialog extends BaseDialog {
 
     DialogInfo? info;
     var dialogQueue = proxy.dialogQueue;
-    var list = dialogQueue.toList();
 
     //handle dialog with tag
     if (tag != null) {
-      for (var i = dialogQueue.length - 1; i >= 0; i--) {
-        if (dialogQueue.isEmpty) break;
-        if (list[i].tag == tag) info = list[i];
+      for (final item in dialogQueue) {
+        if (item.tag == tag) return item;
       }
-      return info;
+      return null;
     }
 
     //handle permanent dialog
     if (force) {
-      for (var i = dialogQueue.length - 1; i >= 0; i--) {
-        if (dialogQueue.isEmpty) break;
-        if (list[i].permanent) return list[i];
+      for (final item in dialogQueue) {
+        if (item.permanent) info = item;
       }
+      if (info != null) return info;
     }
 
     //handle normal dialog
-    for (var i = dialogQueue.length - 1; i >= 0; i--) {
-      if (dialogQueue.isEmpty) break;
-      var item = list[i];
+    for (final item in dialogQueue) {
       if (!item.dialog.mainDialog.visible && !item.useSystem) {
         continue;
       }
       if (type == DialogType.dialog || item.type == type) {
         info = item;
-        break;
       }
     }
 

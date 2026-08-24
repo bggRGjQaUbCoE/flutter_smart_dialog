@@ -1,15 +1,18 @@
 import 'dart:async';
 
-import 'package:material_ui/material_ui.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/config/enum_config.dart';
 import 'package:flutter_smart_dialog/src/config/smart_config.dart';
+import 'package:flutter_smart_dialog/src/config/smart_config_attach.dart';
+import 'package:flutter_smart_dialog/src/config/smart_config_custom.dart';
+import 'package:flutter_smart_dialog/src/config/smart_config_loading.dart';
+import 'package:flutter_smart_dialog/src/config/smart_config_toast.dart';
 import 'package:flutter_smart_dialog/src/data/animation_param.dart';
 import 'package:flutter_smart_dialog/src/data/show_param.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/kit/dialog_kit.dart';
 import 'package:flutter_smart_dialog/src/kit/typedef.dart';
-import 'package:flutter_smart_dialog/src/widget/attach_dialog_widget.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/dialog_scope.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SmartDialog {
   SmartDialog._();
@@ -17,7 +20,11 @@ class SmartDialog {
   /// SmartDialog global config
   ///
   /// SmartDialog全局配置
-  static SmartConfig config = DialogProxy.instance.config;
+  static SmartConfig get config => DialogProxy.instance.config;
+
+  static set config(SmartConfig value) {
+    DialogProxy.instance.config = value;
+  }
 
   /// custom dialog
   ///
@@ -57,9 +64,6 @@ class SmartDialog {
   /// note: Using the [displayTime] param will disable the use of the [tag] param
   ///
   /// [tag]：If you set a tag for the dialog, you can turn it off in a targeted manner
-  ///
-  /// [backDismiss]：true（the back event will close the dialog but not close the page），
-  /// false（the back event not close the dialog and not close page），you still can use the dismiss method to close the dialog
   ///
   /// [keepSingle]：default (false), true (calling [show] multiple times will not generate multiple dialogs,
   /// only single dialog will be kept), false (calling [show] multiple times will generate multiple dialogs)
@@ -129,9 +133,6 @@ class SmartDialog {
   ///
   /// [tag]：如果你给dialog设置了tag, 你可以针对性的关闭它
   ///
-  /// [backDismiss]：true（返回事件将关闭dialog，但是不会关闭页面），
-  /// false（返回事件不会关闭loading，也不会关闭页面），你仍然可以使用dismiss方法来关闭dialog
-  ///
   /// [keepSingle]：默认（false），true（多次调用[show]并不会生成多个dialog，仅仅保持一个dialog），
   /// false（多次调用[show]会生成多个dialog）
   ///
@@ -173,7 +174,6 @@ class SmartDialog {
     VoidCallback? onMask,
     Duration? displayTime,
     String? tag,
-    @Deprecated("please use backType") bool? backDismiss,
     bool? keepSingle,
     bool? permanent,
     bool? useSystem,
@@ -218,11 +218,7 @@ class SmartDialog {
       bindPage: (bindPage ?? config.custom.bindPage) && bindWidget == null,
       bindWidget: bindWidget,
       ignoreArea: ignoreArea,
-      backType:
-          backType ??
-          (backDismiss == null
-              ? config.custom.backType
-              : (backDismiss ? SmartBackType.normal : SmartBackType.block)),
+      backType: backType ?? config.custom.backType,
       onBack: onBack,
     );
     return DialogProxy.instance.show<T>(param: param);
@@ -233,8 +229,6 @@ class SmartDialog {
   /// [targetContext]：BuildContext with target widget
   ///
   /// [builder]：the custom dialog
-  ///
-  /// [replaceBuilder]：deprecated, please use adjustBuilder
   ///
   /// [adjustBuilder]：The widget returned in [adjustBuilder] will replace the widget returned in [builder];
   /// [adjustBuilder] will callback the offset and size of the target widget and the offset and size of the dialog itself.
@@ -294,9 +288,6 @@ class SmartDialog {
   ///
   /// [tag]：if you set a tag for the dialog, you can turn it off in a targeted manner
   ///
-  /// [backDismiss]：true（the back event will close the dialog but not close the page），
-  /// false（the back event not close the dialog and not close page），you still can use the dismiss method to close the dialog
-  ///
   /// [keepSingle]：default (false), true (calling [showAttach] multiple times will not generate multiple dialogs,
   /// only single dialog will be kept), false (calling [showAttach] multiple times will generate multiple dialogs)
   ///
@@ -329,8 +320,6 @@ class SmartDialog {
   /// [targetContext]：伴随位置widget的BuildContext
   ///
   /// [builder]：自定义 dialog
-  ///
-  /// [replaceBuilder]：已废弃, 请使用adjustBuilder
   ///
   /// [adjustBuilder]：[adjustBuilder]中返回widget会替换掉[builder]中返回的widget;
   /// [adjustBuilder]将回调目标widget的坐标,大小和dialog自身的坐标,大小,你可以根据这些参数,重新自定义一个合适的替换widget,
@@ -382,9 +371,6 @@ class SmartDialog {
   ///
   /// [tag]：如果你给dialog设置了tag, 你可以针对性的关闭它
   ///
-  /// [backDismiss]：true（返回事件将关闭dialog，但是不会关闭页面），
-  /// false（返回事件不会关闭loading，也不会关闭页面），你仍然可以使用dismiss方法来关闭dialog
-  ///
   /// [keepSingle]：默认（false），true（多次调用[showAttach]并不会生成多个dialog，仅仅保持一个dialog），
   /// false（多次调用[showAttach]会生成多个dialog）
   ///
@@ -407,7 +393,6 @@ class SmartDialog {
   static Future<T?> showAttach<T>({
     required BuildContext? targetContext,
     required WidgetBuilder builder,
-    @Deprecated("Please use adjustBuilder") ReplaceBuilder? replaceBuilder,
     AdjustBuilder? adjustBuilder,
     SmartDialogController? controller,
     TargetBuilder? targetBuilder,
@@ -429,7 +414,6 @@ class SmartDialog {
     VoidCallback? onDismiss,
     Duration? displayTime,
     String? tag,
-    @Deprecated("please use backType") bool? backDismiss,
     bool? keepSingle,
     bool? permanent,
     bool? useSystem,
@@ -458,7 +442,6 @@ class SmartDialog {
         builder: (context) => builder(context),
       ),
       targetBuilder: targetBuilder,
-      replaceBuilder: replaceBuilder,
       adjustBuilder: adjustBuilder,
       alignment: alignment ?? config.attach.alignment,
       clickMaskDismiss: clickMaskDismiss ?? config.attach.clickMaskDismiss,
@@ -484,11 +467,7 @@ class SmartDialog {
       bindPage: (bindPage ?? config.attach.bindPage) && bindWidget == null,
       bindWidget: bindWidget,
       ignoreArea: null,
-      backType:
-          backType ??
-          (backDismiss == null
-              ? config.attach.backType
-              : (backDismiss ? SmartBackType.normal : SmartBackType.block)),
+      backType: backType ?? config.attach.backType,
       onBack: onBack,
     );
     return DialogProxy.instance.showAttach<T>(param: param);
@@ -623,12 +602,12 @@ class SmartDialog {
             builder ??
             (context) {
               var notifyStyle = DialogProxy.instance.notifyStyle;
-              var widget = switch (notifyType) {
+              final widget = switch (notifyType) {
                 NotifyType.success => notifyStyle.successBuilder?.call(msg),
                 NotifyType.failure => notifyStyle.failureBuilder?.call(msg),
                 NotifyType.warning => notifyStyle.warningBuilder?.call(msg),
-                NotifyType.error => notifyStyle.errorBuilder?.call(msg),
                 NotifyType.alert => notifyStyle.alertBuilder?.call(msg),
+                NotifyType.error => notifyStyle.errorBuilder?.call(msg),
               };
               return widget ?? const SizedBox.shrink();
             },
@@ -690,10 +669,6 @@ class SmartDialog {
   /// [displayTime]：Controls the display time of the dialog on the screen;
   /// the default is null, if it is null, it means that the param will not control the dialog to close
   ///
-  /// [backDismiss]：true（the back event will close the loading but not close the page），
-  /// false（the back event not close the loading and not close page），
-  /// you still can use the dismiss method to close the loading
-  ///
   /// [backType]：For different processing types of return events,
   /// please refer to the description of [SmartBackType] for details
   ///
@@ -735,9 +710,6 @@ class SmartDialog {
   ///
   /// [displayTime]：控制弹窗在屏幕上显示时间; 默认为null, 为null则代表该参数不会控制弹窗关闭
   ///
-  /// [backDismiss]：true（返回事件将关闭loading，但是不会关闭页面），false（返回事件不会关闭loading，也不会关闭页面），
-  /// 你仍然可以使用dismiss方法来关闭loading
-  ///
   /// [backType]：对于返回事件不同的处理类型, 具体可参照[SmartBackType]说明
   ///
   /// [onBack]：返回事件监听，返回true，代表拦截此次返回事件；返回false，代表不拦截，正常执行关闭弹窗等操作
@@ -759,7 +731,6 @@ class SmartDialog {
     VoidCallback? onDismiss,
     VoidCallback? onMask,
     Duration? displayTime,
-    @Deprecated("please use backType") bool? backDismiss,
     SmartBackType? backType,
     SmartOnBack? onBack,
     WidgetBuilder? builder,
@@ -786,11 +757,7 @@ class SmartDialog {
       onDismiss: onDismiss,
       onMask: onMask,
       displayTime: displayTime,
-      backType:
-          backType ??
-          (backDismiss == null
-              ? config.loading.backType
-              : (backDismiss ? SmartBackType.normal : SmartBackType.block)),
+      backType: backType ?? config.loading.backType,
       onBack: onBack,
     );
     return DialogProxy.instance.showLoading<T>(param: param);

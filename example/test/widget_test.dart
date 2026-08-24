@@ -6,8 +6,8 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:example/main.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
 void main() {
   testWidgets('standalone Material UI example shows a SmartDialog toast', (

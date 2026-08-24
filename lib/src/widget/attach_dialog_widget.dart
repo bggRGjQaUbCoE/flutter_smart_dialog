@@ -1,36 +1,19 @@
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/config/enum_config.dart';
 import 'package:flutter_smart_dialog/src/data/animation_param.dart';
+import 'package:flutter_smart_dialog/src/data/attach_model.dart';
 import 'package:flutter_smart_dialog/src/data/base_controller.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
+import 'package:flutter_smart_dialog/src/kit/typedef.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/fade_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/highlight_mask_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/scale_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/size_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/attach_widget.dart';
+import 'package:flutter_smart_dialog/src/widget/helper/dialog_animation_lifecycle.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/dialog_scope.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/mask_event.dart';
 import 'package:material_ui/material_ui.dart';
-
-typedef HighlightBuilder =
-    Positioned Function(
-      Offset targetOffset,
-      Size targetSize,
-    );
-
-typedef TargetBuilder = Offset Function(Offset targetOffset, Size targetSize);
-
-typedef ReplaceBuilder =
-    Widget Function(
-      Offset targetOffset,
-      Size targetSize,
-      Offset selfOffset,
-      Size selfSize,
-    );
-
-typedef AdjustBuilder = AttachAdjustParam Function(AttachParam attachParam);
-
-typedef ScalePointBuilder = Offset Function(Size selfSize);
 
 class AttachDialogWidget extends StatefulWidget {
   const AttachDialogWidget({
@@ -38,7 +21,6 @@ class AttachDialogWidget extends StatefulWidget {
     required this.child,
     required this.targetContext,
     required this.targetBuilder,
-    required this.replaceBuilder,
     required this.adjustBuilder,
     required this.controller,
     required this.animationTime,
@@ -62,8 +44,6 @@ class AttachDialogWidget extends StatefulWidget {
 
   /// 自定义坐标点
   final TargetBuilder? targetBuilder;
-
-  final ReplaceBuilder? replaceBuilder;
 
   final AdjustBuilder? adjustBuilder;
 
@@ -123,8 +103,7 @@ class AttachDialogWidget extends StatefulWidget {
 class _AttachDialogWidgetState extends State<AttachDialogWidget>
     with TickerProviderStateMixin {
   // animation
-  AnimationController? _maskController;
-  late AnimationController _bodyController;
+  DialogAnimationLifecycle? _animationLifecycle;
   AnimationParam? _animationParam;
 
   // target info
@@ -141,28 +120,19 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
   }
 
   void _resetState() {
-    var startTime = widget.animationTime;
-    var openDialog = SmartNonAnimationType.openDialog_nonAnimation;
-    if (widget.nonAnimationTypes.contains(openDialog)) {
-      startTime = Duration.zero;
-    }
-    if (!widget.useAnimation) {
-      startTime = Duration.zero;
-    }
+    final startTime = resolveOpenAnimationDuration(
+      animationTime: widget.animationTime,
+      useAnimation: widget.useAnimation,
+      nonAnimationTypes: widget.nonAnimationTypes,
+    );
 
-    if (_maskController == null) {
-      _maskController = AnimationController(vsync: this, duration: startTime);
-      _bodyController = AnimationController(vsync: this, duration: startTime);
-
-      _maskController!.duration = startTime;
-      _bodyController.duration = startTime;
-      _maskController!.forward();
-      _bodyController.forward();
+    if (_animationLifecycle == null) {
+      _animationLifecycle = DialogAnimationLifecycle(
+        vsync: this,
+        duration: startTime,
+      );
     } else {
-      _maskController!.duration = startTime;
-      _bodyController.duration = startTime;
-      _bodyController.value = 0;
-      _bodyController.forward();
+      _animationLifecycle!.restart(startTime);
     }
 
     ViewUtils.addSafeUse(() {
@@ -206,7 +176,7 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
               maskTriggerType: widget.maskTriggerType,
               onMask: widget.onMask,
               child: HighlightMaskAnimation(
-                controller: _maskController!,
+                controller: _animationLifecycle!.maskController,
                 maskColor: widget.maskColor,
                 maskWidget: widget.maskWidget,
                 usePenetrate: widget.usePenetrate,
@@ -230,28 +200,6 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
   ) {
     AttachAdjustParam? adjustParam;
 
-    //替换控件builder
-    if (widget.replaceBuilder != null) {
-      Widget replaceChildBuilder() {
-        return widget.replaceBuilder!(
-          targetOffset,
-          targetSize,
-          selfOffset,
-          selfSize,
-        );
-      }
-
-      //必须要写在DialogScope的builder之外,保证在scalePointBuilder之前触发replaceBuilder
-      replaceChildBuilder();
-      //保证controller能刷新replaceBuilder
-      if (widget.child is DialogScope) {
-        _child = DialogScope(
-          controller: (widget.child as DialogScope).controller,
-          builder: (context) => replaceChildBuilder(),
-        );
-      }
-    }
-
     // 处理调整组件
     if (widget.adjustBuilder != null) {
       adjustParam = widget.adjustBuilder!(
@@ -268,7 +216,7 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
       if (adjustWidgetBuilder != null) {
         // 必须要写在DialogScope的builder之外,保证在scalePointBuilder之前触发adjustBuilder
         adjustWidgetBuilder(context);
-        //保证controller能刷新replaceBuilder
+        // 保证 controller 能刷新 adjustBuilder 返回的组件
         if (widget.child is DialogScope) {
           _child = DialogScope(
             controller: (widget.child as DialogScope).controller,
@@ -300,7 +248,7 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
     var alignment = adjustParam?.alignment ?? widget.alignment;
     if (widget.animationBuilder != null) {
       return widget.animationBuilder!.call(
-        _bodyController,
+        _animationLifecycle!.bodyController,
         child,
         _animationParam = AnimationParam(
           alignment: alignment,
@@ -309,69 +257,51 @@ class _AttachDialogWidgetState extends State<AttachDialogWidget>
       );
     }
 
-    Widget fade() => FadeAnimation(controller: _bodyController, child: child);
+    var type = widget.animationType;
+    final bodyController = _animationLifecycle!.bodyController;
+    Widget fade() => FadeAnimation(controller: bodyController, child: child);
     Widget scale() => ScaleAnimation(
-      controller: _bodyController,
+      controller: bodyController,
       alignment: _scaleAlignment ?? Alignment.center,
       child: child,
     );
     Widget size() => SizeAnimation(
       alignment: alignment,
-      controller: _bodyController,
+      controller: bodyController,
       child: child,
     );
-
-    //select different animation
-    switch (widget.animationType) {
-      case SmartAnimationType.fade:
-        return fade();
-      case SmartAnimationType.scale:
-        return scale();
-      case SmartAnimationType.centerFade_otherSlide:
-        if (alignment == Alignment.center) {
-          return fade();
-        } else {
-          return size();
-        }
-      case SmartAnimationType.centerScale_otherSlide:
-        if (alignment == Alignment.center) {
-          return scale();
-        } else {
-          return size();
-        }
-    }
+    return switch (type) {
+      SmartAnimationType.fade => fade(),
+      SmartAnimationType.scale => scale(),
+      SmartAnimationType.centerFade_otherSlide =>
+        alignment == Alignment.center ? fade() : size(),
+      SmartAnimationType.centerScale_otherSlide =>
+        alignment == Alignment.center ? scale() : size(),
+    };
   }
 
   ///等待动画结束,关闭动画资源
   Future<void> dismiss({CloseType closeType = CloseType.normal}) async {
-    if (_maskController == null) return;
+    final animationLifecycle = _animationLifecycle;
+    if (animationLifecycle == null) return;
 
-    // dismiss type
-    var endTime = widget.animationTime;
-    for (var dismissType in widget.nonAnimationTypes) {
-      if (widget.controller.judgeDismissDialogType(closeType, dismissType)) {
-        endTime = Duration.zero;
-      }
-    }
-    if (!widget.useAnimation) {
-      endTime = Duration.zero;
-    }
-
-    _maskController!.duration = endTime;
-    _bodyController.duration = endTime;
-
-    //over animation
-    _maskController!.reverse();
-    _bodyController.reverse();
-    _animationParam?.onDismiss?.call();
-    await Future.delayed(endTime);
+    final endTime = resolveDismissAnimationDuration(
+      animationTime: widget.animationTime,
+      useAnimation: widget.useAnimation,
+      nonAnimationTypes: widget.nonAnimationTypes,
+      controller: widget.controller,
+      closeType: closeType,
+    );
+    await animationLifecycle.dismiss(
+      endTime,
+      onDismiss: _animationParam?.onDismiss,
+    );
   }
 
   @override
   void dispose() {
-    _maskController?.dispose();
-    _maskController = null;
-    _bodyController.dispose();
+    _animationLifecycle?.dispose();
+    _animationLifecycle = null;
     super.dispose();
   }
 }

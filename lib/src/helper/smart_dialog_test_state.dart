@@ -1,8 +1,8 @@
 import 'package:flutter_smart_dialog/src/custom/toast/toast_tool.dart';
-import 'package:flutter_smart_dialog/src/kit/debounce_utils.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/monitor_widget_helper.dart';
 import 'package:flutter_smart_dialog/src/helper/route_record.dart';
+import 'package:flutter_smart_dialog/src/kit/debounce_utils.dart';
 
 /// Deterministic cleanup for tests that exercise process-wide singleton state.
 ///

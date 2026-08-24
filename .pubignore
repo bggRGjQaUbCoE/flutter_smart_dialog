@@ -3,6 +3,7 @@
 .pub/
 build/
 coverage/
+doc/api/
 pubspec.lock
 **/Flutter/ephemeral/flutter_native_integration.env
 .github/

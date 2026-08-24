@@ -64,7 +64,9 @@ class CustomNotify extends BaseDialog {
               DebounceUtils.instance.banContinue(DebounceType.mask, true)) {
             return;
           }
-          dismiss(closeType: CloseType.mask, tag: notifyInfo.tag);
+          unawaited(
+            dismiss<void>(closeType: CloseType.mask, tag: notifyInfo.tag),
+          );
         },
       ),
     );
@@ -82,7 +84,9 @@ class CustomNotify extends BaseDialog {
     Timer? timer;
     final tag = notifyInfo.tag;
     if (displayTime != null && tag != null) {
-      timer = Timer(displayTime, () => dismiss(tag: tag));
+      timer = Timer(displayTime, () {
+        unawaited(dismiss<void>(tag: tag));
+      });
       notifyInfo.displayTimer = timer;
     }
 
@@ -138,13 +142,11 @@ class CustomNotify extends BaseDialog {
 
     // insert the dialog carrier into the page
     ViewUtils.addSafeUse(() {
-      try {
-        overlay(
-          DialogProxy.contextNotify,
-        ).insert(overlayEntry, below: proxy.entryLoading);
-      } catch (e) {
-        overlay(DialogProxy.contextNotify).insert(overlayEntry);
-      }
+      ViewUtils.insertOverlayEntry(
+        DialogProxy.contextNotify,
+        overlayEntry,
+        below: proxy.entryLoading,
+      );
     });
   }
 
@@ -167,8 +169,12 @@ class CustomNotify extends BaseDialog {
     required T? result,
     required CloseType closeType,
   }) async {
-    for (int i = DialogProxy.instance.notifyQueue.length; i > 0; i--) {
-      await _closeSingle<T>(tag: tag, result: result, closeType: closeType);
+    final queue = DialogProxy.instance.notifyQueue;
+    final notifications = tag == null
+        ? queue.toList(growable: false).reversed
+        : queue.where((info) => info.tag == tag);
+    for (final info in notifications.toList(growable: false)) {
+      await _closeInfo<T>(info: info, result: result, closeType: closeType);
     }
   }
 
@@ -180,6 +186,14 @@ class CustomNotify extends BaseDialog {
     var info = _getDialog(tag: tag);
     if (info == null) return;
 
+    await _closeInfo<T>(info: info, result: result, closeType: closeType);
+  }
+
+  static Future<void> _closeInfo<T>({
+    required NotifyInfo info,
+    required T? result,
+    required CloseType closeType,
+  }) async {
     //handle close dialog
     var proxy = DialogProxy.instance;
     proxy.notifyQueue.remove(info);
@@ -201,23 +215,16 @@ class CustomNotify extends BaseDialog {
     var proxy = DialogProxy.instance;
     if (proxy.notifyQueue.isEmpty) return null;
 
-    NotifyInfo? info;
     var notifyQueue = proxy.notifyQueue;
-    var list = notifyQueue.toList();
 
     //handle dialog with tag
     if (tag != null) {
-      for (var i = notifyQueue.length - 1; i >= 0; i--) {
-        if (notifyQueue.isEmpty) break;
-        if (list[i].tag == tag) info = list[i];
+      for (final info in notifyQueue) {
+        if (info.tag == tag) return info;
       }
-      return info;
+      return null;
     }
 
-    if (notifyQueue.isNotEmpty) {
-      info = list[list.length - 1];
-    }
-
-    return info;
+    return notifyQueue.last;
   }
 }

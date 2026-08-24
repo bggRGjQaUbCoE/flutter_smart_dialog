@@ -1,3 +1,5 @@
+/// A configurable overlay dialog toolkit for custom dialogs, attached
+/// popovers, loading indicators, notifications, and toast messages.
 library;
 
 /// config

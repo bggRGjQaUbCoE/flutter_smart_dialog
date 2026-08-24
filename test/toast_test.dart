@@ -16,14 +16,14 @@ void main() {
       displayTime: const Duration(milliseconds: 100),
       animationTime: Duration.zero,
       useAnimation: false,
-    );
+    ).ignore();
     SmartDialog.showToast(
       'normal-second',
       displayType: SmartToastType.normal,
       displayTime: const Duration(milliseconds: 100),
       animationTime: Duration.zero,
       useAnimation: false,
-    );
+    ).ignore();
     await tester.pump();
     expect(find.text('normal-first'), findsOneWidget);
     expect(find.text('normal-second'), findsNothing);
@@ -40,6 +40,71 @@ void main() {
     await disposeSmartDialogApp(tester);
   });
 
+  testWidgets('last replaces the serial toast and dismisses it once', (
+    tester,
+  ) async {
+    await pumpSmartDialogApp(tester);
+    var oldDismissCount = 0;
+
+    SmartDialog.showToast(
+      'last-old',
+      displayType: SmartToastType.normal,
+      displayTime: const Duration(seconds: 1),
+      useAnimation: false,
+      onDismiss: () => oldDismissCount++,
+    ).ignore();
+    await tester.pump();
+    final lastFuture = SmartDialog.showToast(
+      'last-new',
+      displayType: SmartToastType.last,
+      displayTime: const Duration(milliseconds: 100),
+      useAnimation: false,
+    );
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(milliseconds: 1));
+    }
+
+    expect(find.text('last-old'), findsNothing);
+    expect(find.text('last-new'), findsOneWidget);
+    expect(oldDismissCount, 1);
+
+    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pump();
+    await tester.pump();
+    await lastFuture;
+    await disposeSmartDialogApp(tester);
+  });
+
+  testWidgets('a replaced onlyRefresh timer cannot close a newer toast', (
+    tester,
+  ) async {
+    await pumpSmartDialogApp(tester);
+
+    SmartDialog.showToast(
+      'stale-only-refresh',
+      displayType: SmartToastType.onlyRefresh,
+      displayTime: const Duration(milliseconds: 100),
+      useAnimation: false,
+    ).ignore();
+    await tester.pump(const Duration(milliseconds: 10));
+    SmartDialog.showToast(
+      'newer-last-toast',
+      displayType: SmartToastType.last,
+      displayTime: const Duration(milliseconds: 300),
+      useAnimation: false,
+    ).ignore();
+    for (var i = 0; i < 4; i++) {
+      await tester.pump(const Duration(milliseconds: 1));
+    }
+
+    await tester.pump(const Duration(milliseconds: 120));
+    expect(find.text('stale-only-refresh'), findsNothing);
+    expect(find.text('newer-last-toast'), findsOneWidget);
+
+    await dismissAndPump<void>(tester, status: SmartStatus.allToast);
+    await disposeSmartDialogApp(tester);
+  });
+
   testWidgets('onlyRefresh keeps refreshing after a mask dismissal', (
     tester,
   ) async {
@@ -53,7 +118,7 @@ void main() {
         useAnimation: false,
         displayTime: const Duration(seconds: 1),
         displayType: SmartToastType.onlyRefresh,
-      );
+      ).ignore();
     }
 
     showToast('before-dismiss');
@@ -85,13 +150,13 @@ void main() {
       displayType: SmartToastType.multi,
       displayTime: const Duration(milliseconds: 100),
       useAnimation: false,
-    );
+    ).ignore();
     SmartDialog.showToast(
       'multi-second',
       displayType: SmartToastType.multi,
       displayTime: const Duration(milliseconds: 150),
       useAnimation: false,
-    );
+    ).ignore();
     await tester.pump();
 
     expect(find.text('multi-first'), findsOneWidget);
@@ -101,6 +166,83 @@ void main() {
     await tester.pump();
     expect(find.text('multi-first'), findsNothing);
     expect(find.text('multi-second'), findsNothing);
+    expect(
+      SmartDialog.checkExist(dialogTypes: const {SmartAllDialogType.toast}),
+      isFalse,
+    );
+    await disposeSmartDialogApp(tester);
+  });
+
+  testWidgets('allToast closes serial and multi toasts exactly once', (
+    tester,
+  ) async {
+    await pumpSmartDialogApp(tester);
+    var serialDismissCount = 0;
+    var queuedDismissCount = 0;
+    var multiDismissCount = 0;
+
+    SmartDialog.showToast(
+      'all-serial',
+      displayType: SmartToastType.normal,
+      displayTime: const Duration(seconds: 1),
+      useAnimation: false,
+      onDismiss: () => serialDismissCount++,
+    ).ignore();
+    SmartDialog.showToast(
+      'all-queued',
+      displayType: SmartToastType.normal,
+      displayTime: const Duration(seconds: 1),
+      useAnimation: false,
+      onDismiss: () => queuedDismissCount++,
+    ).ignore();
+    SmartDialog.showToast(
+      'all-multi',
+      displayType: SmartToastType.multi,
+      displayTime: const Duration(seconds: 1),
+      useAnimation: false,
+      onDismiss: () => multiDismissCount++,
+    ).ignore();
+    await tester.pump();
+
+    await dismissAndPump<void>(tester, status: SmartStatus.allToast);
+    expect(find.text('all-serial'), findsNothing);
+    expect(find.text('all-queued'), findsNothing);
+    expect(find.text('all-multi'), findsNothing);
+    expect(serialDismissCount, 1);
+    expect(queuedDismissCount, 0);
+    expect(multiDismissCount, 1);
+    expect(
+      SmartDialog.checkExist(dialogTypes: const {SmartAllDialogType.toast}),
+      isFalse,
+    );
+    await disposeSmartDialogApp(tester);
+  });
+
+  testWidgets('single toast dismissal prioritizes serial over multi', (
+    tester,
+  ) async {
+    await pumpSmartDialogApp(tester);
+
+    SmartDialog.showToast(
+      'priority-multi',
+      displayType: SmartToastType.multi,
+      displayTime: const Duration(seconds: 1),
+      useAnimation: false,
+    ).ignore();
+    SmartDialog.showToast(
+      'priority-serial',
+      displayType: SmartToastType.normal,
+      displayTime: const Duration(seconds: 1),
+      useAnimation: false,
+    ).ignore();
+    await tester.pump();
+
+    await dismissAndPump<void>(tester, status: SmartStatus.toast);
+    expect(find.text('priority-serial'), findsNothing);
+    expect(find.text('priority-multi'), findsOneWidget);
+
+    await dismissAndPump<void>(tester, status: SmartStatus.toast);
+    expect(find.text('priority-multi'), findsNothing);
     await disposeSmartDialogApp(tester);
   });
 
@@ -120,7 +262,7 @@ void main() {
       'standalone-cupertino-ui',
       useAnimation: false,
       displayTime: const Duration(milliseconds: 100),
-    );
+    ).ignore();
     await tester.pump();
     expect(find.text('standalone-cupertino-ui'), findsOneWidget);
 

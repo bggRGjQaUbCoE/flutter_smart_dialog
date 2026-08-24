@@ -4,12 +4,13 @@ enum SmartStatus {
   /// 关闭单个dialog：loading（showLoading），custom（show）或 attach（showAttach）
   smart,
 
-  /// close toast（showToast）
+  /// Close the active serial toast, or the newest multi toast when no serial
+  /// toast is active.
   ///
   /// 关闭toast（showToast）
   toast,
 
-  /// close all toasts（showToast）
+  /// Close all displayed toasts and cancel queued serial toasts.
   ///
   /// 关闭所有toast（showToast）
   allToast,
@@ -86,6 +87,7 @@ enum SmartToastType {
   normal,
 
   /// Call toast continuously, the next toast will top off the previous toast
+  /// in the serial toast channel. Concurrent [multi] toasts are unaffected.
   ///
   /// 连续调用toast，后一条toast会顶掉前一条toast
   last,
@@ -130,6 +132,9 @@ enum SmartAnimationType {
 /// The type of dialog await ending
 ///
 /// 弹窗await结束的类型
+///
+/// Each call keeps its own completion policy. If a loading or keepSingle
+/// dialog is reused, all callers waiting for dismissal complete together.
 enum SmartAwaitOverType {
   /// The moment when the dialog is completely closed
   ///

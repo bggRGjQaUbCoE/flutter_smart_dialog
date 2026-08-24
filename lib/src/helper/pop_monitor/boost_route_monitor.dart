@@ -1,8 +1,10 @@
-import 'package:material_ui/material_ui.dart';
+import 'dart:async';
+
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/pop_monitor/monitor_pop_route.dart';
 import 'package:flutter_smart_dialog/src/kit/log.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:material_ui/material_ui.dart';
 
 class BoostRouteMonitor {
   static BoostRouteMonitor? _instance;
@@ -26,27 +28,57 @@ class BoostRouteMonitor {
         return;
       }
 
-      await Future.delayed(const Duration(milliseconds: 1));
+      await Future<void>.delayed(const Duration(milliseconds: 1));
       if (route?.isActive == false) {
         _monitorRouteMount(route, ++count);
         return;
       }
 
       if (route is ModalRoute) {
-        // WillPopCallback 该回调函数返回一个 Future<bool>
-        // 如果返回 true，则允许返回操作；如果返回 false，则阻止返回操作
-        Future<bool> willPopCallback() async {
-          return !(await MonitorPopRoute.handBackEvent());
-        }
-
-        // TODO: `addScopedWillPopCallback()` was deprecated after v3.12.0-1.0.pre.
-        // ignore: deprecated_member_use
-        route.addScopedWillPopCallback(willPopCallback);
+        route.registerPopEntry(_BoostPopEntry(route));
         DialogProxy.contextNavigator = route.subtreeContext;
       }
     } catch (e) {
       SmartLog.d(e);
       _monitorRouteMount(route, ++count);
+    }
+  }
+}
+
+class _BoostPopEntry extends PopEntry<Object?> {
+  _BoostPopEntry(this.route);
+
+  final ModalRoute<dynamic> route;
+
+  @override
+  final ValueNotifier<bool> canPopNotifier = ValueNotifier<bool>(false);
+
+  bool _handling = false;
+
+  @override
+  void onPopInvokedWithResult(bool didPop, Object? result) {
+    if (didPop || _handling) {
+      return;
+    }
+    unawaited(_handlePop(result));
+  }
+
+  Future<void> _handlePop(Object? result) async {
+    _handling = true;
+    try {
+      final intercepted = await MonitorPopRoute.handBackEvent();
+      final navigator = route.navigator;
+      if (intercepted || !route.isActive || navigator == null) {
+        return;
+      }
+
+      canPopNotifier.value = true;
+      await navigator.maybePop<Object?>(result);
+    } finally {
+      if (route.isActive) {
+        canPopNotifier.value = false;
+      }
+      _handling = false;
     }
   }
 }

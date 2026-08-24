@@ -1,4 +1,5 @@
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/config/enum_config.dart';
+import 'package:flutter_smart_dialog/src/data/notify_style.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/navigator_observer.dart';
 import 'package:flutter_smart_dialog/src/helper/pop_monitor/boost_route_monitor.dart';

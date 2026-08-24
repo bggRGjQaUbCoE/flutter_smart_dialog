@@ -16,7 +16,7 @@ class DebounceUtils {
       return false;
     }
 
-    var limitTime = switch (type) {
+    final limitTime = switch (type) {
       DebounceType.custom => SmartDialog.config.custom.debounceTime,
       DebounceType.attach => SmartDialog.config.attach.debounceTime,
       DebounceType.notify => SmartDialog.config.notify.debounceTime,

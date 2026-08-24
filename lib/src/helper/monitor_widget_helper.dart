@@ -1,7 +1,8 @@
+import 'dart:async';
 import 'dart:collection';
 
 import 'package:cupertino_ui/cupertino_ui.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/config/enum_config.dart';
 import 'package:flutter_smart_dialog/src/data/dialog_info.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
 import 'package:flutter_smart_dialog/src/helper/route_record.dart';
@@ -42,9 +43,11 @@ class MonitorWidgetHelper {
         _calculate(context!, item);
       }
       for (var i = removeList.length; i > 0; i--) {
-        DialogProxy.instance.dismiss(
-          status: SmartStatus.dialog,
-          tag: removeList[i - 1].tag,
+        unawaited(
+          DialogProxy.instance.dismiss<void>(
+            status: SmartStatus.dialog,
+            tag: removeList[i - 1].tag,
+          ),
         );
       }
       prohibitMonitor = false;
@@ -60,7 +63,7 @@ class MonitorWidgetHelper {
       return;
     }
 
-    var renderObject = _safeRenderBox(context);
+    var renderObject = ViewUtils.findRenderBox(context);
     if (renderObject == null) {
       item.dialog.hide();
       return;
@@ -103,19 +106,6 @@ class MonitorWidgetHelper {
       return context.mounted;
     }
     return true;
-  }
-
-  RenderBox? _safeRenderBox(BuildContext context) {
-    try {
-      var renderObject = context.findRenderObject();
-      if (renderObject is RenderBox &&
-          renderObject.attached &&
-          renderObject.hasSize) {
-        return renderObject;
-      }
-    } catch (_) {}
-
-    return null;
   }
 
   void resetForTest() {

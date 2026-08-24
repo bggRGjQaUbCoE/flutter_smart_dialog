@@ -2,10 +2,7 @@ import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
 import 'package:material_ui/material_ui.dart';
 
 class NotifyFailure extends StatelessWidget {
-  const NotifyFailure({
-    super.key,
-    required this.msg,
-  });
+  const NotifyFailure({super.key, required this.msg});
 
   final String msg;
 

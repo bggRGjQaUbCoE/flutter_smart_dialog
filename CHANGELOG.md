@@ -1,3 +1,15 @@
+# [5.3.0]
+* Breaking: remove the deprecated `backDismiss` parameters and `SmartConfigCustom`/`SmartConfigAttach.backDismiss`; use `backType: SmartBackType.normal` for the old `true` behavior or `SmartBackType.block` for the old `false` behavior
+* Breaking: remove the deprecated `showAttach.replaceBuilder` parameter; use `adjustBuilder` and return an `AttachAdjustParam` with a builder when replacing the attached widget
+* Breaking: remove deprecated `SmartConfig.checkExist()` and `SmartConfig.isExist*` members; use `SmartDialog.checkExist()`
+* Migrate flutter_boost back interception from Flutter's deprecated scoped callback to `PopEntry` without changing dialog-first back behavior
+* Add deterministic regression coverage for dialog, loading, notify, route, attach, and all toast display modes
+* Keep every rapid `show` awaiter associated with its own completion policy when a loading or `keepSingle` dialog is reused
+* Unify toast timer and overlay ownership so stale timers cannot dismiss newer toasts, `allToast` includes multi toasts, and `onDismiss` fires once for each displayed toast
+* Keep `SmartDialog.config` and the internal dialog proxy on the same configuration instance
+* Simplify internal parameter forwarding, animation lifecycle handling, imports, and linear-time bulk dismissal
+* Raise static-analysis and coverage gates and exclude generated API documentation from published packages
+
 # [5.2.0]
 * Fix [#293](https://github.com/fluttercandies/flutter_smart_dialog/issues/293): migrate from Flutter's bundled Material and Cupertino libraries to the standalone `material_ui` and `cupertino_ui` packages introduced with Flutter 3.47
 * Require Dart 3.12 and Flutter 3.44 or later, matching the standalone UI package constraints

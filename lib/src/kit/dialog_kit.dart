@@ -1,5 +1,6 @@
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:flutter_smart_dialog/src/config/enum_config.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
+import 'package:flutter_smart_dialog/src/smart_dialog.dart';
 
 class DialogKit {
   static DialogKit? _instance;

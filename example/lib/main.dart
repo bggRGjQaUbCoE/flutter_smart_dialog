@@ -33,7 +33,7 @@ class SmartDialogPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const TextField()),
+      appBar: AppBar(title: const Text('SmartDialog-EasyDemo')),
       body: Container(
         margin: const EdgeInsets.all(30),
         child: Wrap(
@@ -79,10 +79,7 @@ class SmartDialogPage extends StatelessWidget {
   }
 
   void _showToast() async {
-    SmartDialog.showToast(
-      // alignment: Alignment.center,
-      'test toast ---- ${Random().nextInt(999)}',
-    );
+    SmartDialog.showToast('test toast ---- ${Random().nextInt(999)}');
 
     // for (var i = 0; i < 9; i++) {
     //   SmartDialog.showToast(

@@ -96,12 +96,14 @@ class DialogProxy {
   void resetForTest() {
     for (final info in dialogQueue) {
       info.displayTimer?.cancel();
+      info.dialog.mainDialog.resetForTest();
       info.dialog.overlayEntry.remove();
     }
     dialogQueue.clear();
 
     for (final info in notifyQueue) {
       info.displayTimer?.cancel();
+      info.dialog.mainDialog.resetForTest();
       info.dialog.overlayEntry.remove();
     }
     notifyQueue.clear();
@@ -149,12 +151,9 @@ class DialogProxy {
     return dialog.showAttach<T>(param: param);
   }
 
-  Future<T?> showLoading<T>({
-    required SmartShowLoadingParam param,
-  }) {
-    loadingInfo
-      ..onBack = param.onBack
-      ..backType = param.backType;
+  Future<T?> showLoading<T>({required SmartShowLoadingParam param}) {
+    loadingInfo.onBack = param.onBack;
+    loadingInfo.backType = param.backType;
     return loadingInfo.loadingWidget.showLoading<T>(param: param);
   }
 
@@ -165,11 +164,8 @@ class DialogProxy {
     );
     toast = CustomToast(overlayEntry: entry);
     return toast.showToast(
-      param: param.copyWith(
-        widget: ToastHelper(
-          consumeEvent: param.consumeEvent,
-          child: param.widget,
-        ),
+      param: param.withWidget(
+        ToastHelper(consumeEvent: param.consumeEvent, child: param.widget),
       ),
     );
   }
@@ -181,61 +177,60 @@ class DialogProxy {
     bool force = false,
     CloseType closeType = CloseType.normal,
   }) {
-    switch (status) {
-      case SmartStatus.smart:
-        var loading = config.loading.isExist;
+    if (status == SmartStatus.smart) {
+      var loading = config.loading.isExist;
 
-        if (loading &&
-            (tag == null || (dialogQueue.isEmpty && notifyQueue.isEmpty))) {
-          return loadingInfo.loadingWidget.dismiss(closeType: closeType);
-        }
+      if (loading &&
+          (tag == null || (dialogQueue.isEmpty && notifyQueue.isEmpty))) {
+        return loadingInfo.loadingWidget.dismiss(closeType: closeType);
+      }
 
-        if (notifyQueue.isNotEmpty) {
-          bool useNotify = (tag == null);
-          if (tag != null) {
-            for (var element in notifyQueue) {
-              if (element.tag == tag) {
-                useNotify = true;
-              }
+      if (notifyQueue.isNotEmpty) {
+        bool useNotify = (tag == null);
+        if (tag != null) {
+          for (var element in notifyQueue) {
+            if (element.tag == tag) {
+              useNotify = true;
             }
           }
-          if (useNotify) {
-            return CustomNotify.dismiss<T>(
-              type: DialogType.notify,
-              tag: tag,
-              result: result,
-              force: force,
-              closeType: closeType,
-            );
-          }
         }
-
-        if (dialogQueue.isNotEmpty) {
-          return CustomDialog.dismiss<T>(
-            type: DialogType.dialog,
+        if (useNotify) {
+          return CustomNotify.dismiss<T>(
+            type: DialogType.notify,
             tag: tag,
             result: result,
             force: force,
             closeType: closeType,
           );
         }
-      case SmartStatus.toast:
-        return CustomToast.dismiss();
-      case SmartStatus.allToast:
-        return CustomToast.dismiss(closeAll: true);
-      case SmartStatus.loading:
-        return loadingInfo.loadingWidget.dismiss(closeType: closeType);
-      case SmartStatus.notify:
-      case SmartStatus.allNotify:
-        return CustomNotify.dismiss<T>(
-          type: _convertEnum(status)!,
+      }
+
+      if (dialogQueue.isNotEmpty) {
+        return CustomDialog.dismiss<T>(
+          type: DialogType.dialog,
           tag: tag,
           result: result,
           force: force,
           closeType: closeType,
         );
-      case _:
+      }
+    } else if (status == SmartStatus.toast) {
+      return CustomToast.dismiss();
+    } else if (status == SmartStatus.allToast) {
+      return CustomToast.dismiss(closeAll: true);
+    } else if (status == SmartStatus.loading) {
+      return loadingInfo.loadingWidget.dismiss(closeType: closeType);
+    } else if (status == SmartStatus.notify ||
+        status == SmartStatus.allNotify) {
+      return CustomNotify.dismiss<T>(
+        type: _convertEnum(status)!,
+        tag: tag,
+        result: result,
+        force: force,
+        closeType: closeType,
+      );
     }
+
     DialogType? type = _convertEnum(status);
     if (type == null) return null;
     return CustomDialog.dismiss<T>(
@@ -249,15 +244,18 @@ class DialogProxy {
 
   DialogType? _convertEnum(SmartStatus status) {
     return switch (status) {
+      SmartStatus.dialog => DialogType.dialog,
       SmartStatus.custom => DialogType.custom,
       SmartStatus.attach => DialogType.attach,
-      SmartStatus.dialog => DialogType.dialog,
       SmartStatus.notify => DialogType.notify,
+      SmartStatus.allDialog => DialogType.allDialog,
       SmartStatus.allCustom => DialogType.allCustom,
       SmartStatus.allAttach => DialogType.allAttach,
-      SmartStatus.allDialog => DialogType.allDialog,
       SmartStatus.allNotify => DialogType.allNotify,
-      _ => null,
+      SmartStatus.smart ||
+      SmartStatus.toast ||
+      SmartStatus.allToast ||
+      SmartStatus.loading => null,
     };
   }
 }

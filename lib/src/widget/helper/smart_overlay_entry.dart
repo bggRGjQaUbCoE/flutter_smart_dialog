@@ -1,5 +1,5 @@
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_smart_dialog/src/kit/view_utils.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SmartOverlayEntry extends OverlayEntry {
   SmartOverlayEntry({

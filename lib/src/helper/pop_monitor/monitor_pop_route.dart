@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:flutter_smart_dialog/src/data/smart_tag.dart';
 import 'package:flutter_smart_dialog/src/helper/dialog_proxy.dart';
@@ -32,16 +34,16 @@ class MonitorPopRoute with WidgetsBindingObserver {
       if (await loadingInfo.onBack?.call() == true) {
         return true;
       }
-      switch (loadingInfo.backType) {
-        case SmartBackType.normal:
-          DialogProxy.instance.dismiss(
+      if (loadingInfo.backType == SmartBackType.normal) {
+        unawaited(
+          DialogProxy.instance.dismiss<void>(
             status: SmartStatus.loading,
             closeType: CloseType.back,
-          );
-          return true;
-        case SmartBackType.block:
-          return true;
-        case _:
+          ),
+        );
+        return true;
+      } else if (loadingInfo.backType == SmartBackType.block) {
+        return true;
       }
     }
 
@@ -54,17 +56,17 @@ class MonitorPopRoute with WidgetsBindingObserver {
         if (await item.onBack?.call() == true) {
           return true;
         }
-        switch (item.backType) {
-          case SmartBackType.normal:
-            DialogProxy.instance.dismiss(
+        if (item.backType == SmartBackType.normal) {
+          unawaited(
+            DialogProxy.instance.dismiss<void>(
               status: SmartStatus.notify,
               closeType: CloseType.back,
               tag: item.tag,
-            );
-            return true;
-          case SmartBackType.block:
-            return true;
-          case _:
+            ),
+          );
+          return true;
+        } else if (item.backType == SmartBackType.block) {
+          return true;
         }
       }
     }
@@ -75,16 +77,16 @@ class MonitorPopRoute with WidgetsBindingObserver {
       if (await lastDialog.onBack?.call() == true) {
         return true;
       }
-      switch (lastDialog.backType) {
-        case SmartBackType.normal:
-          DialogProxy.instance.dismiss(
+      if (lastDialog.backType == SmartBackType.normal) {
+        unawaited(
+          DialogProxy.instance.dismiss<void>(
             status: SmartStatus.dialog,
             closeType: CloseType.back,
-          );
-          return true;
-        case SmartBackType.block:
-          return true;
-        case _:
+          ),
+        );
+        return true;
+      } else if (lastDialog.backType == SmartBackType.block) {
+        return true;
       }
     }
 

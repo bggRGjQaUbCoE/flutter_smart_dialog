@@ -9,6 +9,7 @@ import 'package:flutter_smart_dialog/src/widget/animation/fade_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/mask_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/scale_animation.dart';
 import 'package:flutter_smart_dialog/src/widget/animation/slide_animation.dart';
+import 'package:flutter_smart_dialog/src/widget/helper/dialog_animation_lifecycle.dart';
 import 'package:flutter_smart_dialog/src/widget/helper/mask_event.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -80,8 +81,7 @@ class SmartDialogWidget extends StatefulWidget {
 
 class _SmartDialogWidgetState extends State<SmartDialogWidget>
     with TickerProviderStateMixin {
-  AnimationController? _maskController;
-  late AnimationController _bodyController;
+  DialogAnimationLifecycle? _animationLifecycle;
   AnimationParam? _animationParam;
 
   @override
@@ -92,28 +92,19 @@ class _SmartDialogWidgetState extends State<SmartDialogWidget>
   }
 
   void _resetState() {
-    var startTime = widget.animationTime;
-    var openDialog = SmartNonAnimationType.openDialog_nonAnimation;
-    if (widget.nonAnimationTypes.contains(openDialog)) {
-      startTime = Duration.zero;
-    }
-    if (!widget.useAnimation) {
-      startTime = Duration.zero;
-    }
+    final startTime = resolveOpenAnimationDuration(
+      animationTime: widget.animationTime,
+      useAnimation: widget.useAnimation,
+      nonAnimationTypes: widget.nonAnimationTypes,
+    );
 
-    if (_maskController == null) {
-      _maskController = AnimationController(vsync: this, duration: startTime);
-      _bodyController = AnimationController(vsync: this, duration: startTime);
-
-      _maskController!.duration = startTime;
-      _bodyController.duration = startTime;
-      _maskController!.forward();
-      _bodyController.forward();
+    if (_animationLifecycle == null) {
+      _animationLifecycle = DialogAnimationLifecycle(
+        vsync: this,
+        duration: startTime,
+      );
     } else {
-      _maskController!.duration = startTime;
-      _bodyController.duration = startTime;
-      _bodyController.value = 0;
-      _bodyController.forward();
+      _animationLifecycle!.restart(startTime);
     }
 
     ViewUtils.addSafeUse(() {
@@ -146,7 +137,7 @@ class _SmartDialogWidgetState extends State<SmartDialogWidget>
             maskTriggerType: widget.maskTriggerType,
             onMask: widget.onMask,
             child: MaskAnimation(
-              controller: _maskController!,
+              controller: _animationLifecycle!.maskController,
               maskColor: widget.maskColor,
               maskWidget: widget.maskWidget,
               usePenetrate: widget.usePenetrate,
@@ -154,32 +145,18 @@ class _SmartDialogWidgetState extends State<SmartDialogWidget>
           ),
 
           //内容Widget动画
-          Align(
-            alignment: widget.alignment,
-            child: _buildBodyAnimation(),
-          ),
+          Align(alignment: widget.alignment, child: _buildBodyAnimation()),
         ],
       ),
     );
   }
 
-  Widget get fade =>
-      FadeAnimation(controller: _bodyController, child: widget.child);
-
-  Widget get scale =>
-      ScaleAnimation(controller: _bodyController, child: widget.child);
-
-  Widget get slide => SlideAnimation(
-    controller: _bodyController,
-    alignment: widget.alignment,
-    child: widget.child,
-  );
-
   Widget _buildBodyAnimation() {
+    var child = widget.child;
     if (widget.animationBuilder != null) {
       return widget.animationBuilder!.call(
-        _bodyController,
-        widget.child,
+        _animationLifecycle!.bodyController,
+        child,
         _animationParam = AnimationParam(
           alignment: widget.alignment,
           animationTime: widget.animationTime,
@@ -188,58 +165,46 @@ class _SmartDialogWidgetState extends State<SmartDialogWidget>
     }
 
     var type = widget.animationType;
-
-    //select different animation
-    switch (type) {
-      case SmartAnimationType.fade:
-        return fade;
-      case SmartAnimationType.scale:
-        return scale;
-      case SmartAnimationType.centerFade_otherSlide:
-        if (widget.alignment == Alignment.center) {
-          return fade;
-        } else {
-          return slide;
-        }
-      case SmartAnimationType.centerScale_otherSlide:
-        if (widget.alignment == Alignment.center) {
-          return scale;
-        } else {
-          return slide;
-        }
-    }
+    final bodyController = _animationLifecycle!.bodyController;
+    Widget fade() => FadeAnimation(controller: bodyController, child: child);
+    Widget scale() => ScaleAnimation(controller: bodyController, child: child);
+    Widget slide() => SlideAnimation(
+      controller: bodyController,
+      alignment: widget.alignment,
+      child: child,
+    );
+    return switch (type) {
+      SmartAnimationType.fade => fade(),
+      SmartAnimationType.scale => scale(),
+      SmartAnimationType.centerFade_otherSlide =>
+        widget.alignment == Alignment.center ? fade() : slide(),
+      SmartAnimationType.centerScale_otherSlide =>
+        widget.alignment == Alignment.center ? scale() : slide(),
+    };
   }
 
   ///等待动画结束,关闭动画资源
   Future<void> dismiss({CloseType closeType = CloseType.normal}) async {
-    if (_maskController == null) return;
+    final animationLifecycle = _animationLifecycle;
+    if (animationLifecycle == null) return;
 
-    // dismiss type
-    var endTime = widget.animationTime;
-    for (var dismissType in widget.nonAnimationTypes) {
-      if (widget.controller.judgeDismissDialogType(closeType, dismissType)) {
-        endTime = Duration.zero;
-      }
-    }
-    if (!widget.useAnimation) {
-      endTime = Duration.zero;
-    }
-
-    _maskController!.duration = endTime;
-    _bodyController.duration = endTime;
-
-    //over animation
-    _maskController!.reverse();
-    _bodyController.reverse();
-    _animationParam?.onDismiss?.call();
-    await Future.delayed(endTime);
+    final endTime = resolveDismissAnimationDuration(
+      animationTime: widget.animationTime,
+      useAnimation: widget.useAnimation,
+      nonAnimationTypes: widget.nonAnimationTypes,
+      controller: widget.controller,
+      closeType: closeType,
+    );
+    await animationLifecycle.dismiss(
+      endTime,
+      onDismiss: _animationParam?.onDismiss,
+    );
   }
 
   @override
   void dispose() {
-    _maskController?.dispose();
-    _maskController = null;
-    _bodyController.dispose();
+    _animationLifecycle?.dispose();
+    _animationLifecycle = null;
 
     super.dispose();
   }
