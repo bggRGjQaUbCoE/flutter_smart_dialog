@@ -16,6 +16,8 @@ class ToastTool {
 
   final Queue<ToastInfo> toastQueue = ListQueue<ToastInfo>();
   final List<ToastInfo> _multiToasts = <ToastInfo>[];
+  // Includes detached serial toasts until their closing overlays are removed.
+  final Set<ToastInfo> _shownToasts = <ToastInfo>{};
 
   Future<void> show(ToastInfo info) {
     return switch (info.type) {
@@ -54,11 +56,7 @@ class ToastTool {
     return _startSerial(info);
   }
 
-  Future<void> _showLast(ToastInfo info) async {
-    await _clearSerial();
-    toastQueue.addLast(info);
-    await _startSerial(info);
-  }
+  Future<void> _showLast(ToastInfo info) => _replaceSerial(info);
 
   Future<void> _showOnlyRefresh(ToastInfo info) {
     final active = _activeSerial;
@@ -79,10 +77,23 @@ class ToastTool {
     return _replaceSerialWithOnlyRefresh(info);
   }
 
-  Future<void> _replaceSerialWithOnlyRefresh(ToastInfo info) async {
-    await _clearSerial();
+  Future<void> _replaceSerialWithOnlyRefresh(ToastInfo info) {
+    unawaited(_replaceSerial(info));
+    return Future<void>.value();
+  }
+
+  /// Detaches the current serial queue and enqueues [info] synchronously, so a
+  /// replacement requested while the previous toast is still closing cannot be
+  /// overtaken by, or enqueued behind, a later replacement.
+  Future<void> _replaceSerial(ToastInfo info) async {
+    final previous = _detachSerial();
     toastQueue.addLast(info);
-    unawaited(_startSerial(info));
+    if (previous != null) {
+      await _close(previous);
+    }
+    // A newer replacement detached and cancelled [info] while we were waiting.
+    if (info.closed) return;
+    await _startSerial(info);
   }
 
   Future<void> _showMulti(ToastInfo info) {
@@ -105,6 +116,7 @@ class ToastTool {
     if (info.closed || info.shown) return;
     info.shown = true;
     info.onShow();
+    _shownToasts.add(info);
     _syncExist();
   }
 
@@ -133,6 +145,7 @@ class ToastTool {
 
     toastQueue.remove(info);
     _multiToasts.remove(info);
+    _shownToasts.remove(info);
     info
       ..closing = false
       ..closed = true
@@ -141,6 +154,8 @@ class ToastTool {
 
     if (dispatchNext && toastQueue.isNotEmpty) {
       await Future<void>.delayed(SmartDialog.config.toast.intervalTime);
+      // The queue may have been cleared or replaced during the interval.
+      if (toastQueue.isEmpty) return;
       final next = toastQueue.first;
       if (!next.shown && !next.closed) {
         unawaited(_startSerial(next));
@@ -148,8 +163,10 @@ class ToastTool {
     }
   }
 
-  Future<void> _clearSerial() async {
-    if (toastQueue.isEmpty) return;
+  /// Removes every serial entry synchronously: queued entries are cancelled and
+  /// the shown one, if any, is returned for the caller to close.
+  ToastInfo? _detachSerial() {
+    if (toastQueue.isEmpty) return null;
     final entries = toastQueue.toList(growable: false);
     toastQueue.clear();
     final active = entries.first.shown ? entries.first : null;
@@ -157,10 +174,8 @@ class ToastTool {
       if (identical(info, active)) continue;
       _cancelQueued(info);
     }
-    if (active != null) {
-      await _close(active);
-    }
     _syncExist();
+    return active;
   }
 
   Future<void> _closeAll() async {
@@ -174,7 +189,7 @@ class ToastTool {
       _cancelQueued(info);
     }
 
-    final active = <ToastInfo>[?activeSerial, ..._multiToasts];
+    final active = _shownToasts.toList(growable: false);
     await Future.wait<void>(active.map(_close));
     _syncExist();
   }
@@ -195,14 +210,18 @@ class ToastTool {
   }
 
   void _syncExist() {
-    SmartDialog.config.toast.isExist =
-        _activeSerial != null || _multiToasts.any((info) => !info.closed);
+    SmartDialog.config.toast.isExist = _shownToasts.isNotEmpty;
   }
 
   void resetForTest() {
-    final entries = <ToastInfo>{...toastQueue, ..._multiToasts};
+    final entries = <ToastInfo>{
+      ...toastQueue,
+      ..._multiToasts,
+      ..._shownToasts,
+    };
     toastQueue.clear();
     _multiToasts.clear();
+    _shownToasts.clear();
     for (final info in entries) {
       info.timer?.cancel();
       info.mainDialog.resetForTest();
